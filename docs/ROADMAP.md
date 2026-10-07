@@ -30,6 +30,8 @@
 - [x] Ash experience, levels, Force growth and HP growth
 - [x] Workshop assembly and week-costing full recovery
 - [x] combat HP/HEAT bars, telegraphed damage, gadget charges and hit feedback
+- [x] encounter previews show recommended level, danger and retreat availability
+- [x] battle rewards stay visible until the player confirms their return
 - [ ] reusable data-driven event system
 - [ ] data-driven location definitions
 
@@ -74,8 +76,8 @@ repaired auxiliary relay to the first World Core signal.
 - [x] Story bible for the prologue, five Cores and the new-hero finale
 - [x] Reference research and adaptation notes for pacing, battle order and UI
 - [x] 12-week Prologue budget and late Furnace Warden pressure increase
-- [ ] Recommended level and event-specific danger forecasts
-- [ ] Immediate event result card
+- [x] Recommended level and encounter danger forecasts
+- [ ] Dedicated event result card for salvage, rescue and town choices
 - [ ] Stat allocation and multiple growth paths (Force currently grows automatically)
 - [ ] Data-driven event and location definitions
 - [x] Map/route screen for the prologue region

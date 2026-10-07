@@ -72,7 +72,7 @@ export class ExploreScene extends Phaser.Scene {
       this.dialogue.set(this.result ?? (salvaged.length === 0
         ? '地面に、まだ油の匂いが残っている。\nASH: 「捨て場じゃない。部品置き場だ。」'
         : `回収記録 ${salvaged.length}/3。アザミの地図には、道のない線が続く。`), salvaged.length ? 'azami' : 'ash');
-      this.choice(693, '周辺をサルベージ', '1週 / 安全 / 部品・SCRAP・EXP', () => this.salvage());
+      this.choice(693, '周辺をサルベージ', '1週 / 推奨Lv.1 / 低危険 / 部品・EXP', () => this.salvage());
       this.choice(788, salvaged.length === 3 ? '瓦礫の奥を調べる' : '崩落区画を調べる', salvaged.length === 3 ? '1週 / アザミの救出と巡回機戦' : '部品を3種集めると道が開く', () => this.rescue(), salvaged.length === 3);
       this.choice(883, '工房へ戻る', '無料 / 装備と地図を確認', () => this.scene.start('Hub'));
       return;
@@ -86,7 +86,7 @@ export class ExploreScene extends Phaser.Scene {
     }
     if (!progress.houndDefeated) {
       this.dialogue.set(this.result ?? '救出した少女は、壊れた地図を丁寧にたたむ。\nアザミ: 「あたしはアザミ。機械の音が、下から聞こえる。」', 'azami');
-      this.choice(693, '旧巡回機を止める', '1週 / 中危険 / モーター・SCRAP', () => this.scene.start('Battle', { enemyId: 'scrap-hound' }));
+      this.choice(693, '旧巡回機を止める', '1週 / 推奨Lv.2 / 中危険 / モーター', () => this.scene.start('Battle', { enemyId: 'scrap-hound' }));
       this.choice(788, '部品を探す', '1週 / 安全 / SCRAP + EXP', () => this.salvageExtras());
       this.choice(883, '工房へ戻る', '無料 / PILE-01を組み立てる', () => this.scene.start('Hub'));
       return;
@@ -152,14 +152,14 @@ export class ExploreScene extends Phaser.Scene {
     this.dialogue.set(this.result ?? (progress.factoryInspected
       ? '圧力を逃がす道は作った。奥の守衛機が、炉心を守るために動き出す。'
       : '工場の炉は、誰もいないのに動いている。\n蒸気圧は危険域。正面から止めれば町の熱源も失われる。'), 'ash');
-    this.choice(693, progress.factoryInspected ? '調査記録を確認' : '排気弁と熱管を調べる', progress.factoryInspected ? '調査済 / 守衛機へ進める' : '1週 / 安全 / 壊さない停止方法を探す', () => {
+    this.choice(693, progress.factoryInspected ? '調査記録を確認' : '排気弁と熱管を調べる', progress.factoryInspected ? '調査済 / 守衛機へ進める' : '1週 / 推奨Lv.2 / 低危険 / 停止方法を探す', () => {
       if (!progress.factoryInspected) {
         progress.factoryInspected = true; GameState.data.week += 1; GameState.save();
         this.result = '排気弁は閉じるためのものじゃない。圧力を逃がすためのものだ。\nASH: 「仕組みが分かれば、壊さずに済む。」';
         this.scene.restart({ location: 'Factory', result: this.result, resultSpeaker: 'ash' });
       }
     }, !progress.factoryInspected);
-    this.choice(788, progress.factoryBossDefeated ? '補助炉の記録を見る' : '炉の守衛機と対決', '1週 / 高危険 / 勝利で炉を修理', () => this.scene.start('Battle', { enemyId: 'factory-core' }), progress.factoryInspected && !progress.factoryBossDefeated);
+    this.choice(788, progress.factoryBossDefeated ? '補助炉の記録を見る' : '炉の守衛機と対決', '1週 / 推奨Lv.3 / 高危険 / 勝利で炉を修理', () => this.scene.start('Battle', { enemyId: 'factory-core' }), progress.factoryInspected && !progress.factoryBossDefeated);
     this.choice(883, '鉄屑街に戻る', '無料 / 回復と装備を整える', () => this.scene.start('Explore', { location: 'Town' }));
   }
 

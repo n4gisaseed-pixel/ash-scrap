@@ -25,6 +25,7 @@ export class BattleScene extends Phaser.Scene {
   private heatBar!: Phaser.GameObjects.Rectangle;
   private forecastText!: Phaser.GameObjects.Text;
   private gadgetButton!: ReturnType<typeof addCommandButton>;
+  private outcomeButton: ReturnType<typeof addCommandButton> | null = null;
   private actionButtons: Array<ReturnType<typeof addCommandButton>> = [];
   private ended = false;
   private busy = false;
@@ -48,6 +49,7 @@ export class BattleScene extends Phaser.Scene {
     this.ended = false;
     this.busy = false;
     this.actionButtons = [];
+    this.outcomeButton = null;
   }
 
   create() {
@@ -60,6 +62,9 @@ export class BattleScene extends Phaser.Scene {
     });
     this.add.text(30, 47, enemy.name, {
       fontFamily: 'monospace', fontSize: '23px', color: '#f0e8dc', fontStyle: 'bold'
+    });
+    this.add.text(30, 82, `推奨Lv.${boss ? 3 : 2}   /   ${boss ? '高危険' : '中危険'}   /   退却可能`, {
+      fontFamily: '"Noto Sans JP", sans-serif', fontSize: '12px', color: '#d9b98d'
     });
 
     const backdropFrame = boss ? 3 : 1;
@@ -93,12 +98,12 @@ export class BattleScene extends Phaser.Scene {
       : enemy.opening);
 
     this.actionButtons.push(addCommandButton(this, {
-      x: 150, y: 746, title: '工具で攻撃', subtitle: this.hasPile() ? 'PILE-01 / 安定した一撃' : '標準攻撃 / HEAT +18',
+      x: 150, y: 746, title: '工具で攻撃', subtitle: this.hasPile() ? 'PILE-01\n安定した一撃' : '通常攻撃\nHEAT +18',
       width: 218, height: 84, icon: 0, onPress: () => this.attack()
     }));
     this.gadgetButton = addCommandButton(this, {
-      x: 390, y: 746, title: `GADGET ×${this.gadgetCharges}`, subtitle: this.hasPile() ? '油圧パイル / 2回使用' : '即席ピストン / 2回使用',
-      width: 218, height: 84, icon: 1, onPress: () => this.gadget()
+      x: 390, y: 746, title: `GADGET ×${this.gadgetCharges}`,
+      width: 218, height: 84, icon: 1, subtitle: this.hasPile() ? '油圧パイル\nチャージ消費' : '即席ピストン\nチャージ消費', onPress: () => this.gadget()
     });
     this.actionButtons.push(this.gadgetButton);
     this.actionButtons.push(addCommandButton(this, {
@@ -222,7 +227,9 @@ export class BattleScene extends Phaser.Scene {
     this.cameras.main.flash(260, 221, 163, 96);
     this.refresh();
     const destination = this.enemyId === 'factory-core' ? 'Explore' : 'Hub';
-    this.time.delayedCall(1600, () => this.scene.start(destination, { location: 'Factory' }));
+    this.showOutcome('帰還して結果を確定', '報酬を確認 / 次の行動へ', () => {
+      this.scene.start(destination, { location: 'Factory' });
+    });
   }
 
   private defeat() {
@@ -230,8 +237,15 @@ export class BattleScene extends Phaser.Scene {
     this.setActionsEnabled(false);
     GameState.data.hp = GameState.data.maxHp;
     GameState.save();
-    this.dialogue.set('ASHは工房へ運び戻された。\n拾った部品は失わずに済んだ。装備を整えて再挑戦しよう。');
-    this.time.delayedCall(1400, () => this.scene.start('Hub'));
+    this.dialogue.set('ASHは工房へ運び戻された。\n今回の報酬はないが、拾った部品は失わなかった。\n回復してから再挑戦できる。');
+    this.showOutcome('工房へ戻る', 'HPを全快して再挑戦', () => this.scene.start('Hub'));
+  }
+
+  private showOutcome(title: string, subtitle: string, action: () => void) {
+    this.actionButtons.forEach((button) => button.setVisible(false));
+    this.outcomeButton = addCommandButton(this, {
+      x: 270, y: 846, width: 468, height: 76, title, subtitle, onPress: action
+    });
   }
 
   private retreat() {

@@ -20,7 +20,9 @@ export function addCommandButton(scene: Phaser.Scene, options: CommandButtonOpti
   const textWidth = Math.max(80, width - (icon === undefined ? 40 : 88));
   const background = scene.add.rectangle(x, y, width, height, 0x263136)
     .setStrokeStyle(2, 0x728992);
-  if (icon !== undefined) scene.add.image(x - width / 2 + 42, y, 'combat-icons', icon).setDisplaySize(42, 42);
+  const iconObject = icon !== undefined
+    ? scene.add.image(x - width / 2 + 42, y, 'combat-icons', icon).setDisplaySize(42, 42)
+    : null;
 
   const heading = scene.add.text(x - width / 2 + inset, y - height / 2 + 7, '', {
     fontFamily: '"Noto Sans JP", sans-serif', fontSize: compact ? '18px' : (title.length > 23 ? '19px' : '23px'),
@@ -74,5 +76,11 @@ export function addCommandButton(scene: Phaser.Scene, options: CommandButtonOpti
     }
   };
   setEnabled(enabled);
-  return { background, heading, detail, setEnabled };
+  const setVisible = (visible: boolean) => {
+    background.setVisible(visible);
+    heading.setVisible(visible);
+    detail.setVisible(visible);
+    iconObject?.setVisible(visible);
+  };
+  return { background, heading, detail, setEnabled, setVisible };
 }
