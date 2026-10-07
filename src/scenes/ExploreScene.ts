@@ -45,11 +45,11 @@ export class ExploreScene extends Phaser.Scene {
 
   private search(){
     this.searches++;
-    const table=[
+    const table: Array<[string,string]> = [
       ['Rusted Gear','錆びた歯車を見つけた。'],
       ['Copper Wire','まだ導通しそうな銅線だ。'],
       ['Pressure Cylinder','小型の圧力シリンダー。使える。']
-    ] as const;
+    ];
     const [item,msg]=Phaser.Math.RND.pick(table);
     GameState.add(item,1);
     GameState.data.scrap += Phaser.Math.Between(2,5);
