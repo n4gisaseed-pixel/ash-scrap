@@ -20,6 +20,12 @@ export interface SaveData {
   maxHp: number;
   scrap: number;
   week: number;
+  level: number;
+  exp: number;
+  nextExp: number;
+  force: number;
+  grit: number;
+  ingenuity: number;
   chapter0: ChapterProgress;
 }
 
@@ -30,6 +36,12 @@ const initial: SaveData = {
   maxHp: 100,
   scrap: 0,
   week: 1,
+  level: 1,
+  exp: 0,
+  nextExp: 30,
+  force: 0,
+  grit: 0,
+  ingenuity: 0,
   chapter0: {
     scrapyardSalvage: [],
     azamiRecruited: false,
@@ -62,6 +74,12 @@ export class GameState {
         ...structuredClone(initial),
         ...savedFields,
         week: saved.week ?? oldDay ?? initial.week,
+        level: saved.level ?? initial.level,
+        exp: saved.exp ?? initial.exp,
+        nextExp: saved.nextExp ?? initial.nextExp,
+        force: saved.force ?? initial.force,
+        grit: saved.grit ?? initial.grit,
+        ingenuity: saved.ingenuity ?? initial.ingenuity,
         chapter0: {
           ...initial.chapter0,
           ...chapterFlags,
@@ -91,6 +109,22 @@ export class GameState {
     return (this.data.inventory[item] ?? 0) >= amount;
   }
 
+  static gainExp(amount: number) {
+    this.data.exp += amount;
+    const levels: number[] = [];
+    while (this.data.exp >= this.data.nextExp) {
+      this.data.exp -= this.data.nextExp;
+      this.data.level += 1;
+      this.data.nextExp = Math.floor(this.data.nextExp * 1.35);
+      this.data.maxHp += 8;
+      this.data.hp = Math.min(this.data.maxHp, this.data.hp + 18);
+      this.data.force += 1;
+      levels.push(this.data.level);
+    }
+    this.save();
+    return levels;
+  }
+
   static consume(cost: Inventory) {
     for (const [item, amount] of Object.entries(cost)) {
       if (!this.has(item, amount)) return false;
@@ -102,12 +136,4 @@ export class GameState {
     return true;
   }
 
-  static nextDestination(): 'Scrapyard' | 'Craft' | 'Town' | 'Factory' | 'Return' {
-    const progress = this.data.chapter0;
-    if (!progress.houndDefeated) return 'Scrapyard';
-    if (!this.data.crafted.includes('PILE-01')) return 'Craft';
-    if (!progress.townVisited) return 'Town';
-    if (!progress.factoryBossDefeated) return 'Factory';
-    return 'Return';
-  }
 }

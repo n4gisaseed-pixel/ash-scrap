@@ -10,6 +10,7 @@ export class TitleScene extends Phaser.Scene {
     this.load.spritesheet('chapter0-art', 'assets/chapter0-atlas.webp', { frameWidth: 512, frameHeight: 512 });
     this.load.image('character-portraits', 'assets/character-portraits.webp');
     this.load.image('azami-portrait', 'assets/azami-portrait.webp');
+    this.load.image('azami-map', 'assets/azami-map.webp');
     this.load.spritesheet('combat-icons', 'assets/combat-icons.webp', { frameWidth: 627, frameHeight: 627 });
   }
 

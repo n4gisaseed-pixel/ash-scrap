@@ -22,6 +22,11 @@
 - [x] Azami companion rescue event and generated portrait
 - [x] Companion autonomous attack/repair support in battle
 - [x] In-game week tracking for major expedition and recovery actions
+- [x] Generated hand-drawn route map integrated into the hub
+- [x] Main expedition options show week cost, risk and likely gains
+- [x] Repeatable safe salvage for scrap and experience
+- [x] Ash experience, levels, Force growth and HP growth
+- [x] Workshop assembly and week-costing full recovery
 - [x] combat HP/HEAT bars, telegraphed damage, gadget charges and hit feedback
 - [ ] reusable data-driven event system
 - [ ] data-driven location definitions
@@ -56,20 +61,21 @@
 - [x] return-to-workshop ending
 - [ ] full mobile progression test
 
-The earlier Chapter 0 route is being recast as the prologue to *The World After
-It Was Saved*. The playable foundation already includes salvage, PILE-01,
-Mina's settlement, the old furnace and the companion battle. The active work is
-to connect these scenes to Azami's map, the auxiliary relay and the first World
-Core signal.
+Chapter 0 is the first leg of *The World After It Was Saved*. The hub presents
+Azami's field map and unlocked routes; expeditions show their time and risk
+before entry. The playable route includes salvage, PILE-01, Azami's rescue, the
+settlement, the old furnace and a companion battle. The ending connects the
+repaired auxiliary relay to the first World Core signal.
 
 ## Milestone 5 — Campaign systems
 - [x] Story bible for the prologue, five Cores and the new-hero finale
 - [x] Reference research and adaptation notes for pacing, battle order and UI
 - [x] 12-week Prologue budget and late Furnace Warden pressure increase
-- [ ] Destination preview with recommended level, danger, cost and reward
+- [ ] Recommended level and event-specific danger forecasts
 - [ ] Immediate event result card
-- [ ] Ash EXP, level-up and stat allocation
+- [ ] Stat allocation and multiple growth paths (Force currently grows automatically)
 - [ ] Data-driven event and location definitions
+- [x] Map/route screen for the prologue region
 - [ ] Map/route screen for discovered and unknown Cores
 - [ ] Action-order queue with known ally intent and hidden enemy intent
 - [ ] Later regional companion/support events
@@ -80,6 +86,7 @@ Core signal.
 - [x] first generated enemy illustrations
 - [x] first generated location backgrounds
 - [x] first generated combat action icons
+- [x] generated field map used as route navigation
 - [ ] bespoke UI panels and button frames
 - [x] basic hit, shake and overheat effects
 - [ ] music/SFX

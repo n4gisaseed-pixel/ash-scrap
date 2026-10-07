@@ -1,174 +1,165 @@
 import Phaser from 'phaser';
-import { GameState, PROLOGUE_WEEK_LIMIT } from '../state/GameState';
+import { GameState } from '../state/GameState';
 import { addCommandButton } from '../ui/CommandButton';
 import { addDialogueBox } from '../ui/DialogueBox';
 import { addArtPanel, addArtShade } from '../ui/ArtPanel';
 
 type Location = 'Scrapyard' | 'Town' | 'Factory';
 
-const SCRAP_PARTS = [
-  { id: 'Rusted Gear', label: 'Rusted Gear', line: '歯の欠けた歯車。噛み合わせを直せば、まだ回る。' },
-  { id: 'Copper Wire', label: 'Copper Wire', line: '銅線を回収。被覆は焼けているが、芯線は生きている。' },
-  { id: 'Pressure Cylinder', label: 'Pressure Cylinder', line: '小型シリンダーを拾った。圧力漏れはパッキンで止まりそうだ。' }
+const PARTS = [
+  { id: 'Rusted Gear', name: '歯の欠けた歯車', line: '泥を拭うと、山の刻印が見えた。まだ噛み合わせを直せる。' },
+  { id: 'Copper Wire', name: '焼けた銅線', line: '焦げた被覆の下で、芯線だけが鈍く光っている。' },
+  { id: 'Pressure Cylinder', name: '圧力筒', line: '旧式の筒。パッキンを替えれば圧力を保てそうだ。' }
 ];
 
 export class ExploreScene extends Phaser.Scene {
   private location: Location = 'Scrapyard';
   private dialogue!: ReturnType<typeof addDialogueBox>;
-  private salvageNotice: string | null = null;
+  private result: string | null = null;
 
   constructor() { super('Explore'); }
 
-  init(data: { location?: Location }) {
+  init(data: { location?: Location; result?: string }) {
     this.location = data.location ?? 'Scrapyard';
+    this.result = data.result ?? null;
   }
 
   create() {
-    this.drawShell();
-    this.dialogue = addDialogueBox(this, 510, 132);
-    if (this.location === 'Scrapyard') this.createScrapyard();
+    if (this.location === 'Town' && !GameState.data.chapter0.townVisited) {
+      GameState.data.chapter0.townVisited = true;
+      GameState.data.week += 1;
+      GameState.save();
+    }
+    this.drawFrame();
+    this.dialogue = addDialogueBox(this, 585, 132);
+    if (this.result) this.dialogue.set(this.result, 'ash');
+    else if (this.location === 'Scrapyard') this.createScrapyard();
     else if (this.location === 'Town') this.createTown();
     else this.createFactory();
   }
 
-  private drawShell() {
-    const titles: Record<Location, [string, string]> = {
-      Scrapyard: ['SCRAPYARD 01', 'SALVAGE SITE / OUTER RING'],
-      Town: ['IRON-SCRAP TOWN', 'SETTLEMENT / REUSE DISTRICT'],
-      Factory: ['ABANDONED FACTORY', 'INDUSTRIAL ZONE / SEALED FURNACE']
+  private drawFrame() {
+    const meta: Record<Location, { title: string; sub: string; frame: number; label: string }> = {
+      Scrapyard: { title: '廃材置き場', sub: 'SALVAGE SITE / 旧軍施設の外縁', frame: 1, label: 'まだ使えるものを探す' },
+      Town: { title: '鉄屑街', sub: 'SETTLEMENT / 熱と修理で暮らす町', frame: 2, label: '壊れた設備も、暮らしの一部' },
+      Factory: { title: '旧工場', sub: 'INDUSTRIAL RUIN / 補助炉の区画', frame: 3, label: '止める前に、仕組みを読む' }
     };
-    this.cameras.main.setBackgroundColor('#0e0c0a');
-    this.add.rectangle(270, 480, 510, 930, 0x181613).setStrokeStyle(4, 0x4f4437);
-    this.add.text(30, 28, titles[this.location][0], {
-      fontFamily: 'monospace', fontSize: this.location === 'Town' ? '24px' : '27px', color: '#e8d7be', fontStyle: 'bold'
-    });
-    this.add.text(30, 65, titles[this.location][1], { fontFamily: 'monospace', fontSize: '15px', color: '#b09a82' });
-    const weekLabel = GameState.data.week <= PROLOGUE_WEEK_LIMIT
-      ? `WEEK ${GameState.data.week}/${PROLOGUE_WEEK_LIMIT}`
-      : `LATE +${GameState.data.week - PROLOGUE_WEEK_LIMIT}`;
-    this.add.text(510, 66, weekLabel, {
-      fontFamily: 'monospace', fontSize: '12px', color: GameState.data.week > PROLOGUE_WEEK_LIMIT ? '#d77f66' : '#d6b692'
-    }).setOrigin(1, 0);
-    this.add.line(270, 102, 25, 0, 515, 0, 0x664a36).setLineWidth(2);
-
-    const frame = this.location === 'Scrapyard' ? 1 : this.location === 'Town' ? 2 : 3;
-    addArtPanel(this, frame, 270, 265, 468, 286, 0.5, this.location === 'Factory' ? 0.35 : 0.5);
-    addArtShade(this, 270, 265, 468, 286, 0.18);
-    this.add.rectangle(270, 265, 468, 286, 0xffffff, 0).setStrokeStyle(2, 0xa57b58);
-    this.add.rectangle(270, 145, 230, 34, 0x100c09, 0.78).setStrokeStyle(1, 0xba8c61, 0.8);
-    const sceneLabel = this.location === 'Scrapyard' ? 'SALVAGE / OUTER RING'
-      : this.location === 'Town' ? 'REPAIR / TRADE / SHELTER' : 'FURNACE / PRESSURE DANGER';
-    this.add.text(270, 145, sceneLabel, { fontFamily: 'monospace', fontSize: '13px', color: '#f0d6b4' }).setOrigin(.5);
+    const m = meta[this.location];
+    this.cameras.main.setBackgroundColor('#111315');
+    this.add.rectangle(270, 480, 516, 948, 0x17191b).setStrokeStyle(2, 0x59636a);
+    this.add.text(28, 22, m.title, { fontFamily: '"Noto Sans JP", sans-serif', fontSize: '26px', color: '#f3e9dc', fontStyle: 'bold' });
+    this.add.text(30, 60, m.sub, { fontFamily: 'monospace', fontSize: '11px', color: '#93a6b1' });
+    const week = GameState.data.week <= 12 ? `WEEK ${GameState.data.week}/12` : `+${GameState.data.week - 12} WEEK`;
+    this.add.text(510, 62, week, { fontFamily: 'monospace', fontSize: '12px', color: '#d1b083' }).setOrigin(1, 0);
+    this.add.rectangle(270, 95, 480, 1, 0x5f6a71);
+    addArtPanel(this, m.frame as 1 | 2 | 3, 270, 267, 480, 310, .5, this.location === 'Factory' ? .36 : .5);
+    addArtShade(this, 270, 267, 480, 310, .28);
+    this.add.rectangle(270, 267, 480, 310, 0xffffff, 0).setStrokeStyle(1, 0x82919a);
+    this.add.rectangle(270, 407, 456, 46, 0x111416, .83);
+    this.add.text(46, 393, m.label, { fontFamily: '"Noto Sans JP", sans-serif', fontSize: '15px', color: '#efe2d2' });
+    this.add.text(46, 419, `ASH Lv.${GameState.data.level}    HP ${GameState.data.hp}/${GameState.data.maxHp}    SCRAP ${GameState.data.scrap}`, { fontFamily: 'monospace', fontSize: '11px', color: '#bfc9c9' });
   }
 
   private createScrapyard() {
-    const found = GameState.data.chapter0.scrapyardSalvage;
-    if (this.salvageNotice) {
-      this.dialogue.set(this.salvageNotice, 'ash');
-      this.salvageNotice = null;
-    } else if (found.length < SCRAP_PARTS.length) {
-      this.dialogue.set(found.length === 0
-        ? 'ASH: 「あの歯車、まだ使える。捨てる前に確かめるか。」'
-        : `回収 ${found.length} / ${SCRAP_PARTS.length}。ASH: 「使い道は、拾ってから考える。」`, 'ash');
-    } else if (!GameState.data.chapter0.azamiRecruited) {
-      this.dialogue.set('廃材の下から角の生えた少女が顔を出した。\n「その弁、逆に回して！ 早く！」', 'azami');
-    } else {
-      this.dialogue.set('廃材の山が崩れ、機械の唸り声が響いた。\nアザミ: 「来るよ。今度はあたしも手を貸す！」', 'azami');
+    const progress = GameState.data.chapter0;
+    const salvaged = progress.scrapyardSalvage;
+    const nextPart = PARTS.find((part) => !salvaged.includes(part.id));
+    if (nextPart) {
+      this.dialogue.set(this.result ?? (salvaged.length === 0
+        ? '地面に、まだ油の匂いが残っている。\nASH: 「捨て場じゃない。部品置き場だ。」'
+        : `回収記録 ${salvaged.length}/3。アザミの地図には、道のない線が続く。`), salvaged.length ? 'azami' : 'ash');
+      this.choice(693, '周辺をサルベージ', '1週 / 安全 / 部品・SCRAP・EXP', () => this.salvage());
+      this.choice(788, salvaged.length === 3 ? '瓦礫の奥を調べる' : '崩落区画を調べる', salvaged.length === 3 ? '1週 / アザミの救出と巡回機戦' : '部品を3種集めると道が開く', () => this.rescue(), salvaged.length === 3);
+      this.choice(883, '工房へ戻る', '無料 / 装備と地図を確認', () => this.scene.start('Hub'));
+      return;
     }
-
-    addCommandButton(this, {
-      x: 270, y: 660,
-      title: found.length < SCRAP_PARTS.length ? 'SEARCH / SALVAGE' : 'SALVAGE COMPLETE',
-      subtitle: found.length < SCRAP_PARTS.length ? '1 WEEK / LOW RISK / 部品とSCRAPを回収' : '必要な部品は集まった',
-      enabled: found.length < SCRAP_PARTS.length,
-      onPress: () => this.salvage()
-    });
-    addCommandButton(this, {
-      x: 270, y: 760,
-      title: GameState.data.chapter0.azamiRecruited ? 'BATTLE / SCRAP HOUND' : 'RESCUE / DEMON GIRL',
-      subtitle: GameState.data.chapter0.azamiRecruited ? '1 WEEK / MID RISK / MOTOR + SCRAP' : '1 WEEK / 廃材に挟まれた少女を助ける',
-      enabled: found.length >= SCRAP_PARTS.length,
-      onPress: () => {
-        if (!GameState.data.chapter0.azamiRecruited) {
-          GameState.data.chapter0.azamiRecruited = true;
-          GameState.data.week += 1;
-          GameState.save();
-          this.dialogue.set('アザミ: 「助けてくれてありがとう！ あたし魔族だけど、機械も直せるよ！」\nASH: 「じゃあ、まずはその弁から頼む。」', 'azami');
-          this.time.delayedCall(1100, () => this.scene.restart({ location: 'Scrapyard' }));
-          return;
-        }
-        this.scene.start('Battle', { enemyId: 'scrap-hound' });
-      }
-    });
-    addCommandButton(this, { x: 270, y: 860, title: 'RETURN', subtitle: '工房へ戻る', onPress: () => this.scene.start('Hub') });
+    if (!progress.azamiRecruited) {
+      this.dialogue.set(this.result ?? '崩れた機械の下から、青い角の少女が声を上げる。\n「弁を回して！ 右じゃなくて左！」', 'azami');
+      this.choice(693, '救出して一緒に進む', '1週 / アザミが同行する', () => this.rescue());
+      this.choice(788, '周辺をサルベージ', '1週 / SCRAP + EXP', () => this.salvageExtras());
+      this.choice(883, '工房へ戻る', '無料 / 装備を整える', () => this.scene.start('Hub'));
+      return;
+    }
+    if (!progress.houndDefeated) {
+      this.dialogue.set(this.result ?? '救出した少女は、壊れた地図を丁寧にたたむ。\nアザミ: 「あたしはアザミ。機械の音が、下から聞こえる。」', 'azami');
+      this.choice(693, '旧巡回機を止める', '1週 / 中危険 / モーター・SCRAP', () => this.scene.start('Battle', { enemyId: 'scrap-hound' }));
+      this.choice(788, '部品を探す', '1週 / 安全 / SCRAP + EXP', () => this.salvageExtras());
+      this.choice(883, '工房へ戻る', '無料 / PILE-01を組み立てる', () => this.scene.start('Hub'));
+      return;
+    }
+    this.dialogue.set(this.result ?? '巡回機の命令は「侵入者を排除」。\nASH: 「命令だけ残って、使い道が消えたのか。」', 'ash');
+    this.choice(693, '深部をサルベージ', '1週 / 安全 / SCRAP + EXP', () => this.salvageExtras());
+    this.choice(788, '鉄屑街へ向かう', '初回1週 / 炉の相談と地図の更新', () => this.scene.start('Explore', { location: 'Town' }));
+    this.choice(883, '工房へ戻る', '無料 / 装備と地図を確認', () => this.scene.start('Hub'));
   }
 
   private salvage() {
-    const next = SCRAP_PARTS.find((part) => !GameState.data.chapter0.scrapyardSalvage.includes(part.id));
-    if (!next) return;
-    GameState.add(next.id);
-    GameState.data.chapter0.scrapyardSalvage.push(next.id);
+    const part = PARTS.find((entry) => !GameState.data.chapter0.scrapyardSalvage.includes(entry.id));
+    if (!part) return;
+    GameState.add(part.id);
+    GameState.data.chapter0.scrapyardSalvage.push(part.id);
     GameState.data.scrap += 3;
     GameState.data.week += 1;
-    GameState.save();
-    const count = GameState.data.chapter0.scrapyardSalvage.length;
-    this.salvageNotice = `WEEK ${GameState.data.week} / SALVAGE +1 : ${next.label}\n${next.line}\n\nASH: 「${count === 3 ? 'これで組める。' : 'まだ使える。'}」`;
-    this.scene.restart({ location: 'Scrapyard' });
+    const levels = GameState.gainExp(12);
+    this.result = `${part.name} +1   /   SCRAP +3   /   EXP +12${levels.length ? `\nASH Lv.${levels[levels.length - 1]} に上がった。HP上限 +8` : ''}\n${part.line}\n「まだ役目がある。」`;
+    this.scene.restart({ location: 'Scrapyard', result: this.result });
+  }
+
+  private rescue() {
+    if (!GameState.data.chapter0.azamiRecruited) {
+      GameState.data.chapter0.azamiRecruited = true;
+      GameState.data.week += 1;
+      GameState.save();
+      this.result = 'アザミが地図を差し出す。\n「道が消えてても、世界の鼓動は聞こえるよ。」\nASH: 「じゃあ、その音を確かめに行こう。」';
+      this.scene.restart({ location: 'Scrapyard', result: this.result });
+    } else {
+      this.scene.start('Battle', { enemyId: 'scrap-hound' });
+    }
+  }
+
+  private salvageExtras() {
+    GameState.data.scrap += 5;
+    GameState.data.week += 1;
+    const levels = GameState.gainExp(8);
+    this.result = `使えるボルトと銅片を回収。SCRAP +5 / EXP +8${levels.length ? `\nASH Lv.${levels[levels.length - 1]}。HP上限 +8` : ''}\nアザミは地図に、崩れていた通路を描き足した。`;
+    this.scene.restart({ location: 'Scrapyard', result: this.result });
   }
 
   private createTown() {
-    if (!GameState.data.chapter0.townVisited) GameState.data.week += 1;
-    GameState.data.chapter0.townVisited = true;
-    GameState.save();
-    this.dialogue.set('修理屋のミナ: 「工場の炉が勝手に動き始めたの。止められる人を探してる」\nASH: 「止めるだけなら、やれる。」', 'mina');
-    addCommandButton(this, {
-      x: 270, y: 660, title: 'TALK / MINA', subtitle: '工場の異常について聞く',
-      onPress: () => this.dialogue.set('ミナ: 「古い炉心は、壊すと町の熱源も止まる。直せるなら……お願い。」\nASH: 「壊さない方法を探す。」', 'mina')
-    });
-    addCommandButton(this, {
-      x: 270, y: 760, title: 'GO / ABANDONED FACTORY', subtitle: '廃工場へ向かう',
-      onPress: () => this.scene.start('Explore', { location: 'Factory' })
-    });
-    addCommandButton(this, { x: 270, y: 860, title: 'RETURN', subtitle: '工房へ戻る', onPress: () => this.scene.start('Hub') });
+    this.dialogue.set(this.result ?? (GameState.data.chapter0.factoryBossDefeated
+      ? '補助炉の熱が、共同炊事場まで戻ってきた。\nミナ: 「直したのは炉だけじゃない。みんなの明日だよ。」'
+      : '鉄屑街の住人は、古い熱管の周りで暮らしている。\nミナ: 「工場の炉を壊さずに止められる？」'), 'mina');
+    this.choice(693, 'ミナと炉の記録を読む', '無料 / 工場の調査手順がわかる', () => this.dialogue.set('ミナ: 「昔の炉は町の熱源でもあった。壊したら、冬を越せない。」\nASH: 「なら、直して役目を変える。」', 'mina'));
+    this.choice(788, '旧工場へ向かう', GameState.data.crafted.includes('PILE-01') ? '調査1週 / PILE-01を推奨' : '先に工房でPILE-01を組み立てる', () => this.scene.start('Explore', { location: 'Factory' }), GameState.data.crafted.includes('PILE-01'));
+    this.choice(883, '工房へ戻る', '無料 / 装備を整える', () => this.scene.start('Hub'));
   }
 
   private createFactory() {
-    if (GameState.data.chapter0.factoryBossDefeated) {
-      this.dialogue.set('補助炉は町の熱源として動き続ける。壊れた中継器が一度だけ応答し、干上がった貯水槽に水滴が落ちた。\nアザミ: 「地図に線が浮いてきた。次は白い森だよ！」', 'azami');
-      addCommandButton(this, {
-        x: 270, y: 760, title: 'RETURN TO WORKSHOP', subtitle: 'Chapter 0 を終える',
-        onPress: () => {
-          GameState.data.chapter0.endingSeen = true;
-          GameState.save();
-          this.scene.start('Hub');
-        }
+    const progress = GameState.data.chapter0;
+    if (progress.factoryBossDefeated) {
+      this.dialogue.set(this.result ?? '補助炉の脈動が、乾いた貯水槽まで届いた。水が一滴、石に落ちる。\nアザミ: 「地図にも知らない線が出た。白い森へ行こう。」', 'azami');
+      this.choice(693, '工房へ帰還する', 'Chapter 0 / 地図に新しいルートを記録', () => {
+        progress.endingSeen = true; GameState.save(); this.scene.start('Hub');
       });
-      addCommandButton(this, { x: 270, y: 860, title: 'TOWN', subtitle: '鉄屑街へ戻る', onPress: () => this.scene.start('Explore', { location: 'Town' }) });
+      this.choice(788, '鉄屑街に戻る', '無料 / 町の変化を見る', () => this.scene.start('Explore', { location: 'Town' }));
+      this.choice(883, '工房へ戻る', '無料 / 旅の支度を整える', () => this.scene.start('Hub'));
       return;
     }
-
-    this.dialogue.set(GameState.data.chapter0.factoryInspected
-      ? '停止レバーは固着している。炉心の圧力を逃がせば、壊さずに止められそうだ。'
-      : '古い工場が、誰もいないのに稼働している。蒸気の圧が危険域まで上がっている。', 'ash');
-    addCommandButton(this, {
-      x: 270, y: 650, title: GameState.data.chapter0.factoryInspected ? 'INSPECTED' : 'INSPECT / PRESSURE LINE',
-      subtitle: '1 WEEK / LOW RISK / 補助炉の仕組みを調べる', enabled: !GameState.data.chapter0.factoryInspected,
-      onPress: () => {
-        GameState.data.chapter0.factoryInspected = true;
-        GameState.data.week += 1;
-        GameState.save();
-        this.dialogue.set('ASH: 「この排気弁、規格が古いだけだ。締めるんじゃなく、逃がす。」\n炉心の圧力を抜いた。奥の守衛機が動き出す。');
-        this.scene.restart({ location: 'Factory' });
+    this.dialogue.set(this.result ?? (progress.factoryInspected
+      ? '圧力を逃がす道は作った。奥の守衛機が、炉心を守るために動き出す。'
+      : '工場の炉は、誰もいないのに動いている。\n蒸気圧は危険域。正面から止めれば町の熱源も失われる。'), 'ash');
+    this.choice(693, progress.factoryInspected ? '調査記録を確認' : '排気弁と熱管を調べる', progress.factoryInspected ? '調査済 / 守衛機へ進める' : '1週 / 安全 / 壊さない停止方法を探す', () => {
+      if (!progress.factoryInspected) {
+        progress.factoryInspected = true; GameState.data.week += 1; GameState.save();
+        this.result = '排気弁は閉じるためのものじゃない。圧力を逃がすためのものだ。\nASH: 「仕組みが分かれば、壊さずに済む。」';
+        this.scene.restart({ location: 'Factory', result: this.result });
       }
-    });
-    addCommandButton(this, {
-      x: 270, y: 760, title: 'BATTLE / FURNACE WARDEN',
-      subtitle: GameState.data.week > PROLOGUE_WEEK_LIMIT
-        ? '1 WEEK / HIGH RISK / 遅延で敵の火力が上昇'
-        : '1 WEEK / HIGH RISK / IGNITION UNIT + SCRAP',
-      enabled: GameState.data.chapter0.factoryInspected,
-      onPress: () => this.scene.start('Battle', { enemyId: 'factory-core' })
-    });
-    addCommandButton(this, { x: 270, y: 860, title: 'RETURN', subtitle: '鉄屑街へ戻る', onPress: () => this.scene.start('Explore', { location: 'Town' }) });
+    }, !progress.factoryInspected);
+    this.choice(788, progress.factoryBossDefeated ? '補助炉の記録を見る' : '炉の守衛機と対決', '1週 / 高危険 / 勝利で炉を修理', () => this.scene.start('Battle', { enemyId: 'factory-core' }), progress.factoryInspected && !progress.factoryBossDefeated);
+    this.choice(883, '鉄屑街に戻る', '無料 / 回復と装備を整える', () => this.scene.start('Explore', { location: 'Town' }));
+  }
+
+  private choice(y: number, title: string, subtitle: string, action: () => void, enabled = true) {
+    addCommandButton(this, { x: 270, y, title, subtitle, onPress: action, enabled, height: 76, width: 468 });
   }
 }

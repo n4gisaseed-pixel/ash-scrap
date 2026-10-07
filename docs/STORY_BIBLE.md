@@ -21,19 +21,22 @@ must serve people who live here now.
 **Purpose:** establish Ash, Azami, the command adventure loop and the first
 evidence that the World Cores were not simply the Demon King's batteries.
 
-1. Ash takes a short salvage job from Mina in the settlement. He gathers three
-   parts and turns them into the PILE-01, teaching recovery and crafting.
-2. At a buried Demon Army service station, he finds Azami pinned beneath a
-   collapsed machine. Her hand-drawn map shows an entrance that no longer
-   exists. The old patrol construct still treats every traveler as an enemy.
-3. Ash and Azami defeat the Scrap Hound. She has been travelling by herself
-   because she can feel the pulse of old magical machinery through her horns.
-4. The station's pressure relay is damaged. The current tutorial route keeps
-   Mina and the town furnace as the local problem: Ash must vent and repair the
-   relay rather than destroy it, or the settlement loses its heat source.
-5. Repair produces only a weak signal. An abandoned cistern trickles for a few
-   seconds. Azami's map shows the pulse came from a much larger network.
-6. The station's maintenance record calls the World Cores a planetary
+1. Ash takes a short salvage job from Mina in the settlement. The player
+   recovers three repair parts from the scrapyard and can assemble them into
+   PILE-01 at the workshop.
+2. The parts lead to a buried Demon Army service station. Ash finds Azami pinned
+   beneath a collapsed machine. Her hand-drawn map shows an entrance that no
+   longer exists; the old patrol construct still treats every traveler as an
+   enemy.
+3. Ash and Azami defeat the Scrap Hound. She has travelled alone because she
+   can feel the pulse of old magical machinery through her horns.
+4. In Iron-scrap Town, Mina explains that the nearby furnace is both an old
+   military machine and the settlement's heat source. Ash must vent and repair
+   its pressure relay instead of destroying the furnace.
+5. The relay's guard wakes when the pressure changes. After the pair disable
+   it, an abandoned cistern trickles for a few seconds and Azami's map shows a
+   pulse from a much larger network.
+6. The maintenance record calls the World Cores a planetary
    circulation system. It contradicts the old war story that the Cores existed
    only to feed the Demon King. The record is incomplete; the pair need to visit
    the Green Core at Whitewood to verify it.

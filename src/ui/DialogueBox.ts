@@ -29,6 +29,12 @@ export function addDialogueBox(scene: Phaser.Scene, y = 500, height = 128) {
         text.setWordWrapWidth(438);
       }
       text.setText(value);
+      const maxHeight = height - 30;
+      let size = Number.parseInt(text.style.fontSize as string, 10) || 18;
+      while (text.height > maxHeight && size > 13) {
+        size -= 1;
+        text.setFontSize(size);
+      }
     }
   };
 }

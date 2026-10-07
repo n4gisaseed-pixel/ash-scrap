@@ -116,10 +116,12 @@ and small head icons in the battle order.
 
 ## Current implementation gap
 
-The prototype now shows the Prologue's 12-week period, charges weeks for major
-actions, and increases the Furnace Warden's damage when the player arrives
-late. It also has one companion portrait and an early automatic support
-behavior. It does not yet implement full destination risk/reward previews,
-event result cards, level-up/stat allocation, multiple party members or a
-data-driven action-order queue. Those are the next system milestones; the fixed
-screen and save migration are being prepared for them.
+The playable Prologue now shows a generated, hand-drawn route map; main actions
+expose their week cost and a short risk/reward summary. Salvage and battle grant
+experience, Ash levels automatically raise Force and HP, and resting spends a
+week to restore HP. Existing saves receive defaults for the new fields.
+
+Still open: recommended-level previews, stat allocation, richer event result
+cards, multiple companions, data-driven location/event definitions and a
+structured battle order queue. Battle uses a concise inline order forecast and
+one automatic companion behavior.

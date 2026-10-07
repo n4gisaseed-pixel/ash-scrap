@@ -1,5 +1,19 @@
 # Game Design — 救われた後のセカイ
 
+## Current playable slice
+
+The Chapter 0 hub is Azami's field map: a fixed-screen route board for the
+scrapyard, Iron-scrap Town and the old factory. Route access follows story
+progress, while workshop assembly and recovery remain available at the hub.
+Expedition choices show their week cost, danger and likely gains before the
+player commits. Salvage and battle award experience; Ash's Force and maximum HP
+grow when he levels. Rest restores HP and spends one week.
+
+The prologue opens seven years after the Demon King was defeated. Its first
+question is practical: can Ash repair the auxiliary furnace without destroying
+the settlement's heat supply? Azami's map changes as they discover what the old
+routes and machines still do.
+
 ## High concept
 
 A mobile-first, portrait command adventure set seven years after the Demon

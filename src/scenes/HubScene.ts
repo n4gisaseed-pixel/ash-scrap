@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import { GameState, PROLOGUE_WEEK_LIMIT } from '../state/GameState';
 import { addCommandButton } from '../ui/CommandButton';
 import { addDialogueBox } from '../ui/DialogueBox';
-import { addArtPanel, addArtShade } from '../ui/ArtPanel';
 
 export class HubScene extends Phaser.Scene {
   private dialogue!: ReturnType<typeof addDialogueBox>;
@@ -10,107 +9,89 @@ export class HubScene extends Phaser.Scene {
   constructor() { super('Hub'); }
 
   create() {
-    this.cameras.main.setBackgroundColor('#0e0c0a');
-    this.add.rectangle(270, 480, 510, 930, 0x15120f).setStrokeStyle(4, 0x4d3b2e);
-    this.add.text(30, 28, "ASH'S WORKSHOP", { fontFamily: 'monospace', fontSize: '24px', color: '#eadfce', fontStyle: 'bold' });
-    const weekLabel = GameState.data.week <= PROLOGUE_WEEK_LIMIT
-      ? `WEEK ${GameState.data.week} / ${PROLOGUE_WEEK_LIMIT}`
-      : `LATE +${GameState.data.week - PROLOGUE_WEEK_LIMIT} WEEKS`;
-    this.add.text(30, 65, `AFTER THE CLEAR / ${weekLabel} / PROLOGUE`, {
-      fontFamily: 'monospace', fontSize: '11px', color: GameState.data.week > PROLOGUE_WEEK_LIMIT ? '#d77f66' : '#8e735d'
-    });
-    this.add.line(270, 102, 25, 0, 515, 0, 0x664a36).setLineWidth(2);
+    this.cameras.main.setBackgroundColor('#101113');
+    this.add.rectangle(270, 480, 516, 948, 0x151619).setStrokeStyle(2, 0x58606a);
+    this.add.text(28, 24, 'アザミの地図', { fontFamily: '"Noto Sans JP", sans-serif', fontSize: '25px', color: '#f0e8dd', fontStyle: 'bold' });
+    this.add.text(30, 60, 'ROUTE NOTES   /   AFTER THE CLEAR', { fontFamily: 'monospace', fontSize: '11px', color: '#91a5b3' });
+    const week = GameState.data.week <= PROLOGUE_WEEK_LIMIT ? `第 ${GameState.data.week} 週 / 12` : `期限後 +${GameState.data.week - PROLOGUE_WEEK_LIMIT} 週`;
+    this.add.text(510, 35, week, { fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', color: GameState.data.week > PROLOGUE_WEEK_LIMIT ? '#e18a71' : '#b7d2dd' }).setOrigin(1, 0);
+    this.add.rectangle(270, 91, 480, 1, 0x67727b);
 
-    addArtPanel(this, 0, 270, 235, 468, 236, 0.5, 0.34);
-    addArtShade(this, 270, 235, 468, 236, 0.3);
-    this.add.rectangle(270, 235, 468, 236, 0x5c4938, 0).setStrokeStyle(2, 0x9f7956, 0.9);
-    this.add.text(52, 151, 'HOME / REPAIR BAY', { fontFamily: 'monospace', fontSize: '13px', color: '#f1d2a9', backgroundColor: '#17110d', padding: { x: 10, y: 7 } });
-    this.add.text(52, 201, 'ASH', { fontFamily: 'monospace', fontSize: '34px', color: '#f4e8d8', fontStyle: 'bold', stroke: '#17110d', strokeThickness: 5 });
-    this.add.text(52, 249, 'JUNK MECHANIC  /  AGE 15', { fontFamily: 'monospace', fontSize: '11px', color: '#e5c69e', stroke: '#17110d', strokeThickness: 3 });
+    this.add.image(270, 270, 'azami-map').setDisplaySize(480, 330);
+    this.add.rectangle(270, 270, 480, 330, 0xffffff, 0).setStrokeStyle(1, 0x8797a1, 0.85);
+    this.mapMarker(228, 339, '鉄屑街', 0x3e91a2, true);
+    if (GameState.data.chapter0.factoryInspected || GameState.data.chapter0.factoryBossDefeated) {
+      this.mapMarker(425, 344, '旧工場', 0xc26d47, GameState.data.chapter0.factoryBossDefeated);
+    }
+    if (GameState.data.chapter0.endingSeen) this.mapMarker(420, 158, '白い森', 0x619c85, false);
+    this.add.rectangle(270, 397, 460, 58, 0x101216, 0.82);
+    this.add.text(46, 376, 'ASH   Lv.' + GameState.data.level, { fontFamily: 'monospace', fontSize: '18px', color: '#f2e6d7', fontStyle: 'bold' });
+    this.add.text(46, 403, `HP ${GameState.data.hp}/${GameState.data.maxHp}  FOR ${GameState.data.force}  SCRAP ${GameState.data.scrap}  EXP ${GameState.data.exp}/${GameState.data.nextExp}`, { fontFamily: 'monospace', fontSize: '12px', color: '#c8d3d4' });
 
-    this.add.rectangle(270, 408, 468, 90, 0x171411).setStrokeStyle(2, 0x514236);
-    this.add.text(48, 370, this.inventorySummary(), {
-      fontFamily: 'monospace', fontSize: '14px', color: '#e4d2bb',
-      lineSpacing: 1, wordWrap: { width: 438 }
-    });
-    this.dialogue = addDialogueBox(this, 525, 132);
-    this.dialogue.set(this.hubLine(), 'ash');
+    const routeName = GameState.data.chapter0.endingSeen ? '白い森 / GREEN CORE' : '鉄屑街 / 旧工場';
+    this.add.text(30, 467, '次の目的地', { fontFamily: '"Noto Sans JP", sans-serif', fontSize: '13px', color: '#8fa8b4' });
+    this.add.text(30, 490, routeName, { fontFamily: '"Noto Sans JP", sans-serif', fontSize: '21px', color: '#f0e7da', fontStyle: 'bold' });
+    this.add.text(510, 492, GameState.data.chapter0.endingSeen ? 'MAP UPDATED' : `${this.progressCount()} / 3 部品`, { fontFamily: 'monospace', fontSize: '12px', color: '#d0a979' }).setOrigin(1, 0);
 
-    const destination = GameState.nextDestination();
-    const travelText: Record<typeof destination, [string, string]> = {
-      Scrapyard: ['出発する / SCRAPYARD', '使える部品を探す'],
-      Craft: ['NEXT / CRAFT PILE-01', '拾った部品を工房で組み立てる'],
-      Town: ['出発する / IRON-SCRAP TOWN', '+1 WEEK / 町の設備と工場の噂を調べる'],
-      Factory: ['出発する / ABANDONED FACTORY', '炉心の異常を調べる'],
-      Return: ['PROLOGUE / COMPLETE', '次の目的地 : WHITEWOOD / GREEN CORE']
-    };
-    const [title, subtitle] = travelText[destination];
-    this.command(654, title, subtitle, () => this.travel(destination));
-    this.command(755, 'CRAFT / PILE-01', '1 WEEK / GEAR + WIRE + PRESSURE CYLINDER', () => this.craft());
-    this.command(856, 'REST / PREPARE', 'HPを全回復 / 1週間経過', () => this.rest());
+    this.dialogue = addDialogueBox(this, 562, 110);
+    this.dialogue.set(this.hubLine(), GameState.data.chapter0.azamiRecruited ? 'azami' : 'ash');
+
+    const crafted = GameState.data.crafted.includes('PILE-01');
+    addCommandButton(this, { x: 152, y: 644, width: 224, height: 56, title: crafted ? 'PILE-01 点検' : '工房で作る', subtitle: crafted ? '武器の状態を確認' : '1週 / 3種の部品', onPress: () => this.craft() });
+    addCommandButton(this, { x: 388, y: 644, width: 224, height: 56, title: '休息・回復', subtitle: '1週 / HP全快', onPress: () => this.rest() });
+    this.command(733, '廃材置き場へ', `1週 / 安全 / 素材とEXP / ${this.progressCount()}/3`, () => this.scene.start('Explore', { location: 'Scrapyard' }));
+    this.command(817, '鉄屑街へ', GameState.data.chapter0.houndDefeated ? (GameState.data.chapter0.townVisited ? '無料 / 町の人と古い記録' : '初回1週 / 町の人と古い記録') : '巡回機を止めるとルートが開く', () => this.scene.start('Explore', { location: 'Town' }), GameState.data.chapter0.houndDefeated);
+    this.command(901, GameState.data.chapter0.factoryBossDefeated ? '補助炉の記録を見る' : '旧工場へ', !GameState.data.chapter0.townVisited ? '鉄屑街で炉の記録を聞く' : !crafted ? 'PILE-01推奨 / 工房で組み立て' : '調査1週 / 守衛機戦1週・高危険', () => this.scene.start('Explore', { location: 'Factory' }), GameState.data.chapter0.townVisited && crafted);
+    this.add.text(510, 939, GameState.data.chapter0.azamiRecruited ? 'ASH + AZAMI' : 'ASH SOLO', { fontFamily: 'monospace', fontSize: '10px', color: '#91b6c4' }).setOrigin(1, 0);
   }
 
-  private command(y: number, title: string, subtitle: string, action: () => void) {
-    addCommandButton(this, { x: 270, y, title, subtitle, onPress: action });
+  private command(y: number, title: string, subtitle: string, action: () => void, enabled = true) {
+    addCommandButton(this, { x: 270, y, title, subtitle, onPress: action, enabled, height: 68, width: 468 });
   }
 
-  private travel(destination: ReturnType<typeof GameState.nextDestination>) {
-    if (destination === 'Craft') {
-      this.dialogue.set('拾った部品を組み立てよう。\nASH: 「あの3つなら、ひとつにできる。」', 'ash');
-      return;
-    }
-    if (destination === 'Return') {
-      if (GameState.data.chapter0.endingSeen) {
-        this.dialogue.set('PROLOGUE COMPLETE / WHITEWOOD IS NEXT\nASH: 「世界を直す、ね。まずは見に行くか。」', 'ash');
-        return;
-      }
-      this.scene.start('Explore', { location: 'Factory' });
-    } else {
-      this.scene.start('Explore', { location: destination });
-    }
+  private mapMarker(x: number, y: number, label: string, color: number, reached: boolean) {
+    this.add.circle(x, y, 13, 0x182027, .88).setStrokeStyle(3, color, .95);
+    this.add.circle(x, y, reached ? 5 : 3, color, .95);
+    const tag = this.add.text(x + 16, y - 10, label, {
+      fontFamily: '"Noto Sans JP", sans-serif', fontSize: '12px', color: reached ? '#edf3ef' : '#49616a',
+      backgroundColor: reached ? '#202a2c' : '#e3e4d9', padding: { x: 5, y: 3 }
+    });
+    tag.setDepth(3);
   }
 
   private craft() {
     if (GameState.data.crafted.includes('PILE-01')) {
-      this.dialogue.set('PILE-01 は完成済み。\nASH: 「寄せ集めでも、合わせ方で武器になる。」', 'ash');
+      this.dialogue.set(`PILE-01 / 点検済み\nASH: 「拾ったものを組み合わせりゃ、次の誰かを守れる。」`, 'ash');
       return;
     }
     if (GameState.consume({ 'Rusted Gear': 1, 'Copper Wire': 1, 'Pressure Cylinder': 1 })) {
       GameState.data.crafted.push('PILE-01');
       GameState.data.week += 1;
       GameState.save();
-      this.cameras.main.flash(220, 205, 155, 90);
-      this.add.text(270, 621, 'CRAFT COMPLETE : PILE-01', { fontFamily: 'monospace', fontSize: '14px', color: '#e4bc87' }).setOrigin(.5);
+      this.cameras.main.flash(220, 115, 173, 194);
       this.scene.restart();
     } else {
-      this.dialogue.set('素材不足：Rusted Gear ×1 / Copper Wire ×1 / Pressure Cylinder ×1\nASH: 「まずは置き場を漁るか。」', 'ash');
+      this.dialogue.set('必要なもの：歯車、銅線、圧力筒。\nASH: 「足りない分は置き場で探そう。」', 'ash');
     }
   }
 
   private rest() {
-    GameState.data.hp = GameState.data.maxHp;
     GameState.data.week += 1;
+    GameState.data.hp = GameState.data.maxHp;
     GameState.save();
     this.scene.restart();
   }
 
-  private inventorySummary() {
-    const items = GameState.data.inventory;
-    const weapon = GameState.data.crafted.includes('PILE-01') ? 'PILE-01' : 'NONE';
-    return `HP ${GameState.data.hp}/${GameState.data.maxHp}  SCRAP ${GameState.data.scrap}\n` +
-      `GEAR ${items['Rusted Gear'] ?? 0}    WIRE ${items['Copper Wire'] ?? 0}    CYL ${items['Pressure Cylinder'] ?? 0}\n` +
-      `MOTOR ${items['Small Motor'] ?? 0}    IGNITION ${items['Ignition Unit'] ?? 0}\n` +
-      `WEAPON ${weapon}    PARTNER ${GameState.data.chapter0.azamiRecruited ? 'AZAMI / AUTO' : 'NONE'}`;
-  }
+  private progressCount() { return GameState.data.chapter0.scrapyardSalvage.length; }
 
   private hubLine() {
-    if (GameState.data.chapter0.endingSeen) {
-      return 'アザミの地図に、白い森への道が浮かんだ。\nASH: 「世界を直す、ね。まずは見に行くか。」';
-    }
-    if (GameState.data.chapter0.factoryBossDefeated) return '炉心の熱が町を救った。最後に工房へ戻ろう。';
-    if (GameState.data.chapter0.azamiRecruited) return 'アザミが工房の歯車を眺めている。\n「これ、まだ回せるよ。」';
-    if (GameState.data.crafted.includes('PILE-01')) return 'PILE-01 は動く。次は鉄屑街の依頼を聞きに行こう。';
-    if (GameState.data.chapter0.houndDefeated) return '拾った部品を組み立てよう。使い道は、作りながら見つければいい。';
-    return '「今日は何を直す。」\nASH: 「まずは外のスクラップ置き場だな。」';
+    const p = GameState.data.chapter0;
+    if (p.endingSeen) return 'アザミは古地図に、新しい道筋を青い糸で描き足した。\n「白い森の奥から、まだ返事があるよ。」';
+    if (p.factoryBossDefeated) return '補助炉の脈動が、乾いた貯水槽まで届いた。\nアザミ: 「水が一滴。地図にも、知らない線が出た！」';
+    if (p.factoryInspected) return '炉を壊さずに止める方法は見つかった。\n圧力を抜いた今なら、守衛機に向き合える。';
+    if (p.townVisited) return 'ミナが工場の古い記録を渡してくれた。\n「止めるだけじゃだめ。町の熱を残してね。」';
+    if (p.azamiRecruited) return 'アザミの地図は、崩れた道を何度も書き直している。\n「ここから先、機械の音が地面に響いてる。」';
+    if (p.houndDefeated) return '古い巡回機の命令は、今も「侵入者を排除」。\nASH: 「命令だけ残って、使い道が消えたのか。」';
+    return '魔王が倒されて七年。灰の町では、直すことが暮らしだ。\nミナの依頼は、廃材置き場の部品集め。';
   }
 }

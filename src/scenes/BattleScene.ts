@@ -52,36 +52,37 @@ export class BattleScene extends Phaser.Scene {
     const enemy = ENEMIES[this.enemyId];
     const boss = this.enemyId === 'factory-core';
     this.cameras.main.setBackgroundColor('#0c0b09');
-    this.add.rectangle(270, 480, 510, 930, 0x12100e).setStrokeStyle(3, 0x73563f);
-    this.add.text(30, 22, boss ? 'BOSS / ABANDONED FACTORY' : 'ENCOUNTER / SCRAPYARD', {
-      fontFamily: 'monospace', fontSize: '14px', color: '#c59a70'
+    this.add.rectangle(270, 480, 516, 948, 0x151719).setStrokeStyle(2, 0x71808a);
+    this.add.text(30, 22, boss ? 'BOSS / 旧工場' : 'ENCOUNTER / 廃材置き場', {
+      fontFamily: '"Noto Sans JP", sans-serif', fontSize: '13px', color: '#9eb5bf'
     });
     this.add.text(30, 47, enemy.name, {
-      fontFamily: 'monospace', fontSize: '23px', color: '#f0e2cf', fontStyle: 'bold'
+      fontFamily: 'monospace', fontSize: '23px', color: '#f0e8dc', fontStyle: 'bold'
     });
 
     const backdropFrame = boss ? 3 : 1;
     addArtPanel(this, backdropFrame, 270, 260, 468, 300, 0.5, 0.45);
     addArtShade(this, 270, 260, 468, 300, 0.5);
     this.add.rectangle(270, 260, 468, 300, 0xb78a62, 0).setStrokeStyle(2, 0xa57b58, 0.9);
-    this.add.rectangle(270, 260, 260, 260, 0x17110d).setStrokeStyle(3, 0xe0bb91);
+    this.add.rectangle(270, 260, 260, 260, 0x171a1c).setStrokeStyle(2, 0xb7c9cc);
     this.enemyArt = addArtPanel(this, boss ? 5 : 4, 270, 260, 252, 252, 0.5, 0.5);
-    this.add.rectangle(270, 260, 252, 252, 0xffffff, 0).setStrokeStyle(2, 0xe0bb91);
+    this.add.rectangle(270, 260, 252, 252, 0xffffff, 0).setStrokeStyle(2, 0xb7c9cc);
 
     this.enemyHpText = this.add.text(270, 414, '', {
       fontFamily: 'monospace', fontSize: '13px', color: '#f0d4b1'
     }).setOrigin(.5);
-    this.add.rectangle(270, 435, 430, 16, 0x2a221c).setStrokeStyle(1, 0x715840);
+    this.add.rectangle(270, 435, 430, 16, 0x25292b).setStrokeStyle(1, 0x66757a);
     this.enemyHpBar = this.add.rectangle(56, 435, 426, 10, 0xc66542).setOrigin(0, .5);
 
     this.playerHpText = this.add.text(48, 458, '', { fontFamily: 'monospace', fontSize: '12px', color: '#e9dbc9' });
     this.heatText = this.add.text(492, 458, '', { fontFamily: 'monospace', fontSize: '12px', color: '#f0a16a' }).setOrigin(1, 0);
-    this.add.rectangle(270, 482, 430, 12, 0x27211d).setStrokeStyle(1, 0x615143);
+    this.add.rectangle(270, 482, 430, 12, 0x25292b).setStrokeStyle(1, 0x66757a);
     this.playerHpBar = this.add.rectangle(56, 482, 426, 8, 0x83a269).setOrigin(0, .5);
-    this.add.rectangle(270, 510, 430, 12, 0x27211d).setStrokeStyle(1, 0x615143);
+    this.add.rectangle(270, 510, 430, 12, 0x25292b).setStrokeStyle(1, 0x66757a);
     this.heatBar = this.add.rectangle(56, 510, 4, 8, 0xd47a48).setOrigin(0, .5);
-    this.forecastText = this.add.text(270, 530, '', {
-      fontFamily: '"Noto Sans JP", sans-serif', fontSize: '11px', color: '#a99a88'
+    this.add.rectangle(270, 535, 468, 28, 0x1d2427).setStrokeStyle(1, 0x596b72);
+    this.forecastText = this.add.text(270, 535, '', {
+      fontFamily: '"Noto Sans JP", sans-serif', fontSize: '11px', color: '#bbd1d1'
     }).setOrigin(.5);
 
     this.dialogue = addDialogueBox(this, 603, 124);
@@ -90,7 +91,7 @@ export class BattleScene extends Phaser.Scene {
       : enemy.opening);
 
     this.actionButtons.push(addCommandButton(this, {
-      x: 150, y: 746, title: 'ATTACK', subtitle: this.hasPile() ? 'PILE-01 / 安定した一撃' : '標準攻撃 / HEAT +12',
+      x: 150, y: 746, title: '工具で攻撃', subtitle: this.hasPile() ? 'PILE-01 / 安定した一撃' : '標準攻撃 / HEAT +18',
       width: 218, height: 84, icon: 0, onPress: () => this.attack()
     }));
     this.gadgetButton = addCommandButton(this, {
@@ -99,11 +100,11 @@ export class BattleScene extends Phaser.Scene {
     });
     this.actionButtons.push(this.gadgetButton);
     this.actionButtons.push(addCommandButton(this, {
-      x: 150, y: 846, title: 'TUNE', subtitle: 'HEAT冷却 / 次の攻撃を補助',
+      x: 150, y: 846, title: 'TUNE / 排熱', subtitle: 'HEATを冷却 / 次の攻撃を強化',
       width: 218, height: 84, icon: 2, onPress: () => this.tune()
     }));
     this.actionButtons.push(addCommandButton(this, {
-      x: 390, y: 846, title: 'RETREAT', subtitle: '探索地点へ戻る',
+      x: 390, y: 846, title: '撤退する', subtitle: '探索地点へ戻る',
       width: 218, height: 84, icon: 3, onPress: () => this.retreat()
     }));
     this.refresh();
@@ -113,7 +114,7 @@ export class BattleScene extends Phaser.Scene {
   private attack() {
     if (this.ended || this.busy) return;
     this.setActionsEnabled(false);
-    const base = this.hasPile() ? 20 : 14;
+    const base = (this.hasPile() ? 20 : 14) + GameState.data.force * 2;
     const bonus = Math.floor(this.heat / 25) * 3;
     const damage = base + bonus;
     this.heat = Math.min(100, this.heat + 18);
@@ -129,7 +130,7 @@ export class BattleScene extends Phaser.Scene {
     if (this.ended || this.busy || this.gadgetCharges <= 0) return;
     this.setActionsEnabled(false);
     this.gadgetCharges -= 1;
-    const damage = (this.hasPile() ? 34 : 23) + (this.tuned ? 12 : 0) + Math.floor(this.heat / 40) * 3;
+    const damage = (this.hasPile() ? 34 : 23) + GameState.data.ingenuity * 2 + (this.tuned ? 12 : 0) + Math.floor(this.heat / 40) * 3;
     this.tuned = false;
     this.heat = Math.min(100, this.heat + 28);
     this.enemyHp = Math.max(0, this.enemyHp - damage);
@@ -210,8 +211,10 @@ export class BattleScene extends Phaser.Scene {
     GameState.data.inventory[enemy.rewardItem] = (GameState.data.inventory[enemy.rewardItem] ?? 0) + 1;
     if (this.enemyId === 'scrap-hound') GameState.data.chapter0.houndDefeated = true;
     else GameState.data.chapter0.factoryBossDefeated = true;
+    const exp = this.enemyId === 'factory-core' ? 42 : 26;
+    const levels = GameState.gainExp(exp);
     GameState.save();
-    this.dialogue.set(`${enemy.name} を撃破。\n${enemy.victory}\n${enemy.rewardItem} +1 / SCRAP +${enemy.rewardScrap}`);
+    this.dialogue.set(`${enemy.name} を停止。\n${enemy.victory}\n${enemy.rewardItem} +1 / SCRAP +${enemy.rewardScrap} / EXP +${exp}${levels.length ? `\nASH Lv.${levels[levels.length - 1]} / FORCE +1 / HP上限 +8` : ''}`);
     this.cameras.main.flash(260, 221, 163, 96);
     this.refresh();
     const destination = this.enemyId === 'factory-core' ? 'Explore' : 'Hub';
@@ -237,7 +240,7 @@ export class BattleScene extends Phaser.Scene {
   private refresh() {
     const azamiIntent = GameState.data.hp <= Math.ceil(GameState.data.maxHp * 0.4) ? 'REPAIR' : 'STRIKE';
     this.forecastText?.setText(GameState.data.chapter0.azamiRecruited
-      ? `ORDER ASH → AZAMI / ${azamiIntent} → ENEMY　·　DMG ${this.enemyAttackMin}–${this.enemyAttackMax}`
+      ? `行動順   ASH → AZAMI / ${azamiIntent} → 敵   ·   敵威力 ${this.enemyAttackMin}–${this.enemyAttackMax}`
       : `ENEMY DAMAGE ${this.enemyAttackMin}–${this.enemyAttackMax}`);
     this.enemyHpText.setText(`${ENEMIES[this.enemyId].name}   ${this.enemyHp} / ${ENEMIES[this.enemyId].hp} HP`);
     this.playerHpText.setText(`ASH HP   ${GameState.data.hp} / ${GameState.data.maxHp}`);
