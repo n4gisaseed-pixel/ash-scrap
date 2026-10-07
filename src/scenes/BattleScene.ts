@@ -25,7 +25,6 @@ export class BattleScene extends Phaser.Scene {
   private heatBar!: Phaser.GameObjects.Rectangle;
   private forecastText!: Phaser.GameObjects.Text;
   private gadgetButton!: ReturnType<typeof addCommandButton>;
-  private outcomeButton: ReturnType<typeof addCommandButton> | null = null;
   private actionButtons: Array<ReturnType<typeof addCommandButton>> = [];
   private ended = false;
   private busy = false;
@@ -49,7 +48,6 @@ export class BattleScene extends Phaser.Scene {
     this.ended = false;
     this.busy = false;
     this.actionButtons = [];
-    this.outcomeButton = null;
   }
 
   create() {
@@ -223,7 +221,7 @@ export class BattleScene extends Phaser.Scene {
     const exp = this.enemyId === 'factory-core' ? 42 : 26;
     const levels = GameState.gainExp(exp);
     GameState.save();
-    this.dialogue.set(`${enemy.name} を停止。\n${enemy.victory}\n${enemy.rewardItem} +1 / SCRAP +${enemy.rewardScrap} / EXP +${exp}${levels.length ? `\nASH Lv.${levels[levels.length - 1]} / FORCE +1 / HP上限 +8` : ''}`);
+    this.dialogue.set(`${enemy.name} を停止。\n${enemy.victory}\n${enemy.rewardItem} +1 / SCRAP +${enemy.rewardScrap} / EXP +${exp}${levels.length ? `\nASH Lv.${levels[levels.length - 1]} / FORCE +1 / HP上限 +8` : ''}`, 'ash', 'result');
     this.cameras.main.flash(260, 221, 163, 96);
     this.refresh();
     const destination = this.enemyId === 'factory-core' ? 'Explore' : 'Hub';
@@ -237,13 +235,13 @@ export class BattleScene extends Phaser.Scene {
     this.setActionsEnabled(false);
     GameState.data.hp = GameState.data.maxHp;
     GameState.save();
-    this.dialogue.set('ASHは工房へ運び戻された。\n今回の報酬はないが、拾った部品は失わなかった。\n回復してから再挑戦できる。');
+    this.dialogue.set('ASHは工房へ運び戻された。\n今回の報酬はないが、拾った部品は失わなかった。\n回復してから再挑戦できる。', 'ash', 'result');
     this.showOutcome('工房へ戻る', 'HPを全快して再挑戦', () => this.scene.start('Hub'));
   }
 
   private showOutcome(title: string, subtitle: string, action: () => void) {
     this.actionButtons.forEach((button) => button.setVisible(false));
-    this.outcomeButton = addCommandButton(this, {
+    addCommandButton(this, {
       x: 270, y: 846, width: 468, height: 76, title, subtitle, onPress: action
     });
   }

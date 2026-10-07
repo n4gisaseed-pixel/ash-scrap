@@ -39,7 +39,7 @@ export class ExploreScene extends Phaser.Scene {
     else this.createFactory();
     // Result text replaces the narration, never the choices. Keeping these
     // separate prevents the old result branch from leaving an empty screen.
-    if (this.result) this.dialogue.set(this.result, this.resultSpeaker);
+    if (this.result) this.dialogue.set(this.result, this.resultSpeaker, 'result');
   }
 
   private drawFrame() {

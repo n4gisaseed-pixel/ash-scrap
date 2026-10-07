@@ -5,8 +5,13 @@ import { addDialogueBox } from '../ui/DialogueBox';
 
 export class HubScene extends Phaser.Scene {
   private dialogue!: ReturnType<typeof addDialogueBox>;
+  private result: string | null = null;
 
   constructor() { super('Hub'); }
+
+  init(data: { result?: string }) {
+    this.result = data.result ?? null;
+  }
 
   create() {
     this.cameras.main.setBackgroundColor('#101113');
@@ -32,11 +37,12 @@ export class HubScene extends Phaser.Scene {
 
     this.dialogue = addDialogueBox(this, 552, 112, { x: 407, bottom: 435, height: 325 });
     const line = this.hubLine();
-    this.dialogue.set(line.text, line.speaker);
+    this.dialogue.set(this.result ?? line.text, this.result ? 'ash' : line.speaker, this.result ? 'result' : 'dialogue');
 
     const crafted = GameState.data.crafted.includes('PILE-01');
     addCommandButton(this, { x: 152, y: 660, width: 224, height: 56, title: crafted ? 'PILE-01 点検' : '工房で作る', subtitle: crafted ? '武器の状態を確認' : '1週 / 3種の部品', onPress: () => this.craft() });
-    addCommandButton(this, { x: 388, y: 660, width: 224, height: 56, title: '休息・回復', subtitle: '1週 / HP全快', onPress: () => this.rest() });
+    const needsRest = GameState.data.hp < GameState.data.maxHp;
+    addCommandButton(this, { x: 388, y: 660, width: 224, height: 56, title: '休息・回復', subtitle: needsRest ? '1週 / HP全快' : 'HPは最大 / 回復不要', onPress: () => this.rest(), enabled: needsRest });
     this.command(740, '廃材置き場へ', `1週 / 安全 / 素材とEXP / ${this.progressCount()}/3`, () => this.scene.start('Explore', { location: 'Scrapyard' }));
     this.command(820, '鉄屑街へ', GameState.data.chapter0.houndDefeated ? (GameState.data.chapter0.townVisited ? '無料 / 町の人と古い記録' : '初回1週 / 町の人と古い記録') : '巡回機を止めるとルートが開く', () => this.scene.start('Explore', { location: 'Town' }), GameState.data.chapter0.houndDefeated);
     this.command(900, GameState.data.chapter0.factoryBossDefeated ? '補助炉の記録を見る' : '旧工場へ', !GameState.data.chapter0.townVisited ? '鉄屑街で炉の記録を聞く' : !crafted ? 'PILE-01推奨 / 工房で組み立て' : '調査1週 / 守衛機戦1週・高危険', () => this.scene.start('Explore', { location: 'Factory' }), GameState.data.chapter0.townVisited && crafted);
@@ -67,17 +73,18 @@ export class HubScene extends Phaser.Scene {
       GameState.data.week += 1;
       GameState.save();
       this.cameras.main.flash(220, 115, 173, 194);
-      this.scene.restart();
+      this.scene.restart({ result: 'PILE-01を組み立てた。\n拾った三つの部品が、工場へ向かう道具になった。\n次は熱源を壊さない止め方を探そう。' });
     } else {
       this.dialogue.set('必要なもの：歯車、銅線、圧力筒。\nASH: 「足りない分は置き場で探そう。」', 'ash');
     }
   }
 
   private rest() {
+    const healed = GameState.data.maxHp - GameState.data.hp;
     GameState.data.week += 1;
     GameState.data.hp = GameState.data.maxHp;
     GameState.save();
-    this.scene.restart();
+    this.scene.restart({ result: `工房で休息した。HP +${healed} / 全回復。\nアザミは地図を見直し、新しく見つけた道を確かめている。` });
   }
 
   private progressCount() { return GameState.data.chapter0.scrapyardSalvage.length; }

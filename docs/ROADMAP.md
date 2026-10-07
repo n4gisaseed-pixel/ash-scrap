@@ -32,6 +32,7 @@
 - [x] combat HP/HEAT bars, telegraphed damage, gadget charges and hit feedback
 - [x] encounter previews show recommended level, danger and retreat availability
 - [x] battle rewards stay visible until the player confirms their return
+- [x] gold RESULT state for salvage, rescue, craft, rest and battle outcomes
 - [ ] reusable data-driven event system
 - [ ] data-driven location definitions
 
@@ -77,7 +78,7 @@ repaired auxiliary relay to the first World Core signal.
 - [x] Reference research and adaptation notes for pacing, battle order and UI
 - [x] 12-week Prologue budget and late Furnace Warden pressure increase
 - [x] Recommended level and encounter danger forecasts
-- [ ] Dedicated event result card for salvage, rescue and town choices
+- [ ] Structured reward rows and item icons in event result cards
 - [ ] Stat allocation and multiple growth paths (Force currently grows automatically)
 - [ ] Data-driven event and location definitions
 - [x] Map/route screen for the prologue region

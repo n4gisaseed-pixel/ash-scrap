@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 
 export type DialogueSpeaker = 'ash' | 'mina' | 'azami';
+export type DialogueKind = 'dialogue' | 'result';
 export interface StandeePlacement {
   x: number;
   bottom: number;
@@ -63,6 +64,11 @@ export function addDialogueBox(
   const speakerName = scene.add.text(86, top + 23, '', {
     fontFamily: '"Noto Sans JP", sans-serif', fontSize: '14px', color: '#d8f0ee', fontStyle: 'bold'
   }).setOrigin(.5).setDepth(7);
+  const resultPlate = scene.add.rectangle(454, top + 23, 72, 25, 0x453622)
+    .setStrokeStyle(1, 0xd5aa68).setDepth(6).setVisible(false);
+  const resultLabel = scene.add.text(454, top + 23, 'RESULT', {
+    fontFamily: 'monospace', fontSize: '12px', color: '#f0d49a', fontStyle: 'bold'
+  }).setOrigin(.5).setDepth(7).setVisible(false);
   const text = scene.add.text(48, top + 42, '', {
     fontFamily: '"Noto Sans JP", sans-serif', fontSize: '19px', color: '#f7f3e9',
     lineSpacing: 4
@@ -71,9 +77,12 @@ export function addDialogueBox(
   return {
     background,
     text,
-    set(value: string, speaker?: DialogueSpeaker) {
+    set(value: string, speaker?: DialogueSpeaker, kind: DialogueKind = 'dialogue') {
       const activeSpeaker = speaker ?? 'ash';
+      const isResult = kind === 'result';
       speakerName.setText(SPEAKER_LABELS[activeSpeaker]);
+      resultPlate.setVisible(isResult);
+      resultLabel.setVisible(isResult);
       if (actor) {
         actor.setTexture(STANDEE_TEXTURES[activeSpeaker]);
         actor.setVisible(true);
@@ -87,7 +96,8 @@ export function addDialogueBox(
         text.setFontSize(fontSize);
         text.setText(wrapForJapanese(value, 444, fontSize));
       }
-      topRule.setFillStyle(activeSpeaker === 'azami' ? 0x64a8c0 : activeSpeaker === 'mina' ? 0xc98e5f : 0x9d7660);
+      background.setStrokeStyle(2, isResult ? 0xd5aa68 : 0x78939b);
+      topRule.setFillStyle(isResult ? 0xd5aa68 : activeSpeaker === 'azami' ? 0x64a8c0 : activeSpeaker === 'mina' ? 0xc98e5f : 0x9d7660);
       speakerPlate.setFillStyle(activeSpeaker === 'azami' ? 0x203a46 : activeSpeaker === 'mina' ? 0x493425 : 0x382b27);
     }
   };

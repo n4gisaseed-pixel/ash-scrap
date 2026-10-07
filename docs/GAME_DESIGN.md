@@ -66,9 +66,10 @@ story or corrupts the save.
 Before leaving, the player sees the known week cost, suggested party level,
 danger, likely rewards and boss conditions. Safe routes offer modest XP or
 materials; dangerous ruins offer better rewards and a chance of a boss. The
-prologue shows recommended levels and danger before major encounters. Battle
-rewards remain on screen until the player confirms the return. A dedicated
-result card for non-battle events remains planned.
+prologue shows recommended levels and danger before major encounters. Action
+results use a distinct gold RESULT state for salvage, rescue, crafting, rest
+and battle outcomes; battle rewards remain on screen until the player confirms
+the return. Structured reward rows and item icons remain planned.
 
 ## Character growth and battle
 
