@@ -1,16 +1,23 @@
 export type Inventory = Record<string, number>;
 
-const SAVE_KEY = 'ash-scrap-save-v1';
+const SAVE_KEY = 'ash-scrap-save-v2';
 
 export interface SaveData {
   inventory: Inventory;
   crafted: string[];
-  workshopSpawn?: { x: number; y: number };
+  hp: number;
+  maxHp: number;
+  scrap: number;
+  day: number;
 }
 
 const initial: SaveData = {
   inventory: {},
-  crafted: []
+  crafted: [],
+  hp: 100,
+  maxHp: 100,
+  scrap: 0,
+  day: 1
 };
 
 export class GameState {
