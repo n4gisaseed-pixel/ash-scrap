@@ -16,12 +16,14 @@ export class ExploreScene extends Phaser.Scene {
   private location: Location = 'Scrapyard';
   private dialogue!: ReturnType<typeof addDialogueBox>;
   private result: string | null = null;
+  private resultSpeaker: 'ash' | 'mina' | 'azami' = 'ash';
 
   constructor() { super('Explore'); }
 
-  init(data: { location?: Location; result?: string }) {
+  init(data: { location?: Location; result?: string; resultSpeaker?: 'ash' | 'mina' | 'azami' }) {
     this.location = data.location ?? 'Scrapyard';
     this.result = data.result ?? null;
+    this.resultSpeaker = data.resultSpeaker ?? 'ash';
   }
 
   create() {
@@ -31,11 +33,13 @@ export class ExploreScene extends Phaser.Scene {
       GameState.save();
     }
     this.drawFrame();
-    this.dialogue = addDialogueBox(this, 585, 132);
-    if (this.result) this.dialogue.set(this.result, 'ash');
-    else if (this.location === 'Scrapyard') this.createScrapyard();
+    this.dialogue = addDialogueBox(this, 558, 140, { x: 410, bottom: 420, height: 306 });
+    if (this.location === 'Scrapyard') this.createScrapyard();
     else if (this.location === 'Town') this.createTown();
     else this.createFactory();
+    // Result text replaces the narration, never the choices. Keeping these
+    // separate prevents the old result branch from leaving an empty screen.
+    if (this.result) this.dialogue.set(this.result, this.resultSpeaker);
   }
 
   private drawFrame() {
@@ -48,16 +52,16 @@ export class ExploreScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#111315');
     this.add.rectangle(270, 480, 516, 948, 0x17191b).setStrokeStyle(2, 0x59636a);
     this.add.text(28, 22, m.title, { fontFamily: '"Noto Sans JP", sans-serif', fontSize: '26px', color: '#f3e9dc', fontStyle: 'bold' });
-    this.add.text(30, 60, m.sub, { fontFamily: 'monospace', fontSize: '11px', color: '#93a6b1' });
+    this.add.text(30, 58, m.sub, { fontFamily: 'monospace', fontSize: '12px', color: '#b5c2c5' });
     const week = GameState.data.week <= 12 ? `WEEK ${GameState.data.week}/12` : `+${GameState.data.week - 12} WEEK`;
-    this.add.text(510, 62, week, { fontFamily: 'monospace', fontSize: '12px', color: '#d1b083' }).setOrigin(1, 0);
-    this.add.rectangle(270, 95, 480, 1, 0x5f6a71);
+    this.add.text(510, 60, week, { fontFamily: 'monospace', fontSize: '13px', color: '#edc990' }).setOrigin(1, 0);
+    this.add.text(30, 81, `ASH Lv.${GameState.data.level}     HP ${GameState.data.hp}/${GameState.data.maxHp}     SCRAP ${GameState.data.scrap}`, { fontFamily: 'monospace', fontSize: '12px', color: '#d4dddd' });
+    this.add.rectangle(270, 104, 480, 1, 0x5f6a71);
     addArtPanel(this, m.frame as 1 | 2 | 3, 270, 267, 480, 310, .5, this.location === 'Factory' ? .36 : .5);
     addArtShade(this, 270, 267, 480, 310, .28);
     this.add.rectangle(270, 267, 480, 310, 0xffffff, 0).setStrokeStyle(1, 0x82919a);
-    this.add.rectangle(270, 407, 456, 46, 0x111416, .83);
-    this.add.text(46, 393, m.label, { fontFamily: '"Noto Sans JP", sans-serif', fontSize: '15px', color: '#efe2d2' });
-    this.add.text(46, 419, `ASH Lv.${GameState.data.level}    HP ${GameState.data.hp}/${GameState.data.maxHp}    SCRAP ${GameState.data.scrap}`, { fontFamily: 'monospace', fontSize: '11px', color: '#bfc9c9' });
+    this.add.rectangle(270, 396, 456, 42, 0x111416, .82);
+    this.add.text(46, 385, m.label, { fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', color: '#f4eee5' });
   }
 
   private createScrapyard() {
@@ -102,7 +106,7 @@ export class ExploreScene extends Phaser.Scene {
     GameState.data.week += 1;
     const levels = GameState.gainExp(12);
     this.result = `${part.name} +1   /   SCRAP +3   /   EXP +12${levels.length ? `\nASH Lv.${levels[levels.length - 1]} に上がった。HP上限 +8` : ''}\n${part.line}\n「まだ役目がある。」`;
-    this.scene.restart({ location: 'Scrapyard', result: this.result });
+    this.scene.restart({ location: 'Scrapyard', result: this.result, resultSpeaker: 'ash' });
   }
 
   private rescue() {
@@ -111,7 +115,7 @@ export class ExploreScene extends Phaser.Scene {
       GameState.data.week += 1;
       GameState.save();
       this.result = 'アザミが地図を差し出す。\n「道が消えてても、世界の鼓動は聞こえるよ。」\nASH: 「じゃあ、その音を確かめに行こう。」';
-      this.scene.restart({ location: 'Scrapyard', result: this.result });
+      this.scene.restart({ location: 'Scrapyard', result: this.result, resultSpeaker: 'azami' });
     } else {
       this.scene.start('Battle', { enemyId: 'scrap-hound' });
     }
@@ -122,7 +126,7 @@ export class ExploreScene extends Phaser.Scene {
     GameState.data.week += 1;
     const levels = GameState.gainExp(8);
     this.result = `使えるボルトと銅片を回収。SCRAP +5 / EXP +8${levels.length ? `\nASH Lv.${levels[levels.length - 1]}。HP上限 +8` : ''}\nアザミは地図に、崩れていた通路を描き足した。`;
-    this.scene.restart({ location: 'Scrapyard', result: this.result });
+    this.scene.restart({ location: 'Scrapyard', result: this.result, resultSpeaker: 'azami' });
   }
 
   private createTown() {
@@ -152,7 +156,7 @@ export class ExploreScene extends Phaser.Scene {
       if (!progress.factoryInspected) {
         progress.factoryInspected = true; GameState.data.week += 1; GameState.save();
         this.result = '排気弁は閉じるためのものじゃない。圧力を逃がすためのものだ。\nASH: 「仕組みが分かれば、壊さずに済む。」';
-        this.scene.restart({ location: 'Factory', result: this.result });
+        this.scene.restart({ location: 'Factory', result: this.result, resultSpeaker: 'ash' });
       }
     }, !progress.factoryInspected);
     this.choice(788, progress.factoryBossDefeated ? '補助炉の記録を見る' : '炉の守衛機と対決', '1週 / 高危険 / 勝利で炉を修理', () => this.scene.start('Battle', { enemyId: 'factory-core' }), progress.factoryInspected && !progress.factoryBossDefeated);

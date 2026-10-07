@@ -18,8 +18,10 @@
 - [x] simple turn-based battle
 - [x] HEAT/TUNE prototype
 - [x] reusable dialogue box and command button components
-- [x] Ash and Mina dialogue portraits
-- [x] Azami companion rescue event and generated portrait
+- [x] high-contrast speaker nameplate and Japanese-safe text wrapping
+- [x] Ash, Azami and Mina full-body dialogue standees
+- [x] Ash and Azami standees matched to the supplied title key art
+- [x] Azami companion rescue event and standee
 - [x] Companion autonomous attack/repair support in battle
 - [x] In-game week tracking for major expedition and recovery actions
 - [x] Generated hand-drawn route map integrated into the hub
@@ -38,6 +40,7 @@
 - [ ] EXP/levels
 - [ ] status effects
 - [x] locked turn flow
+- [x] duplicate-tap protection on touch commands
 - [x] battle rewards/results feedback
 - [x] defeat/retry flow
 - [x] ally action order and battle support preview
@@ -59,7 +62,7 @@
 - [x] Chapter 0 objective and event progression
 - [x] Chapter 0 boss
 - [x] return-to-workshop ending
-- [ ] full mobile progression test
+- [ ] physical-phone full progression test
 
 Chapter 0 is the first leg of *The World After It Was Saved*. The hub presents
 Azami's field map and unlocked routes; expeditions show their time and risk
@@ -81,7 +84,8 @@ repaired auxiliary relay to the first World Core signal.
 - [ ] Later regional companion/support events
 
 ## Milestone 6 — Presentation
-- [x] first generated Ash, Mina and Azami portraits
+- [x] generated Ash, Mina and Azami portraits
+- [x] reference-matched full-body Ash and Azami standees
 - [x] post-apocalyptic title key art for Ash and Azami
 - [x] first generated enemy illustrations
 - [x] first generated location backgrounds
@@ -92,8 +96,11 @@ repaired auxiliary relay to the first World Core signal.
 - [ ] music/SFX
 - [ ] accessibility/polish
 
-The generated art is a cohesive first pass. Final art direction, bespoke UI
-artwork, audio, and playtesting on physical phones remain open.
+The dialogue stage now uses transparent full-body character art, speaker-colored
+accents and manually wrapped Japanese text. Commands use larger touch targets,
+clearer contrast and a short input lock against accidental repeat activation.
+The supplied Ash/Azami key art is the character reference for their standees.
+Physical-phone review, audio and bespoke UI artwork remain open.
 
 See [GAME_SYSTEM_REFERENCE.md](GAME_SYSTEM_REFERENCE.md) for the sources and
 adaptation. See [STORY_BIBLE.md](STORY_BIBLE.md) for the campaign outline.

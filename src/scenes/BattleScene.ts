@@ -14,6 +14,7 @@ export class BattleScene extends Phaser.Scene {
   private heat = 0;
   private gadgetCharges = 2;
   private tuned = false;
+  private gadgetBoosted = false;
   private enemyArt!: Phaser.GameObjects.Image;
   private dialogue!: ReturnType<typeof addDialogueBox>;
   private enemyHpText!: Phaser.GameObjects.Text;
@@ -43,6 +44,7 @@ export class BattleScene extends Phaser.Scene {
     this.heat = 0;
     this.gadgetCharges = 2;
     this.tuned = false;
+    this.gadgetBoosted = false;
     this.ended = false;
     this.busy = false;
     this.actionButtons = [];
@@ -82,10 +84,10 @@ export class BattleScene extends Phaser.Scene {
     this.heatBar = this.add.rectangle(56, 510, 4, 8, 0xd47a48).setOrigin(0, .5);
     this.add.rectangle(270, 535, 468, 28, 0x1d2427).setStrokeStyle(1, 0x596b72);
     this.forecastText = this.add.text(270, 535, '', {
-      fontFamily: '"Noto Sans JP", sans-serif', fontSize: '11px', color: '#bbd1d1'
+      fontFamily: '"Noto Sans JP", sans-serif', fontSize: '12px', color: '#bbd1d1'
     }).setOrigin(.5);
 
-    this.dialogue = addDialogueBox(this, 603, 124);
+    this.dialogue = addDialogueBox(this, 625, 138);
     this.dialogue.set(this.latePressure > 0
       ? `${enemy.opening}\n遅延圧力 +${this.latePressure} DAMAGE`
       : enemy.opening);
@@ -100,7 +102,7 @@ export class BattleScene extends Phaser.Scene {
     });
     this.actionButtons.push(this.gadgetButton);
     this.actionButtons.push(addCommandButton(this, {
-      x: 150, y: 846, title: 'TUNE / 排熱', subtitle: 'HEATを冷却 / 次の攻撃を強化',
+      x: 150, y: 846, title: 'TUNE / 排熱', subtitle: 'HEATを冷却\n次のパイルを強化',
       width: 218, height: 84, icon: 2, onPress: () => this.tune()
     }));
     this.actionButtons.push(addCommandButton(this, {
@@ -130,7 +132,8 @@ export class BattleScene extends Phaser.Scene {
     if (this.ended || this.busy || this.gadgetCharges <= 0) return;
     this.setActionsEnabled(false);
     this.gadgetCharges -= 1;
-    const damage = (this.hasPile() ? 34 : 23) + GameState.data.ingenuity * 2 + (this.tuned ? 12 : 0) + Math.floor(this.heat / 40) * 3;
+    const damage = (this.hasPile() ? 34 : 23) + GameState.data.ingenuity * 2 + (this.gadgetBoosted ? 12 : 0) + Math.floor(this.heat / 40) * 3;
+    this.gadgetBoosted = false;
     this.tuned = false;
     this.heat = Math.min(100, this.heat + 28);
     this.enemyHp = Math.max(0, this.enemyHp - damage);
@@ -147,7 +150,8 @@ export class BattleScene extends Phaser.Scene {
     const cooled = Math.min(45, this.heat);
     this.heat -= cooled;
     this.tuned = true;
-    this.dialogue.set(`TUNE / 冷却弁を開放。HEAT -${cooled}。\n次のGADGETを強化し、敵の攻撃を半減する。`);
+    this.gadgetBoosted = true;
+    this.dialogue.set(`TUNE / 冷却弁を開放。HEAT -${cooled}。\n次のGADGETを強化。敵の次の攻撃も半減する。`, 'ash');
     this.refresh();
     this.enemyTurn();
   }

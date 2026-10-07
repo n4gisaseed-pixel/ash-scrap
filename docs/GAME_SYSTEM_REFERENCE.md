@@ -35,6 +35,12 @@ The parts that best serve this project are:
    into the environment and dialogue rather than relying only on abstract
    menu panels.
 
+The screen and pacing notes above were checked against the [GAME Watch review](https://game.watch.impress.co.jp/docs/review/379672.html),
+the [battle coverage](https://game.watch.impress.co.jp/docs/news/368339.html),
+and the [4Gamer screenshot gallery](https://www.4gamer.net/games/114/G011441/20100621031/screenshot.html).
+The adaptation uses the reference's visible scene, speaker, message and command
+hierarchy while keeping the game's own characters, story and portrait layout.
+
 ## ASH / SCRAP adaptation
 
 This is a design reference, not an asset or story template. ASH / SCRAP keeps
@@ -125,3 +131,8 @@ Still open: recommended-level previews, stat allocation, richer event result
 cards, multiple companions, data-driven location/event definitions and a
 structured battle order queue. Battle uses a concise inline order forecast and
 one automatic companion behavior.
+
+The current screen pass adds reference-matched full-body Ash/Azami art, a
+speaker nameplate, readable message contrast and explicit Japanese line breaks.
+The post-action result now replaces narration while preserving the choices, so
+salvage and rescue actions remain actionable after their result is shown.
