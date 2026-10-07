@@ -35,3 +35,21 @@ Avoid making every line sarcastic. His childishness should occasionally show thr
 
 ### Mechanical identity
 Ash fights using self-built equipment, gadgets and modified scrap weapons. His combat identity must connect directly to crafting and tuning.
+
+## Mina
+
+**Role:** Repairer in Iron-scrap Town
+
+Mina keeps a neighborhood repair stall running with parts recovered from the
+old factory district. She knows the factory furnace still heats the town and
+asks Ash to stop its runaway pressure without destroying the heat source.
+
+### Visual direction
+- Auburn hair tied back with a copper wire clasp.
+- Patched tan work vest, tool pouch and grease-stained gloves.
+- Carries a small repaired gear as a keepsake from her stall.
+
+### Dialogue direction
+Mina is direct and practical. Her concern is for the people who depend on the
+furnace; she asks Ash to repair the system if possible instead of simply
+breaking it.

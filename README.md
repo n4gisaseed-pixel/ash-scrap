@@ -13,6 +13,9 @@ Mobile-first portrait non-field junkpunk RPG.
 - HEAT / TUNE prototype
 - local browser save
 - GitHub Pages deployment
+- generated Ash and Mina portraits, location art and enemy illustrations
+- generated combat action icons
+- HP / HEAT bars, gadget charges, hit feedback and mobile-sized battle commands
 
 ## Chapter 0 route
 

@@ -1,31 +1,41 @@
 import Phaser from 'phaser';
 import { GameState } from '../state/GameState';
 import { addCommandButton } from '../ui/CommandButton';
+import { addArtPanel } from '../ui/ArtPanel';
 
 export class TitleScene extends Phaser.Scene {
   constructor() { super('Title'); }
 
+  preload() {
+    this.load.spritesheet('chapter0-art', 'assets/chapter0-atlas.webp', { frameWidth: 512, frameHeight: 512 });
+    this.load.image('character-portraits', 'assets/character-portraits.webp');
+    this.load.spritesheet('combat-icons', 'assets/combat-icons.webp', { frameWidth: 627, frameHeight: 627 });
+  }
+
   create() {
+    const portraits = this.textures.get('character-portraits');
+    portraits.add('ash', 0, 0, 0, 887, 887);
+    portraits.add('mina', 0, 887, 0, 887, 887);
     const width = 540;
     const height = 960;
     this.cameras.main.setBackgroundColor('#0d0b09');
-    this.add.rectangle(width / 2, height / 2, width, height, 0x0d0b09);
-    for (let i = 0; i < 42; i++) {
-      this.add.circle(Phaser.Math.Between(0, width), Phaser.Math.Between(0, height), Phaser.Math.Between(1, 3), 0x8d6241, Phaser.Math.FloatBetween(.06, .24));
+    addArtPanel(this, 0, width / 2, height / 2, width, height, 0.5, 0.5);
+    this.add.rectangle(width / 2, height / 2, width, height, 0x090705, 0.48);
+    for (let i = 0; i < 32; i++) {
+      this.add.circle(Phaser.Math.Between(0, width), Phaser.Math.Between(0, height), Phaser.Math.Between(1, 2), 0xd99a5f, Phaser.Math.FloatBetween(.08, .28));
     }
 
     this.add.text(width / 2, 220, 'ASH / SCRAP', {
-      fontFamily: 'monospace', fontSize: '48px', color: '#eadfce', fontStyle: 'bold', stroke: '#241a14', strokeThickness: 8
+      fontFamily: 'monospace', fontSize: '54px', color: '#fff1df', fontStyle: 'bold', stroke: '#241a14', strokeThickness: 8
     }).setOrigin(.5);
-    this.add.text(width / 2, 280, 'NON-FIELD JUNKPUNK RPG', { fontFamily: 'monospace', fontSize: '14px', color: '#9f8064' }).setOrigin(.5);
+    this.add.text(width / 2, 280, 'NON-FIELD JUNKPUNK RPG', { fontFamily: 'monospace', fontSize: '17px', color: '#d7b18b' }).setOrigin(.5);
 
-    this.add.rectangle(width / 2, 430, 380, 220, 0x1d1814).setStrokeStyle(3, 0x5d4734);
-    this.add.text(width / 2, 385, 'ASH', { fontFamily: 'monospace', fontSize: '40px', color: '#d8d1c6' }).setOrigin(.5);
-    this.add.text(width / 2, 450, '「捨てられたものに、\nもう一度、生きる理由を。」', {
-      fontFamily: '"Noto Sans JP", sans-serif', fontSize: '19px', color: '#c99a66', align: 'center', lineSpacing: 10
+    this.add.rectangle(width / 2, 455, 448, 180, 0x120e0b, 0.8).setStrokeStyle(2, 0x9d704c, 0.85);
+    this.add.text(width / 2, 427, '「捨てられたものに、\nもう一度、生きる理由を。」', {
+      fontFamily: '"Noto Sans JP", sans-serif', fontSize: '18px', color: '#f0dfca', align: 'center', lineSpacing: 8
     }).setOrigin(.5);
-    this.add.text(width / 2, 585, 'CHAPTER 0 / THE FIRST REPAIR', {
-      fontFamily: 'monospace', fontSize: '13px', color: '#8c735c'
+    this.add.text(width / 2, 508, 'CHAPTER 0  ·  THE FIRST REPAIR', {
+      fontFamily: 'monospace', fontSize: '11px', color: '#d0a578'
     }).setOrigin(.5);
 
     addCommandButton(this, {

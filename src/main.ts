@@ -14,7 +14,8 @@ new Phaser.Game({
   width: 540,
   height: 960,
   backgroundColor: '#11100e',
-  pixelArt: true,
+  pixelArt: false,
+  antialias: true,
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH

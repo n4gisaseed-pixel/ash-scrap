@@ -18,18 +18,20 @@
 - [x] simple turn-based battle
 - [x] HEAT/TUNE prototype
 - [x] reusable dialogue box and command button components
+- [x] Ash and Mina dialogue portraits
+- [x] combat HP/HEAT bars, telegraphed damage, gadget charges and hit feedback
 - [ ] reusable data-driven event system
 - [ ] data-driven location definitions
 
 ## Milestone 2 — RPG systems
-- [ ] enemy data layer
+- [x] enemy data layer
 - [ ] item/material data layer
 - [ ] equipment
 - [ ] EXP/levels
 - [ ] status effects
-- [ ] proper battle flow/state machine
-- [ ] battle rewards/results screen
-- [ ] defeat/retry flow
+- [x] locked turn flow
+- [x] battle rewards/results feedback
+- [x] defeat/retry flow
 
 ## Milestone 3 — Workshop depth
 - [ ] dismantling
@@ -58,10 +60,14 @@ story route; the 30–45 minute target still needs more events, encounters, and
 mobile playtesting before the chapter is considered content complete.
 
 ## Milestone 5 — Presentation
-- [ ] Ash final portrait / character art
-- [ ] enemy art
-- [ ] location backgrounds
-- [ ] UI art
-- [ ] effects
+- [x] first generated Ash and Mina portraits
+- [x] first generated enemy illustrations
+- [x] first generated location backgrounds
+- [x] first generated combat action icons
+- [ ] bespoke UI panels and button frames
+- [x] basic hit, shake and overheat effects
 - [ ] music/SFX
 - [ ] accessibility/polish
+
+The generated art is a cohesive first pass. Final art direction, bespoke UI
+artwork, audio, and playtesting on physical phones remain open.

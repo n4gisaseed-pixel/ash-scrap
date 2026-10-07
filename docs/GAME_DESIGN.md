@@ -47,10 +47,16 @@ Initial commands:
 - ATTACK
 - GADGET
 - TUNE
-- RETURN
+- RETREAT
 
 ### TUNE
-Ash adjusts equipment mid-battle. Tuning creates risk/reward choices and manages HEAT.
+Ash adjusts equipment mid-battle. TUNE vents up to 45 HEAT, halves the next
+enemy hit and strengthens the next GADGET. ATTACK and GADGET build HEAT;
+reaching 100 causes 8 damage to Ash and vents the mechanism back to 65.
+
+GADGET has two charges per battle. It deals a heavy hit and turns a salvaged
+mechanism into a weapon. The player can spend both charges quickly or use TUNE
+to make an opening for a stronger shot.
 
 ## Salvage
 Locations and enemies yield components:
