@@ -25,9 +25,10 @@ Workshop -> choose destination -> event/exploration -> battle or salvage -> retu
 6. Inspect the pressure line in the Abandoned Factory and fight its Furnace Warden.
 7. Stop the furnace without destroying it, then return to the Workshop.
 
-The local save records scrapyard parts, boss victories, town and factory events,
-crafted equipment, and the ending. The first route is playable now; additional
-chapter events and encounters are still needed to meet the 30–45 minute target.
+The local save records scrapyard parts, the companion, action days, boss
+victories, town and factory events, crafted equipment, and the ending. The first
+route is playable now; additional chapter events and encounters are still needed
+to meet the 30–45 minute target.
 
 ## Exploration
 There is no free walking field map.
@@ -42,6 +43,13 @@ A location consists of:
 
 ## Combat
 Turn-based, portrait layout.
+
+The party currently consists of Ash and, after her scrapyard rescue, Luka. The
+player chooses Ash's action; Luka then acts autonomously before the enemy. She
+attacks a weak point when Ash is healthy, and switches to emergency repair when
+his HP falls below 40%. The action order and enemy damage range are shown before
+the player commits. This takes inspiration from party behavior and boss-turn
+reading in *Boku mo Sekai o Sukuitai*, adapted to Ash's scrap-repair theme.
 
 Initial commands:
 - ATTACK
@@ -65,6 +73,11 @@ Locations and enemies yield components:
 - Small Motor
 - Pressure Cylinder
 - Ignition Unit
+
+Major expedition actions advance the in-game day counter. Rest trades a day for
+a full HP recovery, so the workshop presents recovery as a planning choice.
+Common travel and field movement stay abstracted into destination and event
+commands.
 
 ## Craft
 Workshop-based.

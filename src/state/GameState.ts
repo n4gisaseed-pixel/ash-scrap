@@ -4,6 +4,7 @@ const SAVE_KEY = 'ash-scrap-save-v2';
 
 export interface ChapterProgress {
   scrapyardSalvage: string[];
+  lukaRecruited: boolean;
   houndDefeated: boolean;
   townVisited: boolean;
   factoryInspected: boolean;
@@ -30,6 +31,7 @@ const initial: SaveData = {
   day: 1,
   chapter0: {
     scrapyardSalvage: [],
+    lukaRecruited: false,
     houndDefeated: false,
     townVisited: false,
     factoryInspected: false,

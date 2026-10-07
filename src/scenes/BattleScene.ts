@@ -69,7 +69,10 @@ export class BattleScene extends Phaser.Scene {
     this.playerHpBar = this.add.rectangle(56, 482, 426, 8, 0x83a269).setOrigin(0, .5);
     this.add.rectangle(270, 510, 430, 12, 0x27211d).setStrokeStyle(1, 0x615143);
     this.heatBar = this.add.rectangle(56, 510, 4, 8, 0xd47a48).setOrigin(0, .5);
-    this.add.text(270, 530, `相手の予告ダメージ　${enemy.attackMin}–${enemy.attackMax}`, {
+    const forecast = GameState.data.chapter0.lukaRecruited
+      ? `予告 ${enemy.attackMin}–${enemy.attackMax} DAMAGE　/　ASH → LUKA → ENEMY`
+      : `相手の予告ダメージ　${enemy.attackMin}–${enemy.attackMax}`;
+    this.add.text(270, 530, forecast, {
       fontFamily: '"Noto Sans JP", sans-serif', fontSize: '11px', color: '#a99a88'
     }).setOrigin(.5);
 
@@ -140,6 +143,24 @@ export class BattleScene extends Phaser.Scene {
 
   private enemyTurn() {
     const enemy = ENEMIES[this.enemyId];
+    if (GameState.data.chapter0.lukaRecruited) {
+      if (GameState.data.hp <= Math.ceil(GameState.data.maxHp * 0.4)) {
+        const healed = Math.min(12, GameState.data.maxHp - GameState.data.hp);
+        GameState.data.hp += healed;
+        this.dialogue.set(`ルカの自動援護 / 応急修理。ASHのHPを ${healed} 回復。`, 'luka');
+        this.refresh();
+      } else {
+        const supportDamage = this.enemyId === 'factory-core' ? 12 : 9;
+        this.enemyHp = Math.max(0, this.enemyHp - supportDamage);
+        this.dialogue.set(`ルカの自動援護 / 敵の継ぎ目を撃つ。${supportDamage} DAMAGE。`, 'luka');
+        this.hitEffect(supportDamage);
+        this.refresh();
+        if (this.enemyHp <= 0) {
+          this.win();
+          return;
+        }
+      }
+    }
     const rolledDamage = Phaser.Math.Between(enemy.attackMin, enemy.attackMax);
     const damage = this.tuned ? Math.ceil(rolledDamage / 2) : rolledDamage;
     this.tuned = false;
@@ -176,6 +197,7 @@ export class BattleScene extends Phaser.Scene {
     this.setActionsEnabled(false);
     const enemy = ENEMIES[this.enemyId];
     GameState.data.scrap += enemy.rewardScrap;
+    GameState.data.day += 1;
     GameState.data.inventory[enemy.rewardItem] = (GameState.data.inventory[enemy.rewardItem] ?? 0) + 1;
     if (this.enemyId === 'scrap-hound') GameState.data.chapter0.houndDefeated = true;
     else GameState.data.chapter0.factoryBossDefeated = true;
@@ -191,6 +213,7 @@ export class BattleScene extends Phaser.Scene {
     this.ended = true;
     this.setActionsEnabled(false);
     GameState.data.hp = GameState.data.maxHp;
+    GameState.data.day += 1;
     GameState.save();
     this.dialogue.set('ASHは工房へ運び戻された。\n拾った部品は失わずに済んだ。装備を整えて再挑戦しよう。');
     this.time.delayedCall(1400, () => this.scene.start('Hub'));

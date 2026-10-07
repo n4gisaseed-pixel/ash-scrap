@@ -25,8 +25,8 @@ export class HubScene extends Phaser.Scene {
 
     this.add.rectangle(270, 408, 468, 90, 0x171411).setStrokeStyle(2, 0x514236);
     this.add.text(48, 370, this.inventorySummary(), {
-      fontFamily: 'monospace', fontSize: '16px', color: '#e4d2bb',
-      lineSpacing: 2, wordWrap: { width: 438 }
+      fontFamily: 'monospace', fontSize: '14px', color: '#e4d2bb',
+      lineSpacing: 1, wordWrap: { width: 438 }
     });
     this.dialogue = addDialogueBox(this, 525, 132);
     this.dialogue.set(this.hubLine(), 'ash');
@@ -72,6 +72,7 @@ export class HubScene extends Phaser.Scene {
     }
     if (GameState.consume({ 'Rusted Gear': 1, 'Copper Wire': 1, 'Pressure Cylinder': 1 })) {
       GameState.data.crafted.push('PILE-01');
+      GameState.data.day += 1;
       GameState.save();
       this.cameras.main.flash(220, 205, 155, 90);
       this.add.text(270, 621, 'CRAFT COMPLETE : PILE-01', { fontFamily: 'monospace', fontSize: '14px', color: '#e4bc87' }).setOrigin(.5);
@@ -91,9 +92,10 @@ export class HubScene extends Phaser.Scene {
   private inventorySummary() {
     const items = GameState.data.inventory;
     const weapon = GameState.data.crafted.includes('PILE-01') ? 'PILE-01' : 'NONE';
-    return `HP ${GameState.data.hp}/${GameState.data.maxHp}    SCRAP ${GameState.data.scrap}\n` +
+    return `HP ${GameState.data.hp}/${GameState.data.maxHp}  SCRAP ${GameState.data.scrap}\n` +
       `GEAR ${items['Rusted Gear'] ?? 0}    WIRE ${items['Copper Wire'] ?? 0}    CYL ${items['Pressure Cylinder'] ?? 0}\n` +
-      `MOTOR ${items['Small Motor'] ?? 0}    IGNITION ${items['Ignition Unit'] ?? 0}\nWEAPON ${weapon}`;
+      `MOTOR ${items['Small Motor'] ?? 0}    IGNITION ${items['Ignition Unit'] ?? 0}\n` +
+      `WEAPON ${weapon}    PARTNER ${GameState.data.chapter0.lukaRecruited ? 'LUKA / AUTO' : 'NONE'}`;
   }
 
   private hubLine() {
@@ -101,6 +103,7 @@ export class HubScene extends Phaser.Scene {
       return '工房に、鉄屑街から借りた工具が並んだ。\nASH: 「捨てるかどうかは、直してから決める。」';
     }
     if (GameState.data.chapter0.factoryBossDefeated) return '炉心の熱が町を救った。最後に工房へ戻ろう。';
+    if (GameState.data.chapter0.lukaRecruited) return 'ルカが工房の歯車を眺めている。\n「これ、まだ回せるよ。」';
     if (GameState.data.crafted.includes('PILE-01')) return 'PILE-01 は動く。次は鉄屑街の依頼を聞きに行こう。';
     if (GameState.data.chapter0.houndDefeated) return '拾った部品を組み立てよう。使い道は、作りながら見つければいい。';
     return '「今日は何を直す。」\nASH: 「まずは外のスクラップ置き場だな。」';

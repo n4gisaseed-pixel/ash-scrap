@@ -19,6 +19,9 @@
 - [x] HEAT/TUNE prototype
 - [x] reusable dialogue box and command button components
 - [x] Ash and Mina dialogue portraits
+- [x] Demon companion rescue event and generated portrait
+- [x] Companion autonomous attack/repair support in battle
+- [x] In-game day tracking for major expedition and recovery actions
 - [x] combat HP/HEAT bars, telegraphed damage, gadget charges and hit feedback
 - [ ] reusable data-driven event system
 - [ ] data-driven location definitions
@@ -32,6 +35,7 @@
 - [x] locked turn flow
 - [x] battle rewards/results feedback
 - [x] defeat/retry flow
+- [x] ally action order and battle support preview
 
 ## Milestone 3 — Workshop depth
 - [ ] dismantling
@@ -71,3 +75,10 @@ mobile playtesting before the chapter is considered content complete.
 
 The generated art is a cohesive first pass. Final art direction, bespoke UI
 artwork, audio, and playtesting on physical phones remain open.
+
+## Reference direction
+
+The command-driven pacing, autonomous companion behavior, and readable boss
+turn order take inspiration from *Boku mo Sekai o Sukuitai*. ASH / SCRAP uses
+those ideas for scrap recovery, repair and a junkpunk party story rather than
+reproducing the reference game's world, characters, text or assets.

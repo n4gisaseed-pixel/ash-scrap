@@ -64,8 +64,10 @@ export class ExploreScene extends Phaser.Scene {
       this.dialogue.set(found.length === 0
         ? 'ASH: 「あの歯車、まだ使える。捨てる前に確かめるか。」'
         : `回収 ${found.length} / ${SCRAP_PARTS.length}。ASH: 「使い道は、拾ってから考える。」`, 'ash');
+    } else if (!GameState.data.chapter0.lukaRecruited) {
+      this.dialogue.set('廃材の下から角の生えた少女が顔を出した。\n「その弁、逆に回して！ 早く！」', 'luka');
     } else {
-      this.dialogue.set('廃材の山が崩れ、機械の唸り声が響いた。\nASH: 「部品を狙ってるのか。趣味が悪いな。」', 'ash');
+      this.dialogue.set('廃材の山が崩れ、機械の唸り声が響いた。\nルカ: 「来るよ。今度はあたしも手を貸す！」', 'luka');
     }
 
     addCommandButton(this, {
@@ -77,9 +79,20 @@ export class ExploreScene extends Phaser.Scene {
     });
     addCommandButton(this, {
       x: 270, y: 760,
-      title: 'BATTLE / SCRAP HOUND', subtitle: '鉄屑の奥から、何かが近づく',
+      title: GameState.data.chapter0.lukaRecruited ? 'BATTLE / SCRAP HOUND' : 'RESCUE / DEMON GIRL',
+      subtitle: GameState.data.chapter0.lukaRecruited ? '鉄屑の奥から、何かが近づく' : '廃材に挟まれた少女を助ける',
       enabled: found.length >= SCRAP_PARTS.length,
-      onPress: () => this.scene.start('Battle', { enemyId: 'scrap-hound' })
+      onPress: () => {
+        if (!GameState.data.chapter0.lukaRecruited) {
+          GameState.data.chapter0.lukaRecruited = true;
+          GameState.data.day += 1;
+          GameState.save();
+          this.dialogue.set('ルカ: 「助けてくれてありがとう！ あたし魔族だけど、機械も直せるよ！」\nASH: 「じゃあ、まずはその弁から頼む。」', 'luka');
+          this.time.delayedCall(1100, () => this.scene.restart({ location: 'Scrapyard' }));
+          return;
+        }
+        this.scene.start('Battle', { enemyId: 'scrap-hound' });
+      }
     });
     addCommandButton(this, { x: 270, y: 860, title: 'RETURN', subtitle: '工房へ戻る', onPress: () => this.scene.start('Hub') });
   }
@@ -90,6 +103,7 @@ export class ExploreScene extends Phaser.Scene {
     GameState.add(next.id);
     GameState.data.chapter0.scrapyardSalvage.push(next.id);
     GameState.data.scrap += 3;
+    GameState.data.day += 1;
     GameState.save();
     const count = GameState.data.chapter0.scrapyardSalvage.length;
     this.salvageNotice = `SALVAGE +1 : ${next.label}\n${next.line}\n\nASH: 「${count === 3 ? 'これで組める。' : 'まだ使える。'}」`;
@@ -97,6 +111,7 @@ export class ExploreScene extends Phaser.Scene {
   }
 
   private createTown() {
+    if (!GameState.data.chapter0.townVisited) GameState.data.day += 1;
     GameState.data.chapter0.townVisited = true;
     GameState.save();
     this.dialogue.set('修理屋のミナ: 「工場の炉が勝手に動き始めたの。止められる人を探してる」\nASH: 「止めるだけなら、やれる。」', 'mina');
@@ -134,6 +149,7 @@ export class ExploreScene extends Phaser.Scene {
       subtitle: '配管を調べ、炉心を止める方法を探す', enabled: !GameState.data.chapter0.factoryInspected,
       onPress: () => {
         GameState.data.chapter0.factoryInspected = true;
+        GameState.data.day += 1;
         GameState.save();
         this.dialogue.set('ASH: 「この排気弁、規格が古いだけだ。締めるんじゃなく、逃がす。」\n炉心の圧力を抜いた。奥の守衛機が動き出す。');
         this.scene.restart({ location: 'Factory' });
