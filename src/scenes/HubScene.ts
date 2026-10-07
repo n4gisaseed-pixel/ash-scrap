@@ -37,20 +37,36 @@ export class HubScene extends Phaser.Scene {
 
     this.dialogue = addDialogueBox(this, 552, 112, { x: 407, bottom: 435, height: 325 });
     const line = this.hubLine();
-    this.dialogue.set(this.result ?? line.text, this.result ? 'ash' : line.speaker, this.result ? 'result' : 'dialogue');
+    this.dialogue.set(this.result ?? line.text, this.result ? 'ash' : line.speaker, this.result ? 'result' : 'dialogue', true);
 
     const crafted = GameState.data.crafted.includes('PILE-01');
     addCommandButton(this, { x: 152, y: 660, width: 224, height: 56, title: crafted ? 'PILE-01 点検' : '工房で作る', subtitle: crafted ? '武器の状態を確認' : '1週 / 3種の部品', onPress: () => this.craft() });
     const needsRest = GameState.data.hp < GameState.data.maxHp;
     addCommandButton(this, { x: 388, y: 660, width: 224, height: 56, title: '休息・回復', subtitle: needsRest ? '1週 / HP全快' : 'HPは最大 / 回復不要', onPress: () => this.rest(), enabled: needsRest });
-    this.command(740, '廃材置き場へ', `1週 / 安全 / 素材とEXP / ${this.progressCount()}/3`, () => this.scene.start('Explore', { location: 'Scrapyard' }));
-    this.command(820, '鉄屑街へ', GameState.data.chapter0.houndDefeated ? (GameState.data.chapter0.townVisited ? '無料 / 町の人と古い記録' : '初回1週 / 町の人と古い記録') : '巡回機を止めるとルートが開く', () => this.scene.start('Explore', { location: 'Town' }), GameState.data.chapter0.houndDefeated);
+    this.command(740, '廃材置き場へ', `1週 / 安全 / 素材とEXP / ${this.progressCount()}/3`, () => this.goScrapyard());
+    this.command(820, '鉄屑街へ', GameState.data.chapter0.houndDefeated ? (GameState.data.chapter0.townVisited ? '無料 / 町の人と古い記録' : '初回1週 / 町の人と古い記録') : '巡回機を止めるとルートが開く', () => this.goTown(), GameState.data.chapter0.houndDefeated);
     this.command(900, GameState.data.chapter0.factoryBossDefeated ? '補助炉の記録を見る' : '旧工場へ', !GameState.data.chapter0.townVisited ? '鉄屑街で炉の記録を聞く' : !crafted ? 'PILE-01推奨 / 工房で組み立て' : '調査1週 / 守衛機戦1週・高危険', () => this.scene.start('Explore', { location: 'Factory' }), GameState.data.chapter0.townVisited && crafted);
     this.add.text(510, 939, GameState.data.chapter0.azamiRecruited ? 'ASH + AZAMI' : 'ASH SOLO', { fontFamily: 'monospace', fontSize: '10px', color: '#91b6c4' }).setOrigin(1, 0);
   }
 
   private command(y: number, title: string, subtitle: string, action: () => void, enabled = true) {
     addCommandButton(this, { x: 270, y, title, subtitle, onPress: action, enabled, height: 68, width: 468 });
+  }
+
+  private goScrapyard() {
+    if (!GameState.data.chapter0.scrapyardRouteSeen) {
+      this.scene.start('Story', { sequence: 'scrapyard-road' });
+      return;
+    }
+    this.scene.start('Explore', { location: 'Scrapyard' });
+  }
+
+  private goTown() {
+    if (!GameState.data.chapter0.townVisited) {
+      this.scene.start('Story', { sequence: 'town-arrival' });
+      return;
+    }
+    this.scene.start('Explore', { location: 'Town' });
   }
 
   private mapMarker(x: number, y: number, label: string, color: number, reached: boolean) {
@@ -65,7 +81,7 @@ export class HubScene extends Phaser.Scene {
 
   private craft() {
     if (GameState.data.crafted.includes('PILE-01')) {
-      this.dialogue.set(`PILE-01 / 点検済み\nASH: 「拾ったものを組み合わせりゃ、次の誰かを守れる。」`, 'ash');
+      this.dialogue.set(`PILE-01 / 点検済み\n「拾ったものを組み合わせりゃ、次の誰かを守れる。」`, 'ash');
       return;
     }
     if (GameState.consume({ 'Rusted Gear': 1, 'Copper Wire': 1, 'Pressure Cylinder': 1 })) {
@@ -75,7 +91,7 @@ export class HubScene extends Phaser.Scene {
       this.cameras.main.flash(220, 115, 173, 194);
       this.scene.restart({ result: 'PILE-01を組み立てた。\n拾った三つの部品が、工場へ向かう道具になった。\n次は熱源を壊さない止め方を探そう。' });
     } else {
-      this.dialogue.set('必要なもの：歯車、銅線、圧力筒。\nASH: 「足りない分は置き場で探そう。」', 'ash');
+      this.dialogue.set('必要なもの：歯車、銅線、圧力筒。\n「足りない分は置き場で探そう。」', 'ash');
     }
   }
 

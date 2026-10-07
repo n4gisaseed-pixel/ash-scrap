@@ -33,13 +33,13 @@ export class ExploreScene extends Phaser.Scene {
       GameState.save();
     }
     this.drawFrame();
-    this.dialogue = addDialogueBox(this, 558, 140, { x: 410, bottom: 420, height: 306 });
+    this.dialogue = addDialogueBox(this, 558, 140, { x: 395, bottom: 420, height: 306, width: 274 });
     if (this.location === 'Scrapyard') this.createScrapyard();
     else if (this.location === 'Town') this.createTown();
     else this.createFactory();
     // Result text replaces the narration, never the choices. Keeping these
     // separate prevents the old result branch from leaving an empty screen.
-    if (this.result) this.dialogue.set(this.result, this.resultSpeaker, 'result');
+    if (this.result) this.dialogue.set(this.result, this.resultSpeaker, 'result', true);
   }
 
   private drawFrame() {
@@ -70,30 +70,30 @@ export class ExploreScene extends Phaser.Scene {
     const nextPart = PARTS.find((part) => !salvaged.includes(part.id));
     if (nextPart) {
       this.dialogue.set(this.result ?? (salvaged.length === 0
-        ? '地面に、まだ油の匂いが残っている。\nASH: 「捨て場じゃない。部品置き場だ。」'
-        : `回収記録 ${salvaged.length}/3。アザミの地図には、道のない線が続く。`), salvaged.length ? 'azami' : 'ash');
+        ? '地面に、まだ油の匂いが残っている。\n「捨て場じゃない。部品置き場だ。」'
+        : `回収記録 ${salvaged.length}/3。アザミの地図には、道のない線が続く。`), salvaged.length ? 'azami' : 'ash', 'dialogue', true);
       this.choice(693, '周辺をサルベージ', '1週 / 推奨Lv.1 / 低危険 / 部品・EXP', () => this.salvage());
       this.choice(788, salvaged.length === 3 ? '瓦礫の奥を調べる' : '崩落区画を調べる', salvaged.length === 3 ? '1週 / アザミの救出と巡回機戦' : '部品を3種集めると道が開く', () => this.rescue(), salvaged.length === 3);
       this.choice(883, '工房へ戻る', '無料 / 装備と地図を確認', () => this.scene.start('Hub'));
       return;
     }
     if (!progress.azamiRecruited) {
-      this.dialogue.set(this.result ?? '崩れた機械の下から、青い角の少女が声を上げる。\n「弁を回して！ 右じゃなくて左！」', 'azami');
+      this.dialogue.set(this.result ?? '崩れた機械の下から、青い角の少女が声を上げる。\n「弁を回して！ 右じゃなくて左！」', 'azami', 'dialogue', true);
       this.choice(693, '救出して一緒に進む', '1週 / アザミが同行する', () => this.rescue());
       this.choice(788, '周辺をサルベージ', '1週 / SCRAP + EXP', () => this.salvageExtras());
       this.choice(883, '工房へ戻る', '無料 / 装備を整える', () => this.scene.start('Hub'));
       return;
     }
     if (!progress.houndDefeated) {
-      this.dialogue.set(this.result ?? '救出した少女は、壊れた地図を丁寧にたたむ。\nアザミ: 「あたしはアザミ。機械の音が、下から聞こえる。」', 'azami');
+      this.dialogue.set(this.result ?? '救出した少女は、壊れた地図を丁寧にたたむ。\n「あたしはアザミ。機械の音が、下から聞こえる。」', 'azami', 'dialogue', true);
       this.choice(693, '旧巡回機を止める', '1週 / 推奨Lv.2 / 中危険 / モーター', () => this.scene.start('Battle', { enemyId: 'scrap-hound' }));
       this.choice(788, '部品を探す', '1週 / 安全 / SCRAP + EXP', () => this.salvageExtras());
       this.choice(883, '工房へ戻る', '無料 / PILE-01を組み立てる', () => this.scene.start('Hub'));
       return;
     }
-    this.dialogue.set(this.result ?? '巡回機の命令は「侵入者を排除」。\nASH: 「命令だけ残って、使い道が消えたのか。」', 'ash');
+    this.dialogue.set(this.result ?? '巡回機の命令は「侵入者を排除」。\n「命令だけ残って、使い道が消えたのか。」', 'ash', 'dialogue', true);
     this.choice(693, '深部をサルベージ', '1週 / 安全 / SCRAP + EXP', () => this.salvageExtras());
-    this.choice(788, '鉄屑街へ向かう', '初回1週 / 炉の相談と地図の更新', () => this.scene.start('Explore', { location: 'Town' }));
+    this.choice(788, '鉄屑街へ向かう', '初回1週 / 炉の相談と地図の更新', () => this.goTown());
     this.choice(883, '工房へ戻る', '無料 / 装備と地図を確認', () => this.scene.start('Hub'));
   }
 
@@ -105,17 +105,18 @@ export class ExploreScene extends Phaser.Scene {
     GameState.data.scrap += 3;
     GameState.data.week += 1;
     const levels = GameState.gainExp(12);
-    this.result = `${part.name} +1   /   SCRAP +3   /   EXP +12${levels.length ? `\nASH Lv.${levels[levels.length - 1]} に上がった。HP上限 +8` : ''}\n${part.line}\n「まだ役目がある。」`;
+    const clue = GameState.data.chapter0.scrapyardSalvage.length === 1
+      ? '瓦礫の向こうで、金属を三度叩く音がした。風の音とは間が違う。'
+      : GameState.data.chapter0.scrapyardSalvage.length === 2
+        ? '錆びた梁に青い布が結ばれていた。布の先には、崩落区画へ続く足跡がある。'
+        : '圧力筒の刻印は、崩落区画の古い保守機と同じ規格だ。弁を動かせるかもしれない。';
+    this.result = `${part.name} +1   /   SCRAP +3   /   EXP +12${levels.length ? `\nASH Lv.${levels[levels.length - 1]} に上がった。HP上限 +8` : ''}\n${part.line}\n${clue}`;
     this.scene.restart({ location: 'Scrapyard', result: this.result, resultSpeaker: 'ash' });
   }
 
   private rescue() {
     if (!GameState.data.chapter0.azamiRecruited) {
-      GameState.data.chapter0.azamiRecruited = true;
-      GameState.data.week += 1;
-      GameState.save();
-      this.result = 'アザミが地図を差し出す。\n「道が消えてても、世界の鼓動は聞こえるよ。」\nASH: 「じゃあ、その音を確かめに行こう。」';
-      this.scene.restart({ location: 'Scrapyard', result: this.result, resultSpeaker: 'azami' });
+      this.scene.start('Story', { sequence: 'azami-rescue' });
     } else {
       this.scene.start('Battle', { enemyId: 'scrap-hound' });
     }
@@ -131,9 +132,9 @@ export class ExploreScene extends Phaser.Scene {
 
   private createTown() {
     this.dialogue.set(this.result ?? (GameState.data.chapter0.factoryBossDefeated
-      ? '補助炉の熱が、共同炊事場まで戻ってきた。\nミナ: 「直したのは炉だけじゃない。みんなの明日だよ。」'
-      : '鉄屑街の住人は、古い熱管の周りで暮らしている。\nミナ: 「工場の炉を壊さずに止められる？」'), 'mina');
-    this.choice(693, 'ミナと炉の記録を読む', '無料 / 工場の調査手順がわかる', () => this.dialogue.set('ミナ: 「昔の炉は町の熱源でもあった。壊したら、冬を越せない。」\nASH: 「なら、直して役目を変える。」', 'mina'));
+      ? '補助炉の熱が、共同炊事場まで戻ってきた。\n「直したのは炉だけじゃない。みんなの明日だよ。」'
+      : '鉄屑街の住人は、古い熱管の周りで暮らしている。\n「工場の炉を壊さずに止められる？」'), 'mina', 'dialogue', true);
+    this.choice(693, 'ミナと炉の記録を読む', '無料 / 工場の調査手順がわかる', () => this.dialogue.set('「昔の炉は町の熱源でもあった。壊したら、冬を越せない。」', 'mina', 'dialogue', true));
     this.choice(788, '旧工場へ向かう', GameState.data.crafted.includes('PILE-01') ? '調査1週 / PILE-01を推奨' : '先に工房でPILE-01を組み立てる', () => this.scene.start('Explore', { location: 'Factory' }), GameState.data.crafted.includes('PILE-01'));
     this.choice(883, '工房へ戻る', '無料 / 装備を整える', () => this.scene.start('Hub'));
   }
@@ -141,21 +142,19 @@ export class ExploreScene extends Phaser.Scene {
   private createFactory() {
     const progress = GameState.data.chapter0;
     if (progress.factoryBossDefeated) {
-      this.dialogue.set(this.result ?? '補助炉の脈動が、乾いた貯水槽まで届いた。水が一滴、石に落ちる。\nアザミ: 「地図にも知らない線が出た。白い森へ行こう。」', 'azami');
-      this.choice(693, '工房へ帰還する', 'Chapter 0 / 地図に新しいルートを記録', () => {
-        progress.endingSeen = true; GameState.save(); this.scene.start('Hub');
-      });
+      this.dialogue.set(this.result ?? '補助炉の脈動が、乾いた貯水槽まで届いた。水が一滴、石に落ちる。\n「地図にも知らない線が出た。白い森へ行こう。」', 'azami', 'dialogue', true);
+      this.choice(693, '町へ戻り、記録を確かめる', '炉の熱と地図に起きた変化を見る', () => this.scene.start('Story', { sequence: 'relay-return' }));
       this.choice(788, '鉄屑街に戻る', '無料 / 町の変化を見る', () => this.scene.start('Explore', { location: 'Town' }));
       this.choice(883, '工房へ戻る', '無料 / 旅の支度を整える', () => this.scene.start('Hub'));
       return;
     }
     this.dialogue.set(this.result ?? (progress.factoryInspected
       ? '圧力を逃がす道は作った。奥の守衛機が、炉心を守るために動き出す。'
-      : '工場の炉は、誰もいないのに動いている。\n蒸気圧は危険域。正面から止めれば町の熱源も失われる。'), 'ash');
+      : '工場の炉は、誰もいないのに動いている。\n蒸気圧は危険域。正面から止めれば町の熱源も失われる。'), 'ash', 'dialogue', true);
     this.choice(693, progress.factoryInspected ? '調査記録を確認' : '排気弁と熱管を調べる', progress.factoryInspected ? '調査済 / 守衛機へ進める' : '1週 / 推奨Lv.2 / 低危険 / 停止方法を探す', () => {
       if (!progress.factoryInspected) {
         progress.factoryInspected = true; GameState.data.week += 1; GameState.save();
-        this.result = '排気弁は閉じるためのものじゃない。圧力を逃がすためのものだ。\nASH: 「仕組みが分かれば、壊さずに済む。」';
+        this.result = '排気弁は閉じるためのものじゃない。圧力を逃がすためのものだ。\n「仕組みが分かれば、壊さずに済む。」';
         this.scene.restart({ location: 'Factory', result: this.result, resultSpeaker: 'ash' });
       }
     }, !progress.factoryInspected);
@@ -165,5 +164,13 @@ export class ExploreScene extends Phaser.Scene {
 
   private choice(y: number, title: string, subtitle: string, action: () => void, enabled = true) {
     addCommandButton(this, { x: 270, y, title, subtitle, onPress: action, enabled, height: 76, width: 468 });
+  }
+
+  private goTown() {
+    if (!GameState.data.chapter0.townVisited) {
+      this.scene.start('Story', { sequence: 'town-arrival' });
+      return;
+    }
+    this.scene.start('Explore', { location: 'Town' });
   }
 }

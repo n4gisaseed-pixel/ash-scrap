@@ -19,9 +19,9 @@
 - [x] HEAT/TUNE prototype
 - [x] reusable dialogue box and command button components
 - [x] high-contrast speaker nameplate and Japanese-safe text wrapping
-- [x] Ash, Azami and Mina full-body dialogue standees
+- [x] Ash, Azami and Mina full-body standees for scene art
 - [x] Ash and Azami standees matched to the supplied title key art
-- [x] Azami companion rescue event and standee
+- [x] Azami companion rescue event and bust-up expression set
 - [x] Companion autonomous attack/repair support in battle
 - [x] In-game week tracking for major expedition and recovery actions
 - [x] Generated hand-drawn route map integrated into the hub
@@ -33,7 +33,7 @@
 - [x] encounter previews show recommended level, danger and retreat availability
 - [x] battle rewards stay visible until the player confirms their return
 - [x] gold RESULT state for salvage, rescue, craft, rest and battle outcomes
-- [ ] reusable data-driven event system
+- [x] reusable data-driven story sequences with typewriter dialogue and scene transitions
 - [ ] data-driven location definitions
 
 ## Milestone 2 — RPG systems
@@ -63,8 +63,9 @@
 - [x] Scrapyard progression
 - [x] Abandoned Factory
 - [x] Chapter 0 objective and event progression
+- [x] Travel scenes connecting the workshop, scrapyard, rescue and settlement
 - [x] Chapter 0 boss
-- [x] return-to-workshop ending
+- [x] return-to-settlement ending and first World Core route reveal
 - [ ] physical-phone full progression test
 
 Chapter 0 is the first leg of *The World After It Was Saved*. The hub presents
@@ -88,6 +89,8 @@ repaired auxiliary relay to the first World Core signal.
 
 ## Milestone 6 — Presentation
 - [x] generated Ash, Mina and Azami portraits
+- [x] Ash and Azami bust-up dialogue expressions
+- [x] rescue key illustration with crossfade and transition flash
 - [x] reference-matched full-body Ash and Azami standees
 - [x] post-apocalyptic title key art for Ash and Azami
 - [x] first generated enemy illustrations
@@ -99,11 +102,13 @@ repaired auxiliary relay to the first World Core signal.
 - [ ] music/SFX
 - [ ] accessibility/polish
 
-The dialogue stage now uses transparent full-body character art, speaker-colored
-accents and manually wrapped Japanese text. Commands use larger touch targets,
-clearer contrast and a short input lock against accidental repeat activation.
-The supplied Ash/Azami key art is the character reference for their standees.
-Physical-phone review, audio and bespoke UI artwork remain open.
+Dialogue scenes use generated bust-up character art with expression changes,
+speaker-colored accents, Japanese-safe wrapping and tap-to-finish typewriter
+text. Story sequences crossfade between illustrated travel backdrops; the
+scrapyard rescue has a dedicated full-screen CG. Commands use larger touch
+targets, clearer contrast and a short input lock against accidental repeat
+activation. The supplied Ash/Azami key art remains the character reference.
+Physical-phone review, audio, bespoke UI artwork and later chapters remain open.
 
 See [GAME_SYSTEM_REFERENCE.md](GAME_SYSTEM_REFERENCE.md) for the sources and
 adaptation. See [STORY_BIBLE.md](STORY_BIBLE.md) for the campaign outline.

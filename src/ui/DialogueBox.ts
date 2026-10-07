@@ -1,22 +1,35 @@
 import Phaser from 'phaser';
 
-export type DialogueSpeaker = 'ash' | 'mina' | 'azami';
+export type DialogueSpeaker = 'ash' | 'mina' | 'azami' | 'narrator';
 export type DialogueKind = 'dialogue' | 'result';
+export type DialogueExpression = 'neutral' | 'amused' | 'determined' | 'surprised' | 'joyful' | 'worried';
 export interface StandeePlacement {
   x: number;
   bottom: number;
   height: number;
+  width?: number;
 }
 
 const SPEAKER_LABELS: Record<DialogueSpeaker, string> = {
   ash: 'アッシュ',
   mina: 'ミナ',
-  azami: 'アザミ'
+  azami: 'アザミ',
+  narrator: '旅の記録'
 };
-const STANDEE_TEXTURES: Record<DialogueSpeaker, string> = {
-  ash: 'ash-standee',
+const STANDEE_TEXTURES: Record<DialogueSpeaker, Record<DialogueExpression, string> | string> = {
+  ash: {
+    neutral: 'ash-neutral', amused: 'ash-amused', determined: 'ash-determined',
+    surprised: 'ash-surprised', joyful: 'ash-amused', worried: 'ash-neutral'
+  },
   mina: 'mina-standee',
-  azami: 'azami-standee'
+  azami: {
+    neutral: 'azami-neutral', amused: 'azami-joyful', determined: 'azami-determined',
+    surprised: 'azami-joyful', joyful: 'azami-joyful', worried: 'azami-worried'
+  },
+  narrator: {
+    neutral: 'ash-neutral', amused: 'ash-amused', determined: 'ash-determined',
+    surprised: 'ash-surprised', joyful: 'ash-amused', worried: 'ash-neutral'
+  }
 };
 
 export function wrapForJapanese(text: string, maxWidth: number, fontSize: number) {
@@ -41,7 +54,7 @@ export function wrapForJapanese(text: string, maxWidth: number, fontSize: number
   }).join('\n');
 }
 
-/** A full-width scenario window paired with a reusable full-body stage character. */
+/** A full-width scenario window paired with a bust-up character portrait. */
 export function addDialogueBox(
   scene: Phaser.Scene,
   y = 500,
@@ -51,9 +64,9 @@ export function addDialogueBox(
   const width = 480;
   const top = y - height / 2;
   const actor = placement
-    ? scene.add.image(placement.x, placement.bottom, STANDEE_TEXTURES.ash)
+    ? scene.add.image(placement.x, placement.bottom, 'ash-neutral')
       .setOrigin(.5, 1)
-      .setDisplaySize(placement.height * .68, placement.height)
+      .setDisplaySize(placement.width ?? placement.height, placement.height)
       .setDepth(2)
     : null;
   const background = scene.add.rectangle(270, y, width, height, 0x10171a, 0.97)
@@ -73,32 +86,78 @@ export function addDialogueBox(
     fontFamily: '"Noto Sans JP", sans-serif', fontSize: '19px', color: '#f7f3e9',
     lineSpacing: 4
   }).setDepth(7);
+  let typingEvent: Phaser.Time.TimerEvent | null = null;
+  let isTyping = false;
+  let fullText = '';
 
-  return {
+  const finishTyping = () => {
+    typingEvent?.remove(false);
+    typingEvent = null;
+    isTyping = false;
+    text.setText(fullText);
+  };
+
+  const dialogueBox = {
     background,
     text,
-    set(value: string, speaker?: DialogueSpeaker, kind: DialogueKind = 'dialogue') {
+    set(value: string, speaker?: DialogueSpeaker, kind: DialogueKind = 'dialogue', animate = false, expression: DialogueExpression = 'neutral') {
+      typingEvent?.remove(false);
+      typingEvent = null;
+      isTyping = false;
       const activeSpeaker = speaker ?? 'ash';
       const isResult = kind === 'result';
       speakerName.setText(SPEAKER_LABELS[activeSpeaker]);
       resultPlate.setVisible(isResult);
       resultLabel.setVisible(isResult);
       if (actor) {
-        actor.setTexture(STANDEE_TEXTURES[activeSpeaker]);
+        const textures = STANDEE_TEXTURES[activeSpeaker];
+        const targetTexture = typeof textures === 'string' ? textures : textures[expression];
+        if (actor.texture.key !== targetTexture) {
+          actor.setAlpha(0);
+          actor.setTexture(targetTexture);
+          scene.tweens.add({ targets: actor, alpha: 1, duration: 180, ease: 'Sine.out' });
+        }
+        if (placement) {
+          const widthForPortrait = activeSpeaker === 'mina'
+            ? placement.height * .68
+            : placement.width ?? placement.height;
+          actor.setDisplaySize(widthForPortrait, placement.height);
+        }
         actor.setVisible(true);
       }
       const maxHeight = height - 58;
       let fontSize = 18;
+      fullText = wrapForJapanese(value, 444, fontSize);
       text.setFontSize(fontSize);
-      text.setText(wrapForJapanese(value, 444, fontSize));
+      text.setText(fullText);
       while (text.height > maxHeight && fontSize > 14) {
         fontSize -= 1;
         text.setFontSize(fontSize);
-        text.setText(wrapForJapanese(value, 444, fontSize));
+        fullText = wrapForJapanese(value, 444, fontSize);
+        text.setText(fullText);
+      }
+      if (animate) {
+        const characters = Array.from(fullText);
+        text.setText('');
+        isTyping = true;
+        let visible = 0;
+        typingEvent = scene.time.addEvent({
+          delay: 24,
+          loop: true,
+          callback: () => {
+            visible += 1;
+            text.setText(characters.slice(0, visible).join(''));
+            if (visible >= characters.length) finishTyping();
+          }
+        });
       }
       background.setStrokeStyle(2, isResult ? 0xd5aa68 : 0x78939b);
       topRule.setFillStyle(isResult ? 0xd5aa68 : activeSpeaker === 'azami' ? 0x64a8c0 : activeSpeaker === 'mina' ? 0xc98e5f : 0x9d7660);
       speakerPlate.setFillStyle(activeSpeaker === 'azami' ? 0x203a46 : activeSpeaker === 'mina' ? 0x493425 : 0x382b27);
-    }
+    },
+    isTyping: () => isTyping,
+    finish: finishTyping
   };
+  scene.data.set('activeDialogueBox', dialogueBox);
+  return dialogueBox;
 }

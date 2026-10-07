@@ -4,6 +4,8 @@ const SAVE_KEY = 'ash-scrap-save-v2';
 export const PROLOGUE_WEEK_LIMIT = 12;
 
 export interface ChapterProgress {
+  openingSeen: boolean;
+  scrapyardRouteSeen: boolean;
   scrapyardSalvage: string[];
   azamiRecruited: boolean;
   houndDefeated: boolean;
@@ -43,6 +45,8 @@ const initial: SaveData = {
   grit: 0,
   ingenuity: 0,
   chapter0: {
+    openingSeen: false,
+    scrapyardRouteSeen: false,
     scrapyardSalvage: [],
     azamiRecruited: false,
     houndDefeated: false,

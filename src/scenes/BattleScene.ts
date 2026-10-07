@@ -93,7 +93,7 @@ export class BattleScene extends Phaser.Scene {
     this.dialogue = addDialogueBox(this, 625, 138);
     this.dialogue.set(this.latePressure > 0
       ? `${enemy.opening}\n遅延圧力 +${this.latePressure} DAMAGE`
-      : enemy.opening);
+      : enemy.opening, 'ash', 'dialogue', true);
 
     this.actionButtons.push(addCommandButton(this, {
       x: 150, y: 746, title: '工具で攻撃', subtitle: this.hasPile() ? 'PILE-01\n安定した一撃' : '通常攻撃\nHEAT +18',
@@ -124,11 +124,11 @@ export class BattleScene extends Phaser.Scene {
     const damage = base + bonus;
     this.heat = Math.min(100, this.heat + 18);
     this.enemyHp = Math.max(0, this.enemyHp - damage);
-    this.dialogue.set(`ASHの攻撃。${damage} DAMAGE。\n排熱が上がる。次の一手を選べ。`);
+    this.dialogue.set(`ASHの攻撃。${damage} DAMAGE。\n排熱が上がる。次の一手を選べ。`, 'ash', 'dialogue', true);
     this.hitEffect(damage);
     this.refresh();
     if (this.enemyHp <= 0) this.win();
-    else this.enemyTurn();
+    else this.afterDialogue(() => this.enemyTurn());
   }
 
   private gadget() {
@@ -140,11 +140,11 @@ export class BattleScene extends Phaser.Scene {
     this.tuned = false;
     this.heat = Math.min(100, this.heat + 28);
     this.enemyHp = Math.max(0, this.enemyHp - damage);
-    this.dialogue.set(`GADGET / 油圧パイルを射出。${damage} DAMAGE。\n残りチャージ ${this.gadgetCharges}。`);
+    this.dialogue.set(`GADGET / 油圧パイルを射出。${damage} DAMAGE。\n残りチャージ ${this.gadgetCharges}。`, 'ash', 'dialogue', true);
     this.hitEffect(damage);
     this.refresh();
     if (this.enemyHp <= 0) this.win();
-    else this.enemyTurn();
+    else this.afterDialogue(() => this.enemyTurn());
   }
 
   private tune() {
@@ -154,51 +154,71 @@ export class BattleScene extends Phaser.Scene {
     this.heat -= cooled;
     this.tuned = true;
     this.gadgetBoosted = true;
-    this.dialogue.set(`TUNE / 冷却弁を開放。HEAT -${cooled}。\n次のGADGETを強化。敵の次の攻撃も半減する。`, 'ash');
+    this.dialogue.set(`TUNE / 冷却弁を開放。HEAT -${cooled}。\n次のGADGETを強化。敵の次の攻撃も半減する。`, 'ash', 'dialogue', true);
     this.refresh();
-    this.enemyTurn();
+    this.afterDialogue(() => this.enemyTurn());
   }
 
   private enemyTurn() {
     const enemy = ENEMIES[this.enemyId];
+    const resolveAttack = () => this.resolveEnemyAttack(enemy);
     if (GameState.data.chapter0.azamiRecruited) {
       if (GameState.data.hp <= Math.ceil(GameState.data.maxHp * 0.4)) {
         const healed = Math.min(12, GameState.data.maxHp - GameState.data.hp);
         GameState.data.hp += healed;
-        this.dialogue.set(`アザミの援護 / 応急修理。ASHのHPを ${healed} 回復。`, 'azami');
+        this.dialogue.set(`アザミの援護 / 応急修理。ASHのHPを ${healed} 回復。`, 'azami', 'dialogue', true);
         this.refresh();
       } else {
         const supportDamage = this.enemyId === 'factory-core' ? 12 : 9;
         this.enemyHp = Math.max(0, this.enemyHp - supportDamage);
-        this.dialogue.set(`アザミの援護 / 敵の継ぎ目を撃つ。${supportDamage} DAMAGE。`, 'azami');
+        this.dialogue.set(`アザミの援護 / 敵の継ぎ目を撃つ。${supportDamage} DAMAGE。`, 'azami', 'dialogue', true);
         this.hitEffect(supportDamage);
         this.refresh();
         if (this.enemyHp <= 0) {
-          this.win();
+          this.afterDialogue(() => this.win());
           return;
         }
       }
     }
+    this.afterDialogue(resolveAttack);
+  }
+
+  private resolveEnemyAttack(enemy: typeof ENEMIES[EnemyId]) {
     const rolledDamage = Phaser.Math.Between(this.enemyAttackMin, this.enemyAttackMax);
     const damage = this.tuned ? Math.ceil(rolledDamage / 2) : rolledDamage;
     this.tuned = false;
-    this.time.delayedCall(260, () => {
-      this.dialogue.set(`${enemy.name} の反撃。${damage} DAMAGE。`);
-      this.cameras.main.shake(150, 0.003);
-      this.tweens.add({ targets: this.enemyArt, x: 285, duration: 90, yoyo: true, repeat: 1, ease: 'Sine.inOut' });
-      this.time.delayedCall(260, () => {
-        GameState.data.hp = Math.max(0, GameState.data.hp - damage);
-        if (this.heat >= 100) {
-          GameState.data.hp = Math.max(0, GameState.data.hp - 8);
-          this.heat = 65;
-          this.dialogue.set(`HEAT OVERLOAD。追加で8 DAMAGE。\n排熱が破損する前にTUNEしよう。`);
-        }
-        GameState.save();
-        this.refresh();
-        if (GameState.data.hp <= 0) this.defeat();
-        else this.setActionsEnabled(true);
-      });
+    this.dialogue.set(`${enemy.name} の反撃。${damage} DAMAGE。`, undefined, 'dialogue', true);
+    this.cameras.main.shake(150, 0.003);
+    this.tweens.add({ targets: this.enemyArt, x: 285, duration: 90, yoyo: true, repeat: 1, ease: 'Sine.inOut' });
+    this.afterDialogue(() => {
+      GameState.data.hp = Math.max(0, GameState.data.hp - damage);
+      if (this.heat >= 100) {
+        GameState.data.hp = Math.max(0, GameState.data.hp - 8);
+        this.heat = 65;
+        this.dialogue.set('HEAT OVERLOAD。追加で8 DAMAGE。\n排熱が破損する前にTUNEしよう。', 'ash', 'dialogue', true);
+        this.afterDialogue(() => this.finishTurn());
+        return;
+      }
+      this.finishTurn();
     });
+  }
+
+  private afterDialogue(action: () => void) {
+    const wait = () => {
+      if (this.dialogue.isTyping()) {
+        this.time.delayedCall(80, wait);
+        return;
+      }
+      this.time.delayedCall(240, action);
+    };
+    wait();
+  }
+
+  private finishTurn() {
+    GameState.save();
+    this.refresh();
+    if (GameState.data.hp <= 0) this.defeat();
+    else this.setActionsEnabled(true);
   }
 
   private hitEffect(damage: number) {
@@ -221,7 +241,7 @@ export class BattleScene extends Phaser.Scene {
     const exp = this.enemyId === 'factory-core' ? 42 : 26;
     const levels = GameState.gainExp(exp);
     GameState.save();
-    this.dialogue.set(`${enemy.name} を停止。\n${enemy.victory}\n${enemy.rewardItem} +1 / SCRAP +${enemy.rewardScrap} / EXP +${exp}${levels.length ? `\nASH Lv.${levels[levels.length - 1]} / FORCE +1 / HP上限 +8` : ''}`, 'ash', 'result');
+    this.dialogue.set(`${enemy.name} を停止。\n${enemy.victory}\n${enemy.rewardItem} +1 / SCRAP +${enemy.rewardScrap} / EXP +${exp}${levels.length ? `\nASH Lv.${levels[levels.length - 1]} / FORCE +1 / HP上限 +8` : ''}`, 'ash', 'result', true);
     this.cameras.main.flash(260, 221, 163, 96);
     this.refresh();
     const destination = this.enemyId === 'factory-core' ? 'Explore' : 'Hub';
@@ -235,7 +255,7 @@ export class BattleScene extends Phaser.Scene {
     this.setActionsEnabled(false);
     GameState.data.hp = GameState.data.maxHp;
     GameState.save();
-    this.dialogue.set('ASHは工房へ運び戻された。\n今回の報酬はないが、拾った部品は失わなかった。\n回復してから再挑戦できる。', 'ash', 'result');
+    this.dialogue.set('ASHは工房へ運び戻された。\n今回の報酬はないが、拾った部品は失わなかった。\n回復してから再挑戦できる。', 'ash', 'result', true);
     this.showOutcome('工房へ戻る', 'HPを全快して再挑戦', () => this.scene.start('Hub'));
   }
 

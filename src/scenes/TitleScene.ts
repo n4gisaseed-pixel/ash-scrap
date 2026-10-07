@@ -13,7 +13,16 @@ export class TitleScene extends Phaser.Scene {
     this.load.image('azami-map', 'assets/azami-map.webp');
     this.load.image('ash-standee', 'assets/ash-standee.webp');
     this.load.image('azami-standee', 'assets/azami-standee.webp');
+    for (const expression of ['neutral', 'amused', 'determined', 'surprised']) {
+      this.load.image(`ash-${expression}`, `assets/ash-${expression}.webp`);
+    }
+    for (const expression of ['neutral', 'joyful', 'worried', 'determined']) {
+      this.load.image(`azami-${expression}`, `assets/azami-${expression}.webp`);
+    }
+    this.load.image('azami-rescue-cg', 'assets/azami-rescue-cg.webp');
     this.load.image('mina-standee', 'assets/mina-standee.webp');
+    this.load.image('workshop-bg', 'assets/workshop-bg.webp');
+    this.load.image('journey-road', 'assets/journey-road.webp');
     this.load.spritesheet('combat-icons', 'assets/combat-icons.webp', { frameWidth: 627, frameHeight: 627 });
   }
 
@@ -51,7 +60,7 @@ export class TitleScene extends Phaser.Scene {
       x: width / 2, y: 846, title: 'NEW GAME', subtitle: '新たな旅を始める',
       onPress: () => {
         GameState.reset();
-        this.scene.start('Hub');
+        this.scene.start('Story', { sequence: 'opening' });
       }
     });
     this.add.text(width / 2, 926, 'TAP TO SELECT', { fontFamily: 'monospace', fontSize: '11px', color: '#d2c2b1' }).setOrigin(.5);

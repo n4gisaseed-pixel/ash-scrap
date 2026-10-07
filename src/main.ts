@@ -4,6 +4,7 @@ import { TitleScene } from './scenes/TitleScene';
 import { HubScene } from './scenes/HubScene';
 import { ExploreScene } from './scenes/ExploreScene';
 import { BattleScene } from './scenes/BattleScene';
+import { StoryScene } from './scenes/StoryScene';
 import { GameState } from './state/GameState';
 
 GameState.load();
@@ -20,5 +21,5 @@ new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
-  scene: [TitleScene, HubScene, ExploreScene, BattleScene]
+  scene: [TitleScene, HubScene, ExploreScene, BattleScene, StoryScene]
 });

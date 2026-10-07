@@ -9,9 +9,10 @@ Expedition choices show their week cost, danger and likely gains before the
 player commits. Salvage and battle award experience; Ash's Force and maximum HP
 grow when he levels. Rest restores HP and spends one week.
 
-The prologue opens seven years after the Demon King was defeated. Its first
-question is practical: can Ash repair the auxiliary furnace without destroying
-the settlement's heat supply? Azami's map changes as they discover what the old
+The prologue opens in Ash's leaking workshop, follows the old rail line into a
+collapsed scrapyard, and brings the pair to Iron-scrap Town. Its first question
+is practical: can Ash repair the auxiliary furnace without destroying the
+settlement's heat supply? Azami's map changes as they discover what the old
 routes and machines still do.
 
 ## High concept
@@ -114,7 +115,8 @@ command areas to a 540×960 canvas:
 
 - Compact header: location, week, HP/level and scrap.
 - Main scene: generated environment and character art with faces unobstructed.
-- Dialogue/result card with a distinct speaker portrait and readable short text.
+- Dialogue/result card with bust-up portraits, readable short text and tap-to-
+  finish typewriter reveal. Important story beats can use full-screen CGs.
 - Lower command area with two to four large tap targets.
 - Battle adds a single horizontal action-order strip above the dialogue.
 
@@ -123,8 +125,8 @@ full UI adaptation notes.
 
 ## Current prototype
 
-The previous Chapter 0 route is being recast as the prologue. It already
-contains the Workshop, scrapyard, salvage, PILE-01 craft, Mina's settlement,
-factory encounter and companion support. The prologue narrative and screens
-must now connect those pieces to Azami's map and the auxiliary relay. Chapter 1
-and later Core regions remain planned content.
+The playable prologue connects the workshop, journey, scrapyard salvage,
+Azami's rescue, PILE-01 craft, Mina's settlement and the factory encounter.
+Crossfades, a rescue illustration and a return-to-town event lead into the
+first route toward Whitewood. Chapter 1 and later Core regions remain planned
+content.

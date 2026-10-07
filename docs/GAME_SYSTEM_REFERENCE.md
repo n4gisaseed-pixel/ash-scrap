@@ -132,7 +132,8 @@ cards, multiple companions, data-driven location/event definitions and a
 structured battle order queue. Battle uses a concise inline order forecast and
 one automatic companion behavior.
 
-The current screen pass adds reference-matched full-body Ash/Azami art, a
-speaker nameplate, readable message contrast and explicit Japanese line breaks.
-The post-action result now replaces narration while preserving the choices, so
-salvage and rescue actions remain actionable after their result is shown.
+The current screen pass uses reference-matched Ash/Azami bust-up expressions in
+dialogue, crossfaded story backdrops, a rescue CG, a speaker nameplate, readable
+message contrast and explicit Japanese line breaks. Typewriter text can be
+finished with a tap. The post-action result replaces narration while preserving
+choices, so salvage and rescue actions remain available after results appear.

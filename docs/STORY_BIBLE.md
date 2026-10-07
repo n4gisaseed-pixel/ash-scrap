@@ -21,29 +21,35 @@ must serve people who live here now.
 **Purpose:** establish Ash, Azami, the command adventure loop and the first
 evidence that the World Cores were not simply the Demon King's batteries.
 
-1. Ash takes a short salvage job from Mina in the settlement. The player
-   recovers three repair parts from the scrapyard and can assemble them into
-   PILE-01 at the workshop.
-2. The parts lead to a buried Demon Army service station. Ash finds Azami pinned
-   beneath a collapsed machine. Her hand-drawn map shows an entrance that no
-   longer exists; the old patrol construct still treats every traveler as an
-   enemy.
-3. Ash and Azami defeat the Scrap Hound. She has travelled alone because she
-   can feel the pulse of old magical machinery through her horns.
-4. In Iron-scrap Town, Mina explains that the nearby furnace is both an old
-   military machine and the settlement's heat source. Ash must vent and repair
-   its pressure relay instead of destroying the furnace.
-5. The relay's guard wakes when the pressure changes. After the pair disable
-   it, an abandoned cistern trickles for a few seconds and Azami's map shows a
-   pulse from a much larger network.
-6. The maintenance record calls the World Cores a planetary
+1. At dawn, a radio message from Mina asks Ash to find a gear, copper wire and
+   pressure cylinder for Iron-scrap Town's failing communal furnace. Ash leaves
+   his leaking workshop and follows an old rail line into the scrapyard.
+2. The road has collapsed. New footprints and a strip of blue cloth show that
+   someone passed through recently. While searching for the repair parts, Ash
+   hears a deliberate tapping rhythm beneath the wreckage.
+3. The pressure cylinder's old service marking points to a jammed relief valve.
+   Ash repairs it instead of forcing the machine. A full-screen rescue scene
+   introduces Azami, a demon girl drawing a map as she travels. She can feel
+   pulses from dormant machinery through her horns.
+4. The pair follow the rail line toward the settlement. Azami compares the
+   changed landscape with her outdated map; they reach town as people gather
+   around a shared cooking pot. Mina explains that the furnace is both an old
+   military machine and the town's heat source.
+5. The player can assemble the recovered parts into PILE-01 at the workshop.
+   Ash and Azami defeat the Scrap Hound, whose order still says “remove
+   intruders,” and investigate the auxiliary furnace without destroying it.
+6. The relay's guard wakes when the pressure changes. After the pair disable
+   it, they walk the heated pipes back to town. The communal fire has returned;
+   an abandoned cistern gives one drop of water and Azami's map shows a pulse
+   from a much larger network.
+7. The maintenance record calls the World Cores a planetary
    circulation system. It contradicts the old war story that the Cores existed
    only to feed the Demon King. The record is incomplete; the pair need to visit
    the Green Core at Whitewood to verify it.
 
-**Closing image:** one green shoot beside the cistern, not a suddenly restored
-landscape. Ash agrees to look at Azami's map because “a broken route is still a
-route.”
+**Closing image:** one drop in the dry cistern and a new line toward Whitewood
+on Azami's map. The landscape is still ruined. Ash agrees to continue because
+there is another broken thing they can understand and repair.
 
 ## Chapter 1 — Whitewood, the Green Core
 

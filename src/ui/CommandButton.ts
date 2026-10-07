@@ -58,7 +58,13 @@ export function addCommandButton(scene: Phaser.Scene, options: CommandButtonOpti
     background.setFillStyle(0x3a5962);
     scene.time.delayedCall(90, () => {
       background.setFillStyle(isEnabled ? 0x263136 : 0x202426);
-      if (isEnabled) onPress();
+      if (!isEnabled) return;
+      const dialogue = scene.data?.get('activeDialogueBox') as { isTyping?: () => boolean; finish?: () => void } | undefined;
+      if (dialogue?.isTyping?.()) {
+        dialogue.finish?.();
+        return;
+      }
+      onPress();
     });
     scene.time.delayedCall(360, () => { isPressing = false; });
   });
