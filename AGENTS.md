@@ -1,13 +1,17 @@
-# ASH / SCRAP — Codex Instructions
+# 救われた後のセカイ — Codex Instructions
 
 ## Goal
-Build a mobile-first portrait non-field junkpunk RPG called **ASH / SCRAP**.
+Build a mobile-first portrait non-field RPG called **救われた後のセカイ**
+(*After the Clear*), starring Ash and Azami in a post-apocalyptic fantasy
+world.
 
 The repository is the single source of truth. Before meaningful gameplay or narrative changes, read:
 - `docs/GAME_DESIGN.md`
 - `docs/CHARACTERS.md`
 - `docs/WORLD.md`
 - `docs/ROADMAP.md`
+- `docs/STORY_BIBLE.md`
+- `docs/GAME_SYSTEM_REFERENCE.md`
 
 ## Current product direction
 - Mobile-first.
@@ -40,12 +44,16 @@ Before considering a task complete:
 6. Update docs when implementation changes an agreed design.
 
 ## Core loop
-Workshop -> choose destination -> event/exploration -> battle or salvage -> return -> craft/tune -> unlock farther destinations.
+Settlement/workshop -> review map and party -> choose a week-costing expedition
+or work action -> resolve event/result -> improve Ash's gear and skills ->
+unlock a route or World Core -> return.
 
-## Chapter 0 target
-Workshop -> Scrapyard -> Iron-scrap Town -> Abandoned Factory -> Boss -> Workshop return.
+## Prologue target
+Workshop -> Scrapyard / meet Azami -> build PILE-01 -> repair the local furnace
+relay -> discover the World Core network -> unlock Whitewood / Green Core.
 
-Target playtime: approximately 30–45 minutes.
+The full campaign plan is in `docs/STORY_BIBLE.md`; the reference-system
+adaptation is in `docs/GAME_SYSTEM_REFERENCE.md`.
 
 ## Core identity
 The game is not a generic fantasy RPG with steampunk decoration.
@@ -72,10 +80,11 @@ Key systems:
 - Prefer 2–4 meaningful choices per screen.
 
 ## Development priority
-1. Complete playable Chapter 0 vertical slice.
-2. Reliable mobile UX.
-3. Combat/crafting depth.
-4. Narrative/events.
+1. Recast the playable prototype as the post-apocalyptic prologue.
+2. Reliable mobile UX and command-result pacing.
+3. Time, expedition risk/reward and character growth systems.
+4. Tactical party combat and event-driven regional chapters.
 5. Art/audio polish.
 
-Avoid unnecessary scope expansion until Chapter 0 is playable from beginning to end.
+Do not add free-roaming movement. Keep the command loop quick and make each
+costing action present a clear trade-off.

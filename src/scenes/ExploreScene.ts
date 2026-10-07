@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GameState } from '../state/GameState';
+import { GameState, PROLOGUE_WEEK_LIMIT } from '../state/GameState';
 import { addCommandButton } from '../ui/CommandButton';
 import { addDialogueBox } from '../ui/DialogueBox';
 import { addArtPanel, addArtShade } from '../ui/ArtPanel';
@@ -43,6 +43,12 @@ export class ExploreScene extends Phaser.Scene {
       fontFamily: 'monospace', fontSize: this.location === 'Town' ? '24px' : '27px', color: '#e8d7be', fontStyle: 'bold'
     });
     this.add.text(30, 65, titles[this.location][1], { fontFamily: 'monospace', fontSize: '15px', color: '#b09a82' });
+    const weekLabel = GameState.data.week <= PROLOGUE_WEEK_LIMIT
+      ? `WEEK ${GameState.data.week}/${PROLOGUE_WEEK_LIMIT}`
+      : `LATE +${GameState.data.week - PROLOGUE_WEEK_LIMIT}`;
+    this.add.text(510, 66, weekLabel, {
+      fontFamily: 'monospace', fontSize: '12px', color: GameState.data.week > PROLOGUE_WEEK_LIMIT ? '#d77f66' : '#d6b692'
+    }).setOrigin(1, 0);
     this.add.line(270, 102, 25, 0, 515, 0, 0x664a36).setLineWidth(2);
 
     const frame = this.location === 'Scrapyard' ? 1 : this.location === 'Town' ? 2 : 3;
@@ -64,30 +70,30 @@ export class ExploreScene extends Phaser.Scene {
       this.dialogue.set(found.length === 0
         ? 'ASH: 「あの歯車、まだ使える。捨てる前に確かめるか。」'
         : `回収 ${found.length} / ${SCRAP_PARTS.length}。ASH: 「使い道は、拾ってから考える。」`, 'ash');
-    } else if (!GameState.data.chapter0.lukaRecruited) {
-      this.dialogue.set('廃材の下から角の生えた少女が顔を出した。\n「その弁、逆に回して！ 早く！」', 'luka');
+    } else if (!GameState.data.chapter0.azamiRecruited) {
+      this.dialogue.set('廃材の下から角の生えた少女が顔を出した。\n「その弁、逆に回して！ 早く！」', 'azami');
     } else {
-      this.dialogue.set('廃材の山が崩れ、機械の唸り声が響いた。\nルカ: 「来るよ。今度はあたしも手を貸す！」', 'luka');
+      this.dialogue.set('廃材の山が崩れ、機械の唸り声が響いた。\nアザミ: 「来るよ。今度はあたしも手を貸す！」', 'azami');
     }
 
     addCommandButton(this, {
       x: 270, y: 660,
       title: found.length < SCRAP_PARTS.length ? 'SEARCH / SALVAGE' : 'SALVAGE COMPLETE',
-      subtitle: found.length < SCRAP_PARTS.length ? '使える部品を見分けて回収する' : '必要な部品は集まった',
+      subtitle: found.length < SCRAP_PARTS.length ? '1 WEEK / LOW RISK / 部品とSCRAPを回収' : '必要な部品は集まった',
       enabled: found.length < SCRAP_PARTS.length,
       onPress: () => this.salvage()
     });
     addCommandButton(this, {
       x: 270, y: 760,
-      title: GameState.data.chapter0.lukaRecruited ? 'BATTLE / SCRAP HOUND' : 'RESCUE / DEMON GIRL',
-      subtitle: GameState.data.chapter0.lukaRecruited ? '鉄屑の奥から、何かが近づく' : '廃材に挟まれた少女を助ける',
+      title: GameState.data.chapter0.azamiRecruited ? 'BATTLE / SCRAP HOUND' : 'RESCUE / DEMON GIRL',
+      subtitle: GameState.data.chapter0.azamiRecruited ? '1 WEEK / MID RISK / MOTOR + SCRAP' : '1 WEEK / 廃材に挟まれた少女を助ける',
       enabled: found.length >= SCRAP_PARTS.length,
       onPress: () => {
-        if (!GameState.data.chapter0.lukaRecruited) {
-          GameState.data.chapter0.lukaRecruited = true;
-          GameState.data.day += 1;
+        if (!GameState.data.chapter0.azamiRecruited) {
+          GameState.data.chapter0.azamiRecruited = true;
+          GameState.data.week += 1;
           GameState.save();
-          this.dialogue.set('ルカ: 「助けてくれてありがとう！ あたし魔族だけど、機械も直せるよ！」\nASH: 「じゃあ、まずはその弁から頼む。」', 'luka');
+          this.dialogue.set('アザミ: 「助けてくれてありがとう！ あたし魔族だけど、機械も直せるよ！」\nASH: 「じゃあ、まずはその弁から頼む。」', 'azami');
           this.time.delayedCall(1100, () => this.scene.restart({ location: 'Scrapyard' }));
           return;
         }
@@ -103,15 +109,15 @@ export class ExploreScene extends Phaser.Scene {
     GameState.add(next.id);
     GameState.data.chapter0.scrapyardSalvage.push(next.id);
     GameState.data.scrap += 3;
-    GameState.data.day += 1;
+    GameState.data.week += 1;
     GameState.save();
     const count = GameState.data.chapter0.scrapyardSalvage.length;
-    this.salvageNotice = `SALVAGE +1 : ${next.label}\n${next.line}\n\nASH: 「${count === 3 ? 'これで組める。' : 'まだ使える。'}」`;
+    this.salvageNotice = `WEEK ${GameState.data.week} / SALVAGE +1 : ${next.label}\n${next.line}\n\nASH: 「${count === 3 ? 'これで組める。' : 'まだ使える。'}」`;
     this.scene.restart({ location: 'Scrapyard' });
   }
 
   private createTown() {
-    if (!GameState.data.chapter0.townVisited) GameState.data.day += 1;
+    if (!GameState.data.chapter0.townVisited) GameState.data.week += 1;
     GameState.data.chapter0.townVisited = true;
     GameState.save();
     this.dialogue.set('修理屋のミナ: 「工場の炉が勝手に動き始めたの。止められる人を探してる」\nASH: 「止めるだけなら、やれる。」', 'mina');
@@ -128,7 +134,7 @@ export class ExploreScene extends Phaser.Scene {
 
   private createFactory() {
     if (GameState.data.chapter0.factoryBossDefeated) {
-      this.dialogue.set('炉心は静かに回り続けている。拾った部品と、町の技術を組み合わせた結果だ。\nASH: 「直すってのは、元に戻すことだけじゃない。」', 'ash');
+      this.dialogue.set('補助炉は町の熱源として動き続ける。壊れた中継器が一度だけ応答し、干上がった貯水槽に水滴が落ちた。\nアザミ: 「地図に線が浮いてきた。次は白い森だよ！」', 'azami');
       addCommandButton(this, {
         x: 270, y: 760, title: 'RETURN TO WORKSHOP', subtitle: 'Chapter 0 を終える',
         onPress: () => {
@@ -146,17 +152,20 @@ export class ExploreScene extends Phaser.Scene {
       : '古い工場が、誰もいないのに稼働している。蒸気の圧が危険域まで上がっている。', 'ash');
     addCommandButton(this, {
       x: 270, y: 650, title: GameState.data.chapter0.factoryInspected ? 'INSPECTED' : 'INSPECT / PRESSURE LINE',
-      subtitle: '配管を調べ、炉心を止める方法を探す', enabled: !GameState.data.chapter0.factoryInspected,
+      subtitle: '1 WEEK / LOW RISK / 補助炉の仕組みを調べる', enabled: !GameState.data.chapter0.factoryInspected,
       onPress: () => {
         GameState.data.chapter0.factoryInspected = true;
-        GameState.data.day += 1;
+        GameState.data.week += 1;
         GameState.save();
         this.dialogue.set('ASH: 「この排気弁、規格が古いだけだ。締めるんじゃなく、逃がす。」\n炉心の圧力を抜いた。奥の守衛機が動き出す。');
         this.scene.restart({ location: 'Factory' });
       }
     });
     addCommandButton(this, {
-      x: 270, y: 760, title: 'BATTLE / FURNACE WARDEN', subtitle: '圧力を逃がした炉心の守衛機',
+      x: 270, y: 760, title: 'BATTLE / FURNACE WARDEN',
+      subtitle: GameState.data.week > PROLOGUE_WEEK_LIMIT
+        ? '1 WEEK / HIGH RISK / 遅延で敵の火力が上昇'
+        : '1 WEEK / HIGH RISK / IGNITION UNIT + SCRAP',
       enabled: GameState.data.chapter0.factoryInspected,
       onPress: () => this.scene.start('Battle', { enemyId: 'factory-core' })
     });

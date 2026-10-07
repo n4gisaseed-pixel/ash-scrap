@@ -1,10 +1,11 @@
 export type Inventory = Record<string, number>;
 
 const SAVE_KEY = 'ash-scrap-save-v2';
+export const PROLOGUE_WEEK_LIMIT = 12;
 
 export interface ChapterProgress {
   scrapyardSalvage: string[];
-  lukaRecruited: boolean;
+  azamiRecruited: boolean;
   houndDefeated: boolean;
   townVisited: boolean;
   factoryInspected: boolean;
@@ -18,7 +19,7 @@ export interface SaveData {
   hp: number;
   maxHp: number;
   scrap: number;
-  day: number;
+  week: number;
   chapter0: ChapterProgress;
 }
 
@@ -28,10 +29,10 @@ const initial: SaveData = {
   hp: 100,
   maxHp: 100,
   scrap: 0,
-  day: 1,
+  week: 1,
   chapter0: {
     scrapyardSalvage: [],
-    lukaRecruited: false,
+    azamiRecruited: false,
     houndDefeated: false,
     townVisited: false,
     factoryInspected: false,
@@ -50,11 +51,22 @@ export class GameState {
         this.data = structuredClone(initial);
         return;
       }
-      const saved = JSON.parse(raw) as Partial<SaveData>;
+      const saved = JSON.parse(raw) as Partial<SaveData> & {
+        day?: number;
+        chapter0?: Partial<ChapterProgress> & { lukaRecruited?: boolean };
+      };
+      const oldChapter: Partial<ChapterProgress> & { lukaRecruited?: boolean } = saved.chapter0 ?? {};
+      const { lukaRecruited, ...chapterFlags } = oldChapter;
+      const { day: oldDay, chapter0: _oldChapter, ...savedFields } = saved;
       this.data = {
         ...structuredClone(initial),
-        ...saved,
-        chapter0: { ...initial.chapter0, ...(saved.chapter0 ?? {}) }
+        ...savedFields,
+        week: saved.week ?? oldDay ?? initial.week,
+        chapter0: {
+          ...initial.chapter0,
+          ...chapterFlags,
+          azamiRecruited: chapterFlags.azamiRecruited ?? lukaRecruited ?? false
+        }
       };
     } catch {
       this.data = structuredClone(initial);

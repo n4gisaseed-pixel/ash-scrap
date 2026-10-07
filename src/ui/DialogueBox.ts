@@ -11,12 +11,12 @@ export function addDialogueBox(scene: Phaser.Scene, y = 500, height = 128) {
   return {
     background,
     text,
-    set(value: string, speaker?: 'ash' | 'mina' | 'luka') {
+    set(value: string, speaker?: 'ash' | 'mina' | 'azami') {
       text.setFontSize(speaker
         ? (value.length > 84 ? '15px' : value.length > 60 ? '16px' : '18px')
         : (value.length > 92 ? '16px' : value.length > 68 ? '17px' : '19px'));
       if (speaker) {
-        if (speaker === 'luka') portrait.setTexture('luka-portrait');
+        if (speaker === 'azami') portrait.setTexture('azami-portrait');
         else portrait.setTexture('character-portraits', speaker);
         portrait.setVisible(true);
         portraitCard.setVisible(true);

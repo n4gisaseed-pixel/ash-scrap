@@ -19,9 +19,9 @@
 - [x] HEAT/TUNE prototype
 - [x] reusable dialogue box and command button components
 - [x] Ash and Mina dialogue portraits
-- [x] Demon companion rescue event and generated portrait
+- [x] Azami companion rescue event and generated portrait
 - [x] Companion autonomous attack/repair support in battle
-- [x] In-game day tracking for major expedition and recovery actions
+- [x] In-game week tracking for major expedition and recovery actions
 - [x] combat HP/HEAT bars, telegraphed damage, gadget charges and hit feedback
 - [ ] reusable data-driven event system
 - [ ] data-driven location definitions
@@ -46,7 +46,7 @@
 - [ ] recipe discovery
 - [ ] visual workshop progression
 
-## Milestone 4 — Chapter 0
+## Milestone 4 — Prologue: The Map After the End
 - [x] Iron-scrap Town
 - [x] NPC/event scenes
 - [x] Scrapyard progression
@@ -56,15 +56,27 @@
 - [x] return-to-workshop ending
 - [ ] full mobile progression test
 
-The first end-to-end Chapter 0 route is now playable: salvage three named parts,
-fight the Scrap Hound, craft PILE-01, visit Iron-scrap Town, inspect the factory
-pressure system, defeat the Furnace Warden, and return to the workshop. Progress
-and chapter flags are stored in the existing local save. This establishes the
-story route; the 30–45 minute target still needs more events, encounters, and
-mobile playtesting before the chapter is considered content complete.
+The earlier Chapter 0 route is being recast as the prologue to *The World After
+It Was Saved*. The playable foundation already includes salvage, PILE-01,
+Mina's settlement, the old furnace and the companion battle. The active work is
+to connect these scenes to Azami's map, the auxiliary relay and the first World
+Core signal.
 
-## Milestone 5 — Presentation
-- [x] first generated Ash and Mina portraits
+## Milestone 5 — Campaign systems
+- [x] Story bible for the prologue, five Cores and the new-hero finale
+- [x] Reference research and adaptation notes for pacing, battle order and UI
+- [x] 12-week Prologue budget and late Furnace Warden pressure increase
+- [ ] Destination preview with recommended level, danger, cost and reward
+- [ ] Immediate event result card
+- [ ] Ash EXP, level-up and stat allocation
+- [ ] Data-driven event and location definitions
+- [ ] Map/route screen for discovered and unknown Cores
+- [ ] Action-order queue with known ally intent and hidden enemy intent
+- [ ] Later regional companion/support events
+
+## Milestone 6 — Presentation
+- [x] first generated Ash, Mina and Azami portraits
+- [x] post-apocalyptic title key art for Ash and Azami
 - [x] first generated enemy illustrations
 - [x] first generated location backgrounds
 - [x] first generated combat action icons
@@ -76,9 +88,5 @@ mobile playtesting before the chapter is considered content complete.
 The generated art is a cohesive first pass. Final art direction, bespoke UI
 artwork, audio, and playtesting on physical phones remain open.
 
-## Reference direction
-
-The command-driven pacing, autonomous companion behavior, and readable boss
-turn order take inspiration from *Boku mo Sekai o Sukuitai*. ASH / SCRAP uses
-those ideas for scrap recovery, repair and a junkpunk party story rather than
-reproducing the reference game's world, characters, text or assets.
+See [GAME_SYSTEM_REFERENCE.md](GAME_SYSTEM_REFERENCE.md) for the sources and
+adaptation. See [STORY_BIBLE.md](STORY_BIBLE.md) for the campaign outline.

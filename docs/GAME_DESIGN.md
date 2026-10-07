@@ -1,103 +1,113 @@
-# ASH / SCRAP — Game Design
+# Game Design — 救われた後のセカイ
 
 ## High concept
-A portrait-oriented browser/mobile junkpunk RPG about Ash, a teenage mechanic who gives discarded machines new purposes.
 
-**Theme:** “Discarded things can still have a purpose.”
+A mobile-first, portrait command adventure set seven years after the Demon
+King's defeat. Ash, a teenage junk mechanic, and Azami, a demon girl who maps
+the changed world, repair the five World Cores that once maintained the
+planet's magical circulation.
+
+**Theme:** The world was saved once. Its people still have to live in it.
 
 ## Format
-- Mobile-first.
-- Portrait orientation.
-- Fixed screen: no page scrolling and no field-map camera scrolling.
-- Non-field RPG.
-- Progression is driven by tapping commands, choosing destinations, reading events, fighting, salvaging and crafting.
-- Every screen must fit within a single 540×960 game canvas.
+
+- TypeScript, Phaser 3 and Vite.
+- Fixed 540×960 portrait canvas, designed for touch.
+- No browser scrolling, virtual D-pad, free-roaming map or required landscape
+  play.
+- Progress through destinations, expeditions, events, crafting and boss fights.
+- Every screen has one purpose and fits in the fixed canvas.
 
 ## Core loop
-Workshop -> choose destination -> event/exploration -> battle or salvage -> return -> craft/tune -> unlock next destination.
 
-## Chapter 0 flow
-1. Start at the Workshop hub.
-2. Salvage a Rusted Gear, Copper Wire and Pressure Cylinder in the Scrapyard.
-3. Fight the Scrap Hound, which yields a Small Motor.
-4. Return to the Workshop and craft PILE-01 from the recovered parts.
-5. Visit Iron-scrap Town and hear about the factory's pressure fault from Mina.
-6. Inspect the pressure line in the Abandoned Factory and fight its Furnace Warden.
-7. Stop the furnace without destroying it, then return to the Workshop.
+Settlement / workshop → review the map and party → choose a week-costing action
+→ see the event and results → improve Ash's gear and skills → unlock a route or
+World Core → return to the settlement.
 
-The local save records scrapyard parts, the companion, action days, boss
-victories, town and factory events, crafted equipment, and the ending. The first
-route is playable now; additional chapter events and encounters are still needed
-to meet the 30–45 minute target.
+Routine travel and common encounters resolve quickly by command selection. Named
+guardians and story bosses use full tactical battles.
 
-## Exploration
-There is no free walking field map.
+## Story sequence
 
-A location consists of:
-- fixed background/illustration
-- location title
-- short narrative/event text
-- 2–4 context commands
-- occasional random or scripted event
-- battle transition
+See [STORY_BIBLE.md](STORY_BIBLE.md) for the full campaign outline.
 
-## Combat
-Turn-based, portrait layout.
+- Prologue: meet Azami, build PILE-01, repair an auxiliary relay and discover
+  that the World Cores served the world, not the Demon King.
+- Chapter 1: Green Core / Whitewood.
+- Chapter 2: Water Core / The Dry Lake.
+- Chapter 3: Wind Core / The Broken Route.
+- Chapter 4: Fire Core / The Furnace City.
+- Chapter 5: Crown Core / The Old Demon Castle.
+- Finale: defend Azami from a new hero party acting on incomplete records.
 
-The party currently consists of Ash and, after her scrapyard rescue, Luka. The
-player chooses Ash's action; Luka then acts autonomously before the enemy. She
-attacks a weak point when Ash is healthy, and switches to emergency repair when
-his HP falls below 40%. The action order and enemy damage range are shown before
-the player commits. This takes inspiration from party behavior and boss-turn
-reading in *Boku mo Sekai o Sukuitai*, adapted to Ash's scrap-repair theme.
+## Time and expedition choices
 
-Initial commands:
-- ATTACK
-- GADGET
-- TUNE
-- RETREAT
+Each chapter is designed as a limited 12-week scenario. Safe salvage, risky
+scouting, dungeon attempts, major events, training, crafting and rest advance
+the week. Checking the map, reading known information and reviewing inventory
+are free. A main route should take 8–9 weeks, leaving room for optional
+preparation. A missed target changes regional conditions but never blocks the
+story or corrupts the save.
 
-### TUNE
-Ash adjusts equipment mid-battle. TUNE vents up to 45 HEAT, halves the next
-enemy hit and strengthens the next GADGET. ATTACK and GADGET build HEAT;
-reaching 100 causes 8 damage to Ash and vents the mechanism back to 65.
+Before leaving, the player sees the known week cost, suggested party level,
+danger, likely rewards and boss conditions. Safe routes offer modest XP or
+materials; dangerous ruins offer better rewards and a chance of a boss. The
+result appears immediately in a compact card.
 
-GADGET has two charges per battle. It deals a heavy hit and turns a salvaged
-mechanism into a weapon. The player can spend both charges quickly or use TUNE
-to make an opening for a stronger shot.
+## Character growth and battle
 
-## Salvage
-Locations and enemies yield components:
-- Rusted Gear
-- Copper Wire
-- Small Motor
-- Pressure Cylinder
-- Ignition Unit
+- The player directly chooses Ash's action.
+- Azami makes her own decisions and acts according to her established tendencies.
+- The battle order lists upcoming actors and known companion actions. Enemy
+  intent stays uncertain until Ash can analyze a pattern.
+- Ash levels through expeditions and events. Force, Grit and Ingenuity support
+  attacks, survival/HEAT and scrap tools/analysis respectively.
+- Equipment, gadgets and skills come from crafting, discoveries and people met
+  along the route.
+- The long-term party target is Ash plus at most two companions. Azami is the
+  first fixed companion; later support characters are introduced through
+  regional story events.
 
-Major expedition actions advance the in-game day counter. Rest trades a day for
-a full HP recovery, so the workshop presents recovery as a planning choice.
-Common travel and field movement stay abstracted into destination and event
-commands.
+### Existing command verbs
 
-## Craft
-Workshop-based.
-Example:
-Rusted Gear + Copper Wire + Pressure Cylinder -> PILE-01
+- **ATTACK:** dependable scrap-weapon strike.
+- **GADGET:** spend a built or recovered mechanism for a strong effect.
+- **TUNE:** vent HEAT and configure the next repair/gadget action.
+- **ANALYZE:** learn an enemy pattern and expose a weakness.
+- **RETREAT:** leave a dangerous encounter if the route allows it.
 
-## Mobile UX rules
-- Large tap targets.
-- No virtual D-pad.
-- No swipe-dependent core controls.
-- No browser scrolling.
-- No UI element may require reaching beyond the fixed viewport.
-- Important actions remain in the lower half of the screen.
-- Text must remain readable on a normal smartphone in portrait orientation.
+The command set will be introduced in stages; keep the active battle screen to
+four large primary choices at once.
 
-## Current prototype targets
-- vertical title screen
-- workshop hub
-- non-field scrapyard
-- salvage
-- simple battle
-- PILE-01 crafting
-- local save
+## Event and presentation rules
+
+- One clear background, one or two visible character portraits/standees, a
+  speaker label and 2–4 short lines per event step.
+- A result card reports XP, scrap, recovered parts and changed story flags.
+- Choices should express a practical trade-off, not hide a required action.
+- Give recurring scenes warm everyday details so the post-apocalyptic world
+  still feels inhabited.
+- World Core repairs produce small visible changes before large environmental
+  recovery.
+
+## Portrait UI rules
+
+The screen hierarchy adapts the reference game's clear status, scene, message and
+command areas to a 540×960 canvas:
+
+- Compact header: location, week, HP/level and scrap.
+- Main scene: generated environment and character art with faces unobstructed.
+- Dialogue/result card with a distinct speaker portrait and readable short text.
+- Lower command area with two to four large tap targets.
+- Battle adds a single horizontal action-order strip above the dialogue.
+
+See [GAME_SYSTEM_REFERENCE.md](GAME_SYSTEM_REFERENCE.md) for research and the
+full UI adaptation notes.
+
+## Current prototype
+
+The previous Chapter 0 route is being recast as the prologue. It already
+contains the Workshop, scrapyard, salvage, PILE-01 craft, Mina's settlement,
+factory encounter and companion support. The prologue narrative and screens
+must now connect those pieces to Azami's map and the auxiliary relay. Chapter 1
+and later Core regions remain planned content.

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { ENEMIES, type EnemyId } from '../data/enemies';
-import { GameState } from '../state/GameState';
+import { GameState, PROLOGUE_WEEK_LIMIT } from '../state/GameState';
 import { addCommandButton } from '../ui/CommandButton';
 import { addDialogueBox } from '../ui/DialogueBox';
 import { addArtPanel, addArtShade } from '../ui/ArtPanel';
@@ -8,6 +8,9 @@ import { addArtPanel, addArtShade } from '../ui/ArtPanel';
 export class BattleScene extends Phaser.Scene {
   private enemyId: EnemyId = 'scrap-hound';
   private enemyHp = 80;
+  private enemyAttackMin = 0;
+  private enemyAttackMax = 0;
+  private latePressure = 0;
   private heat = 0;
   private gadgetCharges = 2;
   private tuned = false;
@@ -19,6 +22,7 @@ export class BattleScene extends Phaser.Scene {
   private enemyHpBar!: Phaser.GameObjects.Rectangle;
   private playerHpBar!: Phaser.GameObjects.Rectangle;
   private heatBar!: Phaser.GameObjects.Rectangle;
+  private forecastText!: Phaser.GameObjects.Text;
   private gadgetButton!: ReturnType<typeof addCommandButton>;
   private actionButtons: Array<ReturnType<typeof addCommandButton>> = [];
   private ended = false;
@@ -29,6 +33,13 @@ export class BattleScene extends Phaser.Scene {
   init(data: { enemyId?: EnemyId }) {
     this.enemyId = data.enemyId ?? 'scrap-hound';
     this.enemyHp = ENEMIES[this.enemyId].hp;
+    const enemy = ENEMIES[this.enemyId];
+    const overdueWeeks = Math.max(0, GameState.data.week - PROLOGUE_WEEK_LIMIT);
+    this.latePressure = this.enemyId === 'factory-core' ? Math.min(8, overdueWeeks * 2) : 0;
+    this.enemyAttackMin = enemy.attackMin + this.latePressure;
+    this.enemyAttackMax = enemy.attackMax + this.latePressure;
+    GameState.data.week += 1;
+    GameState.save();
     this.heat = 0;
     this.gadgetCharges = 2;
     this.tuned = false;
@@ -69,15 +80,14 @@ export class BattleScene extends Phaser.Scene {
     this.playerHpBar = this.add.rectangle(56, 482, 426, 8, 0x83a269).setOrigin(0, .5);
     this.add.rectangle(270, 510, 430, 12, 0x27211d).setStrokeStyle(1, 0x615143);
     this.heatBar = this.add.rectangle(56, 510, 4, 8, 0xd47a48).setOrigin(0, .5);
-    const forecast = GameState.data.chapter0.lukaRecruited
-      ? `予告 ${enemy.attackMin}–${enemy.attackMax} DAMAGE　/　ASH → LUKA → ENEMY`
-      : `相手の予告ダメージ　${enemy.attackMin}–${enemy.attackMax}`;
-    this.add.text(270, 530, forecast, {
+    this.forecastText = this.add.text(270, 530, '', {
       fontFamily: '"Noto Sans JP", sans-serif', fontSize: '11px', color: '#a99a88'
     }).setOrigin(.5);
 
     this.dialogue = addDialogueBox(this, 603, 124);
-    this.dialogue.set(enemy.opening);
+    this.dialogue.set(this.latePressure > 0
+      ? `${enemy.opening}\n遅延圧力 +${this.latePressure} DAMAGE`
+      : enemy.opening);
 
     this.actionButtons.push(addCommandButton(this, {
       x: 150, y: 746, title: 'ATTACK', subtitle: this.hasPile() ? 'PILE-01 / 安定した一撃' : '標準攻撃 / HEAT +12',
@@ -143,16 +153,16 @@ export class BattleScene extends Phaser.Scene {
 
   private enemyTurn() {
     const enemy = ENEMIES[this.enemyId];
-    if (GameState.data.chapter0.lukaRecruited) {
+    if (GameState.data.chapter0.azamiRecruited) {
       if (GameState.data.hp <= Math.ceil(GameState.data.maxHp * 0.4)) {
         const healed = Math.min(12, GameState.data.maxHp - GameState.data.hp);
         GameState.data.hp += healed;
-        this.dialogue.set(`ルカの自動援護 / 応急修理。ASHのHPを ${healed} 回復。`, 'luka');
+        this.dialogue.set(`アザミの援護 / 応急修理。ASHのHPを ${healed} 回復。`, 'azami');
         this.refresh();
       } else {
         const supportDamage = this.enemyId === 'factory-core' ? 12 : 9;
         this.enemyHp = Math.max(0, this.enemyHp - supportDamage);
-        this.dialogue.set(`ルカの自動援護 / 敵の継ぎ目を撃つ。${supportDamage} DAMAGE。`, 'luka');
+        this.dialogue.set(`アザミの援護 / 敵の継ぎ目を撃つ。${supportDamage} DAMAGE。`, 'azami');
         this.hitEffect(supportDamage);
         this.refresh();
         if (this.enemyHp <= 0) {
@@ -161,7 +171,7 @@ export class BattleScene extends Phaser.Scene {
         }
       }
     }
-    const rolledDamage = Phaser.Math.Between(enemy.attackMin, enemy.attackMax);
+    const rolledDamage = Phaser.Math.Between(this.enemyAttackMin, this.enemyAttackMax);
     const damage = this.tuned ? Math.ceil(rolledDamage / 2) : rolledDamage;
     this.tuned = false;
     this.time.delayedCall(260, () => {
@@ -197,7 +207,6 @@ export class BattleScene extends Phaser.Scene {
     this.setActionsEnabled(false);
     const enemy = ENEMIES[this.enemyId];
     GameState.data.scrap += enemy.rewardScrap;
-    GameState.data.day += 1;
     GameState.data.inventory[enemy.rewardItem] = (GameState.data.inventory[enemy.rewardItem] ?? 0) + 1;
     if (this.enemyId === 'scrap-hound') GameState.data.chapter0.houndDefeated = true;
     else GameState.data.chapter0.factoryBossDefeated = true;
@@ -213,7 +222,6 @@ export class BattleScene extends Phaser.Scene {
     this.ended = true;
     this.setActionsEnabled(false);
     GameState.data.hp = GameState.data.maxHp;
-    GameState.data.day += 1;
     GameState.save();
     this.dialogue.set('ASHは工房へ運び戻された。\n拾った部品は失わずに済んだ。装備を整えて再挑戦しよう。');
     this.time.delayedCall(1400, () => this.scene.start('Hub'));
@@ -227,6 +235,10 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private refresh() {
+    const azamiIntent = GameState.data.hp <= Math.ceil(GameState.data.maxHp * 0.4) ? 'REPAIR' : 'STRIKE';
+    this.forecastText?.setText(GameState.data.chapter0.azamiRecruited
+      ? `ORDER ASH → AZAMI / ${azamiIntent} → ENEMY　·　DMG ${this.enemyAttackMin}–${this.enemyAttackMax}`
+      : `ENEMY DAMAGE ${this.enemyAttackMin}–${this.enemyAttackMax}`);
     this.enemyHpText.setText(`${ENEMIES[this.enemyId].name}   ${this.enemyHp} / ${ENEMIES[this.enemyId].hp} HP`);
     this.playerHpText.setText(`ASH HP   ${GameState.data.hp} / ${GameState.data.maxHp}`);
     this.heatText.setText(`HEAT   ${this.heat} / 100`);
