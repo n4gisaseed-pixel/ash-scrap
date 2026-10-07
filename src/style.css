@@ -1,1 +1,1 @@
-html,body,#game{margin:0;width:100%;height:100%;overflow:hidden;background:#0c0b0a}body{font-family:ui-monospace,Consolas,"Noto Sans JP",monospace}canvas{image-rendering:pixelated}
+html,body,#game{margin:0;width:100%;height:100%;overflow:hidden;background:#0c0b0a;touch-action:none;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}body{font-family:ui-monospace,Consolas,"Noto Sans JP",monospace}canvas{image-rendering:pixelated;touch-action:none}
