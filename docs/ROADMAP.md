@@ -1,50 +1,60 @@
 # Roadmap
 
-## Milestone 0 — Project foundation
-- [ ] Phaser 3 + TypeScript + Vite scaffold
-- [ ] development/build scripts
-- [ ] basic scene architecture
-- [ ] GitHub Pages deployment workflow
-- [ ] placeholder title screen
-- [ ] documentation treated as source of truth
+## Milestone 0 — Foundation
+- [x] Phaser 3 + TypeScript + Vite scaffold
+- [x] development/build scripts
+- [x] GitHub Pages deployment workflow
+- [x] vertical title screen
+- [x] local browser save
+- [x] documentation treated as source of truth
 
-## Milestone 1 — Walking prototype
-- [ ] Workshop map
-- [ ] Ash movement
-- [ ] collision
-- [ ] interactable object
-- [ ] NPC dialogue
-- [ ] map transition
-- [ ] save/load position
+## Milestone 1 — Portrait non-field prototype
+- [x] fixed 540×960 portrait canvas
+- [x] no browser scrolling
+- [x] Workshop hub
+- [x] Scrapyard command screen
+- [x] salvage action
+- [x] simple crafting
+- [x] simple turn-based battle
+- [x] HEAT/TUNE prototype
+- [ ] reusable dialogue/event system
+- [ ] reusable command-menu component
+- [ ] data-driven locations/events
 
-## Milestone 2 — RPG loop
-- [ ] battle scene
-- [ ] enemy data
-- [ ] inventory
+## Milestone 2 — RPG systems
+- [ ] enemy data layer
+- [ ] item/material data layer
 - [ ] equipment
-- [ ] EXP/level
-- [ ] salvage rewards
+- [ ] EXP/levels
+- [ ] status effects
+- [ ] proper battle flow/state machine
+- [ ] battle rewards/results screen
+- [ ] defeat/retry flow
 
-## Milestone 3 — Workshop
+## Milestone 3 — Workshop depth
 - [ ] dismantling
-- [ ] crafting
+- [ ] crafting recipes
 - [ ] weapon modification
-- [ ] TUNE integration
-- [ ] first recipes
+- [ ] gadget loadout
+- [ ] TUNE upgrades
+- [ ] recipe discovery
+- [ ] visual workshop progression
 
 ## Milestone 4 — Chapter 0
 - [ ] Iron-scrap Town
-- [ ] Scrapyard
+- [ ] NPC/event scenes
+- [ ] Scrapyard progression
 - [ ] Abandoned Factory
 - [ ] quests/events
-- [ ] boss
+- [ ] Chapter 0 boss
 - [ ] return-to-workshop ending
-- [ ] full progression test
+- [ ] full mobile progression test
 
 ## Milestone 5 — Presentation
-- [ ] Ash final sprites
-- [ ] portraits
+- [ ] Ash final portrait / character art
+- [ ] enemy art
+- [ ] location backgrounds
 - [ ] UI art
 - [ ] effects
 - [ ] music/SFX
-- [ ] polish and accessibility
+- [ ] accessibility/polish
