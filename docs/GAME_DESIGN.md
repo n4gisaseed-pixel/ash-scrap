@@ -1,53 +1,54 @@
 # ASH / SCRAP — Game Design
 
 ## High concept
-A browser-playable 2D junkpunk RPG about Ash, a teenage mechanic living among scrap, steam machinery and abandoned industrial structures.
+A portrait-oriented browser/mobile junkpunk RPG about Ash, a teenage mechanic who gives discarded machines new purposes.
 
 **Theme:** “Discarded things can still have a purpose.”
 
-## Genre
-Exploration + salvage/crafting + turn-based JRPG.
-
-## Initial scope
-Create Chapter 0 as a 30–45 minute vertical slice before expanding the world.
-
-### Chapter 0 flow
-1. Ash's Workshop — tutorial and first repair.
-2. Iron-scrap Town — NPCs, shop, first request.
-3. Scrapyard — exploration and salvage.
-4. Abandoned Factory — first dungeon.
-5. Boss battle.
-6. Return to Workshop — craft/repair payoff and chapter ending.
+## Format
+- Mobile-first.
+- Portrait orientation.
+- Fixed screen: no page scrolling and no field-map camera scrolling.
+- Non-field RPG.
+- Progression is driven by tapping commands, choosing destinations, reading events, fighting, salvaging and crafting.
+- Every screen must fit within a single 540×960 game canvas.
 
 ## Core loop
-Explore -> collect scrap -> fight -> return -> dismantle -> craft/tune equipment -> unlock farther exploration.
+Workshop -> choose destination -> event/exploration -> battle or salvage -> return -> craft/tune -> unlock next destination.
+
+## Chapter 0 flow
+1. Workshop hub.
+2. Scrapyard exploration.
+3. Salvage tutorial.
+4. Scrap Hound battle.
+5. Craft PILE-01.
+6. New route unlocks toward Iron-scrap Town / Abandoned Factory.
 
 ## Exploration
-- 2D top-down movement.
-- Interact with NPCs, machinery, containers and environmental objects.
-- Maps should reward looking into corners with useful junk, small stories or shortcuts.
+There is no free walking field map.
+
+A location consists of:
+- fixed background/illustration
+- location title
+- short narrative/event text
+- 2–4 context commands
+- occasional random or scripted event
+- battle transition
 
 ## Combat
-Turn-based.
+Turn-based, portrait layout.
 
 Initial commands:
 - ATTACK
 - GADGET
-- ITEM
 - TUNE
+- RETURN
 
 ### TUNE
-Ash can adjust equipment during battle. Tuning should create meaningful risk/reward decisions rather than functioning as ordinary magic.
-
-Examples:
-- OVERDRIVE: more power, increased malfunction/heat risk.
-- PRESSURE: prepare an armor-piercing strike.
-- COOLING: reduce accumulated HEAT.
+Ash adjusts equipment mid-battle. Tuning creates risk/reward choices and manages HEAT.
 
 ## Salvage
-Enemies and exploration points provide components rather than only money.
-
-Examples:
+Locations and enemies yield components:
 - Rusted Gear
 - Copper Wire
 - Small Motor
@@ -55,39 +56,24 @@ Examples:
 - Ignition Unit
 
 ## Craft
-At the Workshop, components can be dismantled, recombined and installed.
-
+Workshop-based.
 Example:
-Iron Pipe + Ignition Unit + Pressure Cylinder -> PILE-01
+Rusted Gear + Copper Wire + Pressure Cylinder -> PILE-01
 
-Equipment should evolve through modification rather than being replaced every few minutes.
+## Mobile UX rules
+- Large tap targets.
+- No virtual D-pad.
+- No swipe-dependent core controls.
+- No browser scrolling.
+- No UI element may require reaching beyond the fixed viewport.
+- Important actions remain in the lower half of the screen.
+- Text must remain readable on a normal smartphone in portrait orientation.
 
-## Progression philosophy
-Player power should come from:
-- Ash's level/skills
-- finding better components
-- discovering recipes
-- modifying existing equipment
-- learning how systems interact
-
-## Initial required systems
-- title/new game/continue
-- map movement and collision
-- interaction
-- dialogue/events
-- map transitions
-- inventory
-- equipment
-- turn-based combat
-- EXP/levels
-- salvage drops
-- dismantling
-- crafting
-- weapon modification
-- quests
-- shop
-- local save/load
-- Chapter 0 boss and ending
-
-## Not yet
-Do not prioritize multiplayer, accounts, cloud saves, procedural open worlds or a huge crafting catalog during the vertical slice.
+## Current prototype targets
+- vertical title screen
+- workshop hub
+- non-field scrapyard
+- salvage
+- simple battle
+- PILE-01 crafting
+- local save
