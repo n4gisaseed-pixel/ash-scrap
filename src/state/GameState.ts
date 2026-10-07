@@ -2,6 +2,15 @@ export type Inventory = Record<string, number>;
 
 const SAVE_KEY = 'ash-scrap-save-v2';
 
+export interface ChapterProgress {
+  scrapyardSalvage: string[];
+  houndDefeated: boolean;
+  townVisited: boolean;
+  factoryInspected: boolean;
+  factoryBossDefeated: boolean;
+  endingSeen: boolean;
+}
+
 export interface SaveData {
   inventory: Inventory;
   crafted: string[];
@@ -9,6 +18,7 @@ export interface SaveData {
   maxHp: number;
   scrap: number;
   day: number;
+  chapter0: ChapterProgress;
 }
 
 const initial: SaveData = {
@@ -17,7 +27,15 @@ const initial: SaveData = {
   hp: 100,
   maxHp: 100,
   scrap: 0,
-  day: 1
+  day: 1,
+  chapter0: {
+    scrapyardSalvage: [],
+    houndDefeated: false,
+    townVisited: false,
+    factoryInspected: false,
+    factoryBossDefeated: false,
+    endingSeen: false
+  }
 };
 
 export class GameState {
@@ -26,7 +44,16 @@ export class GameState {
   static load() {
     try {
       const raw = localStorage.getItem(SAVE_KEY);
-      this.data = raw ? { ...structuredClone(initial), ...JSON.parse(raw) } : structuredClone(initial);
+      if (!raw) {
+        this.data = structuredClone(initial);
+        return;
+      }
+      const saved = JSON.parse(raw) as Partial<SaveData>;
+      this.data = {
+        ...structuredClone(initial),
+        ...saved,
+        chapter0: { ...initial.chapter0, ...(saved.chapter0 ?? {}) }
+      };
     } catch {
       this.data = structuredClone(initial);
     }
@@ -59,5 +86,14 @@ export class GameState {
     }
     this.save();
     return true;
+  }
+
+  static nextDestination(): 'Scrapyard' | 'Craft' | 'Town' | 'Factory' | 'Return' {
+    const progress = this.data.chapter0;
+    if (!progress.houndDefeated) return 'Scrapyard';
+    if (!this.data.crafted.includes('PILE-01')) return 'Craft';
+    if (!progress.townVisited) return 'Town';
+    if (!progress.factoryBossDefeated) return 'Factory';
+    return 'Return';
   }
 }

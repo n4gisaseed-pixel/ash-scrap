@@ -17,9 +17,9 @@
 - [x] simple crafting
 - [x] simple turn-based battle
 - [x] HEAT/TUNE prototype
-- [ ] reusable dialogue/event system
-- [ ] reusable command-menu component
-- [ ] data-driven locations/events
+- [x] reusable dialogue box and command button components
+- [ ] reusable data-driven event system
+- [ ] data-driven location definitions
 
 ## Milestone 2 — RPG systems
 - [ ] enemy data layer
@@ -41,14 +41,21 @@
 - [ ] visual workshop progression
 
 ## Milestone 4 — Chapter 0
-- [ ] Iron-scrap Town
-- [ ] NPC/event scenes
-- [ ] Scrapyard progression
-- [ ] Abandoned Factory
-- [ ] quests/events
-- [ ] Chapter 0 boss
-- [ ] return-to-workshop ending
+- [x] Iron-scrap Town
+- [x] NPC/event scenes
+- [x] Scrapyard progression
+- [x] Abandoned Factory
+- [x] Chapter 0 objective and event progression
+- [x] Chapter 0 boss
+- [x] return-to-workshop ending
 - [ ] full mobile progression test
+
+The first end-to-end Chapter 0 route is now playable: salvage three named parts,
+fight the Scrap Hound, craft PILE-01, visit Iron-scrap Town, inspect the factory
+pressure system, defeat the Furnace Warden, and return to the workshop. Progress
+and chapter flags are stored in the existing local save. This establishes the
+story route; the 30–45 minute target still needs more events, encounters, and
+mobile playtesting before the chapter is considered content complete.
 
 ## Milestone 5 — Presentation
 - [ ] Ash final portrait / character art

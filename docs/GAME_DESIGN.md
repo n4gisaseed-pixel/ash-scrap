@@ -17,12 +17,17 @@ A portrait-oriented browser/mobile junkpunk RPG about Ash, a teenage mechanic wh
 Workshop -> choose destination -> event/exploration -> battle or salvage -> return -> craft/tune -> unlock next destination.
 
 ## Chapter 0 flow
-1. Workshop hub.
-2. Scrapyard exploration.
-3. Salvage tutorial.
-4. Scrap Hound battle.
-5. Craft PILE-01.
-6. New route unlocks toward Iron-scrap Town / Abandoned Factory.
+1. Start at the Workshop hub.
+2. Salvage a Rusted Gear, Copper Wire and Pressure Cylinder in the Scrapyard.
+3. Fight the Scrap Hound, which yields a Small Motor.
+4. Return to the Workshop and craft PILE-01 from the recovered parts.
+5. Visit Iron-scrap Town and hear about the factory's pressure fault from Mina.
+6. Inspect the pressure line in the Abandoned Factory and fight its Furnace Warden.
+7. Stop the furnace without destroying it, then return to the Workshop.
+
+The local save records scrapyard parts, boss victories, town and factory events,
+crafted equipment, and the ending. The first route is playable now; additional
+chapter events and encounters are still needed to meet the 30–45 minute target.
 
 ## Exploration
 There is no free walking field map.
