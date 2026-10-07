@@ -1,18 +1,42 @@
 import Phaser from 'phaser';
 
 export class TitleScene extends Phaser.Scene {
- constructor(){ super('Title'); }
- create(){
-  const {width:w,height:h}=this.scale;
-  this.cameras.main.setBackgroundColor('#12100d');
-  this.add.rectangle(w/2,h/2,w,h,0x12100d);
-  for(let i=0;i<26;i++) this.add.circle(Phaser.Math.Between(0,w),Phaser.Math.Between(0,h),Phaser.Math.Between(1,3),0x8d6241,Phaser.Math.FloatBetween(.08,.28));
-  this.add.text(w/2,h*.28,'ASH / SCRAP',{fontFamily:'monospace',fontSize:'62px',color:'#e4ddd0',fontStyle:'bold',stroke:'#241a14',strokeThickness:8}).setOrigin(.5);
-  this.add.text(w/2,h*.39,'— discarded things still have a purpose —',{fontFamily:'monospace',fontSize:'15px',color:'#9f8064'}).setOrigin(.5);
-  const start=this.add.text(w/2,h*.60,'[ NEW GAME ]',{fontFamily:'monospace',fontSize:'25px',color:'#d9c5a6',backgroundColor:'#29211b',padding:{x:18,y:10}}).setOrigin(.5).setInteractive({useHandCursor:true});
-  this.add.text(w/2,h*.73,'ENTER / CLICK',{fontFamily:'monospace',fontSize:'13px',color:'#766557'}).setOrigin(.5);
-  const go=()=>this.scene.start('Workshop');
-  start.on('pointerover',()=>start.setColor('#ffffff')).on('pointerout',()=>start.setColor('#d9c5a6')).on('pointerdown',go);
-  this.input.keyboard?.once('keydown-ENTER',go);
- }
+  constructor(){ super('Title'); }
+
+  create(){
+    const W=540,H=960;
+    this.cameras.main.setBackgroundColor('#0d0b09');
+    this.add.rectangle(W/2,H/2,W,H,0x0d0b09);
+
+    for(let i=0;i<42;i++){
+      this.add.circle(Phaser.Math.Between(0,W),Phaser.Math.Between(0,H),Phaser.Math.Between(1,3),0x8d6241,Phaser.Math.FloatBetween(.06,.24));
+    }
+
+    this.add.text(W/2,245,'ASH / SCRAP',{
+      fontFamily:'monospace',fontSize:'54px',color:'#eadfce',fontStyle:'bold',
+      stroke:'#241a14',strokeThickness:8
+    }).setOrigin(.5);
+
+    this.add.text(W/2,310,'NON-FIELD JUNKPUNK RPG',{
+      fontFamily:'monospace',fontSize:'16px',color:'#9f8064'
+    }).setOrigin(.5);
+
+    this.add.rectangle(W/2,455,330,190,0x1d1814).setStrokeStyle(3,0x5d4734);
+    this.add.text(W/2,420,'ASH',{
+      fontFamily:'monospace',fontSize:'40px',color:'#d8d1c6'
+    }).setOrigin(.5);
+    this.add.text(W/2,480,'“まだ使える。”',{
+      fontFamily:'"Noto Sans JP", sans-serif',fontSize:'22px',color:'#c99a66'
+    }).setOrigin(.5);
+
+    const start=this.add.text(W/2,660,'NEW GAME',{
+      fontFamily:'monospace',fontSize:'28px',color:'#f3e2ca',
+      backgroundColor:'#5a3925',padding:{x:34,y:17}
+    }).setOrigin(.5).setInteractive();
+
+    start.on('pointerdown',()=>this.scene.start('Hub'));
+    this.add.text(W/2,725,'TAP TO START',{
+      fontFamily:'monospace',fontSize:'13px',color:'#746252'
+    }).setOrigin(.5);
+  }
 }
