@@ -2,6 +2,10 @@ import Phaser from 'phaser';
 import './style.css';
 import { TitleScene } from './scenes/TitleScene';
 import { WorkshopScene } from './scenes/WorkshopScene';
+import { ScrapyardScene } from './scenes/ScrapyardScene';
+import { GameState } from './state/GameState';
+
+GameState.load();
 
 new Phaser.Game({
  type: Phaser.AUTO,
@@ -12,5 +16,5 @@ new Phaser.Game({
  pixelArt: true,
  physics: { default: 'arcade', arcade: { debug: false } },
  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
- scene: [TitleScene, WorkshopScene]
+ scene: [TitleScene, WorkshopScene, ScrapyardScene]
 });
