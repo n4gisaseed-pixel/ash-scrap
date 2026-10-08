@@ -111,6 +111,10 @@ export class ExploreScene extends Phaser.Scene {
         ? '錆びた梁に青い布が結ばれていた。布の先には、崩落区画へ続く足跡がある。'
         : '圧力筒の刻印は、崩落区画の古い保守機と同じ規格だ。弁を動かせるかもしれない。';
     this.result = `${part.name} +1   /   SCRAP +3   /   EXP +12${levels.length ? `\nASH Lv.${levels[levels.length - 1]} に上がった。HP上限 +8` : ''}\n${part.line}\n${clue}`;
+    if (GameState.data.chapter0.scrapyardSalvage.length === 3 && !GameState.data.chapter0.azamiRecruited) {
+      this.scene.start('Story', { sequence: 'azami-rescue' });
+      return;
+    }
     this.scene.restart({ location: 'Scrapyard', result: this.result, resultSpeaker: 'ash' });
   }
 

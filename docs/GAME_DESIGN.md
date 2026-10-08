@@ -2,18 +2,19 @@
 
 ## Current playable slice
 
-The Chapter 0 hub is Azami's field map: a fixed-screen route board for the
-scrapyard, Iron-scrap Town and the old factory. Route access follows story
-progress, while workshop assembly and recovery remain available at the hub.
-Expedition choices show their week cost, danger and likely gains before the
-player commits. Salvage and battle award experience; Ash's Force and maximum HP
-grow when he levels. Rest restores HP and spends one week.
+The game follows a roughly 45–60 minute campaign: a prologue and five World
+Core chapters, followed by a short defense finale. After the prologue, each
+chapter has six deliberate field actions and a tactical guardian fight. Story
+events start automatically after actions three and six; the player chooses
+how to prepare, while the route and its revelations move forward on their own.
 
 The prologue opens in Ash's leaking workshop, follows the old rail line into a
 collapsed scrapyard, and brings the pair to Iron-scrap Town. Its first question
 is practical: can Ash repair the auxiliary furnace without destroying the
-settlement's heat supply? Azami's map changes as they discover what the old
-routes and machines still do.
+settlement's heat supply? The three required parts are recovered over three
+expedition turns; the rescue scene then starts automatically. The five regions
+continue this rhythm and reveal the consequences of the old hero's route one
+piece at a time.
 
 ## High concept
 
@@ -82,9 +83,8 @@ the return. Structured reward rows and item icons remain planned.
   attacks, survival/HEAT and scrap tools/analysis respectively.
 - Equipment, gadgets and skills come from crafting, discoveries and people met
   along the route.
-- The long-term party target is Ash plus at most two companions. Azami is the
-  first fixed companion; later support characters are introduced through
-  regional story events.
+- The campaign party is Ash and Azami. Local people join scenes and help with
+  regional preparations, while Azami remains the autonomous companion in battle.
 
 ### Existing command verbs
 
@@ -107,6 +107,12 @@ four large primary choices at once.
   still feels inhabited.
 - World Core repairs produce small visible changes before large environmental
   recovery.
+- The five regional chapters use an automatic 3+3 action rhythm. Scouting,
+  salvage and repairs all advance the same route, but change Insight, materials,
+  weapon strength and HP differently.
+- A full-screen illustration hides dialogue portraits. Two-character dialogue
+  places Ash on the left and Azami or Mina on the right; the active speaker is
+  brighter and changes expression.
 
 ## Portrait UI rules
 
@@ -125,8 +131,8 @@ full UI adaptation notes.
 
 ## Current prototype
 
-The playable prologue connects the workshop, journey, scrapyard salvage,
-Azami's rescue, PILE-01 craft, Mina's settlement and the factory encounter.
-Crossfades, a rescue illustration and a return-to-town event lead into the
-first route toward Whitewood. Chapter 1 and later Core regions remain planned
-content.
+The playable campaign connects the workshop, scrapyard salvage, Azami's rescue,
+PILE-01 craft, Mina's settlement, the factory encounter, five data-driven Core
+chapters and the new-hero finale. Every region has bespoke story scenes,
+illustrated environment art, a material, a guardian and a visible recovery
+moment. Longer optional dialogue and challenge routes remain future expansion.

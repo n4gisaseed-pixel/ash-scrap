@@ -175,5 +175,16 @@ they are directions toward people who need help now.
 - Prologue plus five Core chapters, followed by a short defense finale.
 - Each region has one safe option, one riskier route, one character/event beat
   and one boss encounter. Not every trip needs a battle.
-- Current playable prototype remains the Prologue. The regional chapters are
-  story plans, not implemented content yet.
+- The playable campaign targets roughly one hour at a relaxed reading pace.
+- After each Core unlocks, its six expedition turns are split into two stages.
+  The third action automatically reveals the local story and a clue; the sixth
+  automatically opens the guardian encounter. The player chooses how to spend
+  those turns on scouting, salvage or repairs, so preparation changes without
+  stopping the story route.
+- Each region has a distinct material that can be integrated into PILE-01,
+  increasing weapon strength. Scouting raises Insight, which reduces that
+  region guardian's attack. Repairs restore HP and can reveal more of the
+  machine's history.
+- The five Core chapters, their regional guardians, the reactivation crisis,
+  new hero battle and ending are implemented as a playable campaign. Further
+  optional routes, side stories and challenge encounters remain expansion work.

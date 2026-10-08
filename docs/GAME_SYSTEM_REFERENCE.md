@@ -59,6 +59,10 @@ portrait canvas.
   regional conditions and raises risk; it never creates an unrecoverable save.
 - Ordinary travel and routine encounters resolve as short event results. A
   named guardian or major story confrontation enters a full tactical battle.
+- The playable campaign targets about one hour. Each Core chapter offers six
+  field actions; the third action starts a story beat and the sixth starts its
+  guardian scene automatically. The player chooses preparation, not whether
+  the story advances.
 
 ### Expedition choices
 
@@ -122,18 +126,18 @@ and small head icons in the battle order.
 
 ## Current implementation gap
 
-The playable Prologue now shows a generated, hand-drawn route map; main actions
-expose their week cost and a short risk/reward summary. Salvage and battle grant
-experience, Ash levels automatically raise Force and HP, and resting spends a
-week to restore HP. Existing saves receive defaults for the new fields.
+The playable campaign now continues from the Prologue into all five Cores and
+the finale. Its regional actions trade time for Insight, materials, weapon
+strength or HP. Salvage and battle grant experience, Ash levels automatically
+raise Force and HP, and regional material can tune PILE-01. Existing saves
+receive defaults for campaign state.
 
-Still open: recommended-level previews, stat allocation, richer event result
-cards, multiple companions, data-driven location/event definitions and a
-structured battle order queue. Battle uses a concise inline order forecast and
-one automatic companion behavior.
+Still open: stat allocation, richer event reward rows, alternate companions
+and a structured battle order queue. Battle uses a concise inline order
+forecast and Azami's automatic support behavior.
 
-The current screen pass uses reference-matched Ash/Azami bust-up expressions in
-dialogue, crossfaded story backdrops, a rescue CG, a speaker nameplate, readable
-message contrast and explicit Japanese line breaks. Typewriter text can be
-finished with a tap. The post-action result replaces narration while preserving
-choices, so salvage and rescue actions remain available after results appear.
+The current screen pass uses reference-matched bust-up expressions and puts two
+speakers on opposite sides of story dialogue. Cinematic illustrations hide
+portraits to keep the composition clear. Regional backdrops, guardian artwork,
+crossfades, brief flashes, a speaker nameplate, Japanese-safe wrapping and
+typewriter text support the campaign pacing.

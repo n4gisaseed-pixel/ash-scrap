@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GameState, PROLOGUE_WEEK_LIMIT } from '../state/GameState';
 import { addCommandButton } from '../ui/CommandButton';
 import { addDialogueBox } from '../ui/DialogueBox';
+import { REGIONS } from '../data/regions';
 
 export class HubScene extends Phaser.Scene {
   private dialogue!: ReturnType<typeof addDialogueBox>;
@@ -26,16 +27,16 @@ export class HubScene extends Phaser.Scene {
     this.add.image(270, 270, 'azami-map').setDisplaySize(480, 330);
     this.add.rectangle(270, 270, 480, 330, 0xffffff, 0).setStrokeStyle(1, 0x8797a1, 0.85);
     this.mapMarker(228, 339, '鉄屑街', 0x3e91a2, true);
-    if (GameState.data.chapter0.factoryInspected || GameState.data.chapter0.factoryBossDefeated) {
+    if (!GameState.data.chapter0.endingSeen && (GameState.data.chapter0.factoryInspected || GameState.data.chapter0.factoryBossDefeated)) {
       this.mapMarker(425, 344, '旧工場', 0xc26d47, GameState.data.chapter0.factoryBossDefeated);
     }
-    if (GameState.data.chapter0.endingSeen) this.mapMarker(420, 158, '白い森', 0x619c85, false);
-    const routeName = GameState.data.chapter0.endingSeen ? '白い森 / GREEN CORE' : '鉄屑街 / 旧工場';
+    const nextRegion = REGIONS[GameState.data.campaign.unlockedRegion];
+    const routeName = GameState.data.chapter0.endingSeen ? nextRegion ? `${nextRegion.name} / ${nextRegion.core}` : '五つの核が再接続された' : '鉄屑街 / 旧工場';
     this.add.text(30, 447, '次の目的地', { fontFamily: '"Noto Sans JP", sans-serif', fontSize: '14px', color: '#b5cad0' });
     this.add.text(30, 471, routeName, { fontFamily: '"Noto Sans JP", sans-serif', fontSize: '21px', color: '#f0e7da', fontStyle: 'bold' });
-    this.add.text(510, 480, GameState.data.chapter0.endingSeen ? 'MAP UPDATED' : `${this.progressCount()} / 3 部品`, { fontFamily: 'monospace', fontSize: '13px', color: '#edc990' }).setOrigin(1, 0);
+    this.add.text(510, 480, GameState.data.chapter0.endingSeen ? `${GameState.data.campaign.coresRepaired.length} / 5 核` : `${this.progressCount()} / 3 部品`, { fontFamily: 'monospace', fontSize: '13px', color: '#edc990' }).setOrigin(1, 0);
 
-    this.dialogue = addDialogueBox(this, 552, 112, { x: 407, bottom: 435, height: 325 });
+    this.dialogue = addDialogueBox(this, 552, 112);
     const line = this.hubLine();
     this.dialogue.set(this.result ?? line.text, this.result ? 'ash' : line.speaker, this.result ? 'result' : 'dialogue', true);
 
@@ -43,6 +44,10 @@ export class HubScene extends Phaser.Scene {
     addCommandButton(this, { x: 152, y: 660, width: 224, height: 56, title: crafted ? 'PILE-01 点検' : '工房で作る', subtitle: crafted ? '武器の状態を確認' : '1週 / 3種の部品', onPress: () => this.craft() });
     const needsRest = GameState.data.hp < GameState.data.maxHp;
     addCommandButton(this, { x: 388, y: 660, width: 224, height: 56, title: '休息・回復', subtitle: needsRest ? '1週 / HP全快' : 'HPは最大 / 回復不要', onPress: () => this.rest(), enabled: needsRest });
+    if (GameState.data.chapter0.endingSeen) {
+      this.createCampaignCommands();
+      return;
+    }
     this.command(740, '廃材置き場へ', `1週 / 安全 / 素材とEXP / ${this.progressCount()}/3`, () => this.goScrapyard());
     this.command(820, '鉄屑街へ', GameState.data.chapter0.houndDefeated ? (GameState.data.chapter0.townVisited ? '無料 / 町の人と古い記録' : '初回1週 / 町の人と古い記録') : '巡回機を止めるとルートが開く', () => this.goTown(), GameState.data.chapter0.houndDefeated);
     this.command(900, GameState.data.chapter0.factoryBossDefeated ? '補助炉の記録を見る' : '旧工場へ', !GameState.data.chapter0.townVisited ? '鉄屑街で炉の記録を聞く' : !crafted ? 'PILE-01推奨 / 工房で組み立て' : '調査1週 / 守衛機戦1週・高危険', () => this.scene.start('Explore', { location: 'Factory' }), GameState.data.chapter0.townVisited && crafted);
@@ -59,6 +64,34 @@ export class HubScene extends Phaser.Scene {
       return;
     }
     this.scene.start('Explore', { location: 'Scrapyard' });
+  }
+
+  private createCampaignCommands() {
+    const campaign = GameState.data.campaign;
+    const next = REGIONS[campaign.unlockedRegion];
+    REGIONS.forEach((region, index) => {
+      const node = [
+        [420, 158], [90, 224], [338, 203], [442, 348], [268, 147]
+      ][index];
+      if (node) this.mapMarker(node[0], node[1], region.name, index < campaign.unlockedRegion ? 0x77ae83 : 0x62a5bf, index < campaign.unlockedRegion);
+    });
+    const active = campaign.activeRegion;
+    this.command(740, next ? `${active ? '旅を再開' : '旅に出る'}：${next.name}` : campaign.finaleComplete ? '地図を見直す' : '新しい勇者を迎える',
+      next ? `行動 ${campaign.regionActions}/6 / 3行動で物語が自動進行` : campaign.finaleComplete ? '五つの世界核を修復した' : '最後の物語 / 門前へ',
+      () => this.launchJourney(), Boolean(next) || !campaign.finaleComplete);
+    this.command(820, '工房で旅装を整える', `PILE-01 強度 ${GameState.data.weaponLevel} / HP ${GameState.data.hp}/${GameState.data.maxHp}`,
+      () => this.dialogue.set(`PILE-01 強度 ${GameState.data.weaponLevel}。\n次の旅では、現地の部品を武器に組み込める。`, 'ash'));
+    this.command(900, '鉄屑街へ立ち寄る', 'ミナと住人の様子を見る', () => this.scene.start('Explore', { location: 'Town' }));
+  }
+
+  private launchJourney() {
+    const campaign = GameState.data.campaign;
+    const next = REGIONS[campaign.unlockedRegion];
+    if (!next) {
+      if (!campaign.finaleComplete) this.scene.start('Story', { sequence: 'campaign-finale', regionId: 'demon-castle' });
+      return;
+    }
+    this.scene.start('Journey', { regionId: campaign.activeRegion ?? next.id });
   }
 
   private goTown() {
@@ -107,6 +140,8 @@ export class HubScene extends Phaser.Scene {
 
   private hubLine(): { text: string; speaker: 'ash' | 'azami' | 'mina' } {
     const p = GameState.data.chapter0;
+    if (p.endingSeen && GameState.data.campaign.finaleComplete) return { text: '新しい勇者は剣を下ろした。アザミの地図は、まだ白紙のままの場所を示している。', speaker: 'azami' };
+    if (p.endingSeen && GameState.data.campaign.activeRegion) return { text: '三度行動すると、残された記録がつながる。あと三度で、その地方の守護機が動き出す。', speaker: 'ash' };
     if (p.endingSeen) return { text: 'アザミは古地図に、新しい道筋を青い糸で描き足した。\n「白い森の奥から、まだ返事があるよ。」', speaker: 'azami' };
     if (p.factoryBossDefeated) return { text: '補助炉の脈動が、乾いた貯水槽まで届いた。\n「水が一滴。地図にも、知らない線が出た！」', speaker: 'azami' };
     if (p.factoryInspected) return { text: '炉を壊さずに止める方法は見つかった。\n圧力を抜いた今なら、守衛機に向き合える。', speaker: 'ash' };

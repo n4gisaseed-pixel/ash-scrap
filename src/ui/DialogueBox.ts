@@ -21,7 +21,10 @@ const STANDEE_TEXTURES: Record<DialogueSpeaker, Record<DialogueExpression, strin
     neutral: 'ash-neutral', amused: 'ash-amused', determined: 'ash-determined',
     surprised: 'ash-surprised', joyful: 'ash-amused', worried: 'ash-neutral'
   },
-  mina: 'mina-standee',
+  mina: {
+    neutral: 'mina-neutral', amused: 'mina-smile', determined: 'mina-determined',
+    surprised: 'mina-neutral', joyful: 'mina-smile', worried: 'mina-worried'
+  },
   azami: {
     neutral: 'azami-neutral', amused: 'azami-joyful', determined: 'azami-determined',
     surprised: 'azami-joyful', joyful: 'azami-joyful', worried: 'azami-worried'
@@ -118,9 +121,7 @@ export function addDialogueBox(
           scene.tweens.add({ targets: actor, alpha: 1, duration: 180, ease: 'Sine.out' });
         }
         if (placement) {
-          const widthForPortrait = activeSpeaker === 'mina'
-            ? placement.height * .68
-            : placement.width ?? placement.height;
+          const widthForPortrait = placement.width ?? placement.height;
           actor.setDisplaySize(widthForPortrait, placement.height);
         }
         actor.setVisible(true);

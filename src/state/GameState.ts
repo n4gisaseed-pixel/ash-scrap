@@ -1,3 +1,5 @@
+import type { RegionId } from '../data/regions';
+
 export type Inventory = Record<string, number>;
 
 const SAVE_KEY = 'ash-scrap-save-v2';
@@ -25,10 +27,21 @@ export interface SaveData {
   level: number;
   exp: number;
   nextExp: number;
+  weaponLevel: number;
   force: number;
   grit: number;
   ingenuity: number;
   chapter0: ChapterProgress;
+  campaign: CampaignProgress;
+}
+
+export interface CampaignProgress {
+  unlockedRegion: number;
+  activeRegion: RegionId | null;
+  regionActions: number;
+  regionInsight: number;
+  coresRepaired: RegionId[];
+  finaleComplete: boolean;
 }
 
 const initial: SaveData = {
@@ -41,6 +54,7 @@ const initial: SaveData = {
   level: 1,
   exp: 0,
   nextExp: 30,
+  weaponLevel: 0,
   force: 0,
   grit: 0,
   ingenuity: 0,
@@ -54,6 +68,14 @@ const initial: SaveData = {
     factoryInspected: false,
     factoryBossDefeated: false,
     endingSeen: false
+  },
+  campaign: {
+    unlockedRegion: 0,
+    activeRegion: null,
+    regionActions: 0,
+    regionInsight: 0,
+    coresRepaired: [],
+    finaleComplete: false
   }
 };
 
@@ -70,10 +92,11 @@ export class GameState {
       const saved = JSON.parse(raw) as Partial<SaveData> & {
         day?: number;
         chapter0?: Partial<ChapterProgress> & { lukaRecruited?: boolean };
+        campaign?: Partial<CampaignProgress>;
       };
       const oldChapter: Partial<ChapterProgress> & { lukaRecruited?: boolean } = saved.chapter0 ?? {};
       const { lukaRecruited, ...chapterFlags } = oldChapter;
-      const { day: oldDay, chapter0: _oldChapter, ...savedFields } = saved;
+      const { day: oldDay, chapter0: _oldChapter, campaign: _oldCampaign, ...savedFields } = saved;
       this.data = {
         ...structuredClone(initial),
         ...savedFields,
@@ -84,10 +107,16 @@ export class GameState {
         force: saved.force ?? initial.force,
         grit: saved.grit ?? initial.grit,
         ingenuity: saved.ingenuity ?? initial.ingenuity,
+        weaponLevel: saved.weaponLevel ?? initial.weaponLevel,
         chapter0: {
           ...initial.chapter0,
           ...chapterFlags,
           azamiRecruited: chapterFlags.azamiRecruited ?? lukaRecruited ?? false
+        },
+        campaign: {
+          ...initial.campaign,
+          ...saved.campaign,
+          coresRepaired: saved.campaign?.coresRepaired ?? []
         }
       };
     } catch {

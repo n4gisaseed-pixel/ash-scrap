@@ -48,9 +48,13 @@ Settlement/workshop -> review map and party -> choose a week-costing expedition
 or work action -> resolve event/result -> improve Ash's gear and skills ->
 unlock a route or World Core -> return.
 
-## Prologue target
-Workshop -> Scrapyard / meet Azami -> build PILE-01 -> repair the local furnace
-relay -> discover the World Core network -> unlock Whitewood / Green Core.
+## Campaign target
+Build a roughly one-hour campaign: Workshop -> Scrapyard / meet Azami -> build
+PILE-01 -> repair the local furnace relay -> Whitewood -> Dry Lake -> Wind
+Route -> Furnace City -> Old Demon Castle -> the new-hero encounter. In each
+Core region, story should advance automatically after three and six deliberate
+field actions; choices affect preparation and rewards, not whether the main
+story continues.
 
 The full campaign plan is in `docs/STORY_BIBLE.md`; the reference-system
 adaptation is in `docs/GAME_SYSTEM_REFERENCE.md`.

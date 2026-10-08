@@ -62,7 +62,6 @@ export function addCommandButton(scene: Phaser.Scene, options: CommandButtonOpti
       const dialogue = scene.data?.get('activeDialogueBox') as { isTyping?: () => boolean; finish?: () => void } | undefined;
       if (dialogue?.isTyping?.()) {
         dialogue.finish?.();
-        return;
       }
       onPress();
     });

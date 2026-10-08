@@ -34,7 +34,7 @@
 - [x] battle rewards stay visible until the player confirms their return
 - [x] gold RESULT state for salvage, rescue, craft, rest and battle outcomes
 - [x] reusable data-driven story sequences with typewriter dialogue and scene transitions
-- [ ] data-driven location definitions
+- [x] data-driven region definitions
 
 ## Milestone 2 — RPG systems
 - [x] enemy data layer
@@ -75,22 +75,27 @@ settlement, the old furnace and a companion battle. The ending connects the
 repaired auxiliary relay to the first World Core signal.
 
 ## Milestone 5 — Campaign systems
-- [x] Story bible for the prologue, five Cores and the new-hero finale
+- [x] Story bible and playable story for the prologue, five Cores and new-hero finale
 - [x] Reference research and adaptation notes for pacing, battle order and UI
 - [x] 12-week Prologue budget and late Furnace Warden pressure increase
 - [x] Recommended level and encounter danger forecasts
 - [ ] Structured reward rows and item icons in event result cards
 - [ ] Stat allocation and multiple growth paths (Force currently grows automatically)
-- [ ] Data-driven event and location definitions
+- [x] Data-driven event sequences and location definitions
+- [x] Automatic story triggers after three and six regional actions
+- [x] Distinct guardian encounter and regional material for all five Cores
+- [x] Campaign-ending new-hero battle and epilogue
 - [x] Map/route screen for the prologue region
-- [ ] Map/route screen for discovered and unknown Cores
+- [x] Map/route screen for discovered and unknown Cores
 - [ ] Action-order queue with known ally intent and hidden enemy intent
-- [ ] Later regional companion/support events
+- [ ] Later regional companions and optional support events
 
 ## Milestone 6 — Presentation
 - [x] generated Ash, Mina and Azami portraits
 - [x] Ash and Azami bust-up dialogue expressions
 - [x] rescue key illustration with crossfade and transition flash
+- [x] Five generated World Core environments and five regional guardian portraits
+- [x] Two-sided story portraits with speaker emphasis and illustration-only scenes
 - [x] reference-matched full-body Ash and Azami standees
 - [x] post-apocalyptic title key art for Ash and Azami
 - [x] first generated enemy illustrations
@@ -108,7 +113,8 @@ text. Story sequences crossfade between illustrated travel backdrops; the
 scrapyard rescue has a dedicated full-screen CG. Commands use larger touch
 targets, clearer contrast and a short input lock against accidental repeat
 activation. The supplied Ash/Azami key art remains the character reference.
-Physical-phone review, audio, bespoke UI artwork and later chapters remain open.
+Physical-phone full-campaign review, audio, bespoke UI artwork and optional
+regional side stories remain open.
 
 See [GAME_SYSTEM_REFERENCE.md](GAME_SYSTEM_REFERENCE.md) for the sources and
 adaptation. See [STORY_BIBLE.md](STORY_BIBLE.md) for the campaign outline.

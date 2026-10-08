@@ -19,10 +19,19 @@ export class TitleScene extends Phaser.Scene {
     for (const expression of ['neutral', 'joyful', 'worried', 'determined']) {
       this.load.image(`azami-${expression}`, `assets/azami-${expression}.webp`);
     }
+    for (const expression of ['neutral', 'smile', 'worried', 'determined']) {
+      this.load.image(`mina-${expression}`, `assets/mina-${expression}.webp`);
+    }
     this.load.image('azami-rescue-cg', 'assets/azami-rescue-cg.webp');
     this.load.image('mina-standee', 'assets/mina-standee.webp');
     this.load.image('workshop-bg', 'assets/workshop-bg.webp');
     this.load.image('journey-road', 'assets/journey-road.webp');
+    for (const asset of ['whitewood', 'dry-lake', 'storm-route', 'furnace-city', 'demon-core']) {
+      this.load.image(asset, `assets/${asset}.webp`);
+    }
+    for (const portrait of ['green-guardian', 'water-sentinel', 'wind-golem', 'fire-warden', 'crown-sentinel', 'young-hero']) {
+      this.load.image(`enemy-${portrait}`, `assets/${portrait}.webp`);
+    }
     this.load.spritesheet('combat-icons', 'assets/combat-icons.webp', { frameWidth: 627, frameHeight: 627 });
   }
 
@@ -48,7 +57,7 @@ export class TitleScene extends Phaser.Scene {
     this.add.text(width / 2, 341, '魔王が倒されて、七年。\nそれでも世界は、まだ直りきっていない。', {
       fontFamily: '"Noto Sans JP", sans-serif', fontSize: '17px', color: '#f0dfca', align: 'center', lineSpacing: 5
     }).setOrigin(.5);
-    this.add.text(width / 2, 400, 'PROLOGUE  ·  THE MAP AFTER THE END', {
+    this.add.text(width / 2, 400, 'FIVE WORLD CORES  ·  ONE LONG JOURNEY', {
       fontFamily: 'monospace', fontSize: '10px', color: '#d0a578'
     }).setOrigin(.5);
 

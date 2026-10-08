@@ -3,7 +3,8 @@ import { ENEMIES, type EnemyId } from '../data/enemies';
 import { GameState, PROLOGUE_WEEK_LIMIT } from '../state/GameState';
 import { addCommandButton } from '../ui/CommandButton';
 import { addDialogueBox } from '../ui/DialogueBox';
-import { addArtPanel, addArtShade } from '../ui/ArtPanel';
+import { addArtPanel, addArtShade, addTexturePanel } from '../ui/ArtPanel';
+import { getRegion, REGIONS } from '../data/regions';
 
 export class BattleScene extends Phaser.Scene {
   private enemyId: EnemyId = 'scrap-hound';
@@ -39,6 +40,10 @@ export class BattleScene extends Phaser.Scene {
     this.latePressure = this.enemyId === 'factory-core' ? Math.min(8, overdueWeeks * 2) : 0;
     this.enemyAttackMin = enemy.attackMin + this.latePressure;
     this.enemyAttackMax = enemy.attackMax + this.latePressure;
+    if (enemy.region && GameState.data.campaign.regionInsight >= 2) {
+      this.enemyAttackMin = Math.max(4, this.enemyAttackMin - 3);
+      this.enemyAttackMax = Math.max(8, this.enemyAttackMax - 3);
+    }
     GameState.data.week += 1;
     GameState.save();
     this.heat = 0;
@@ -52,25 +57,31 @@ export class BattleScene extends Phaser.Scene {
 
   create() {
     const enemy = ENEMIES[this.enemyId];
-    const boss = this.enemyId === 'factory-core';
+    const boss = this.enemyId === 'factory-core' || Boolean(enemy.region) || this.enemyId === 'new-hero';
+    const regionIndex = enemy.region ? REGIONS.findIndex((region) => region.id === enemy.region) : -1;
+    const recommendedLevel = enemy.region ? 3 + regionIndex * 2 : this.enemyId === 'new-hero' ? 13 : boss ? 3 : 2;
     this.cameras.main.setBackgroundColor('#0c0b09');
     this.add.rectangle(270, 480, 516, 948, 0x151719).setStrokeStyle(2, 0x71808a);
-    this.add.text(30, 22, boss ? 'BOSS / 旧工場' : 'ENCOUNTER / 廃材置き場', {
+    this.add.text(30, 22, enemy.region ? `BOSS / ${getRegion(enemy.region).name}` : this.enemyId === 'new-hero' ? 'FINAL ENCOUNTER / 旧魔王城' : boss ? 'BOSS / 旧工場' : 'ENCOUNTER / 廃材置き場', {
       fontFamily: '"Noto Sans JP", sans-serif', fontSize: '13px', color: '#9eb5bf'
     });
     this.add.text(30, 47, enemy.name, {
       fontFamily: 'monospace', fontSize: '23px', color: '#f0e8dc', fontStyle: 'bold'
     });
-    this.add.text(30, 82, `推奨Lv.${boss ? 3 : 2}   /   ${boss ? '高危険' : '中危険'}   /   退却可能`, {
+    this.add.text(30, 82, `推奨Lv.${recommendedLevel}   /   ${boss ? '高危険' : '中危険'}   /   退却可能`, {
       fontFamily: '"Noto Sans JP", sans-serif', fontSize: '12px', color: '#d9b98d'
     });
 
     const backdropFrame = boss ? 3 : 1;
-    addArtPanel(this, backdropFrame, 270, 260, 468, 300, 0.5, 0.45);
+    const backdropTexture = enemy.region ? getRegion(enemy.region).background : this.enemyId === 'new-hero' ? 'demon-core' : null;
+    if (backdropTexture) addTexturePanel(this, backdropTexture, 270, 260, 468, 300, .5, .42);
+    else addArtPanel(this, backdropFrame, 270, 260, 468, 300, 0.5, 0.45);
     addArtShade(this, 270, 260, 468, 300, 0.5);
     this.add.rectangle(270, 260, 468, 300, 0xb78a62, 0).setStrokeStyle(2, 0xa57b58, 0.9);
     this.add.rectangle(270, 260, 260, 260, 0x171a1c).setStrokeStyle(2, 0xb7c9cc);
-    this.enemyArt = addArtPanel(this, boss ? 5 : 4, 270, 260, 252, 252, 0.5, 0.5);
+    this.enemyArt = enemy.portrait
+      ? this.add.image(270, 260, `enemy-${enemy.portrait}`).setDisplaySize(252, 252)
+      : addArtPanel(this, boss ? 5 : 4, 270, 260, 252, 252, 0.5, 0.5);
     this.add.rectangle(270, 260, 252, 252, 0xffffff, 0).setStrokeStyle(2, 0xb7c9cc);
 
     this.enemyHpText = this.add.text(270, 414, '', {
@@ -119,7 +130,7 @@ export class BattleScene extends Phaser.Scene {
   private attack() {
     if (this.ended || this.busy) return;
     this.setActionsEnabled(false);
-    const base = (this.hasPile() ? 20 : 14) + GameState.data.force * 2;
+    const base = (this.hasPile() ? 20 : 14) + GameState.data.force * 2 + GameState.data.weaponLevel * 5;
     const bonus = Math.floor(this.heat / 25) * 3;
     const damage = base + bonus;
     this.heat = Math.min(100, this.heat + 18);
@@ -135,7 +146,7 @@ export class BattleScene extends Phaser.Scene {
     if (this.ended || this.busy || this.gadgetCharges <= 0) return;
     this.setActionsEnabled(false);
     this.gadgetCharges -= 1;
-    const damage = (this.hasPile() ? 34 : 23) + GameState.data.ingenuity * 2 + (this.gadgetBoosted ? 12 : 0) + Math.floor(this.heat / 40) * 3;
+    const damage = (this.hasPile() ? 34 : 23) + GameState.data.ingenuity * 2 + GameState.data.weaponLevel * 7 + (this.gadgetBoosted ? 12 : 0) + Math.floor(this.heat / 40) * 3;
     this.gadgetBoosted = false;
     this.tuned = false;
     this.heat = Math.min(100, this.heat + 28);
@@ -237,17 +248,27 @@ export class BattleScene extends Phaser.Scene {
     GameState.data.scrap += enemy.rewardScrap;
     GameState.data.inventory[enemy.rewardItem] = (GameState.data.inventory[enemy.rewardItem] ?? 0) + 1;
     if (this.enemyId === 'scrap-hound') GameState.data.chapter0.houndDefeated = true;
-    else GameState.data.chapter0.factoryBossDefeated = true;
+    else if (this.enemyId === 'factory-core') GameState.data.chapter0.factoryBossDefeated = true;
     const exp = this.enemyId === 'factory-core' ? 42 : 26;
     const levels = GameState.gainExp(exp);
     GameState.save();
     this.dialogue.set(`${enemy.name} を停止。\n${enemy.victory}\n${enemy.rewardItem} +1 / SCRAP +${enemy.rewardScrap} / EXP +${exp}${levels.length ? `\nASH Lv.${levels[levels.length - 1]} / FORCE +1 / HP上限 +8` : ''}`, 'ash', 'result', true);
     this.cameras.main.flash(260, 221, 163, 96);
     this.refresh();
-    const destination = this.enemyId === 'factory-core' ? 'Explore' : 'Hub';
-    this.showOutcome('帰還して結果を確定', '報酬を確認 / 次の行動へ', () => {
-      this.scene.start(destination, { location: 'Factory' });
-    });
+    if (enemy.region) {
+      this.showOutcome('旅の記録を続ける', '報酬を確認 / 核の修復へ', () => {
+        this.scene.start('Story', { sequence: 'region-epilogue', regionId: enemy.region });
+      });
+    } else if (this.enemyId === 'new-hero') {
+      this.showOutcome('剣を収めて話をする', '戦いのあとに残ったものを確かめる', () => {
+        this.scene.start('Story', { sequence: 'finale-epilogue', regionId: 'demon-castle' });
+      });
+    } else {
+      const destination = this.enemyId === 'factory-core' ? 'Explore' : 'Hub';
+      this.showOutcome('帰還して結果を確定', '報酬を確認 / 次の行動へ', () => {
+        this.scene.start(destination, { location: 'Factory' });
+      });
+    }
   }
 
   private defeat() {
@@ -269,6 +290,15 @@ export class BattleScene extends Phaser.Scene {
   private retreat() {
     if (this.busy || this.ended) return;
     this.setActionsEnabled(false);
+    const enemy = ENEMIES[this.enemyId];
+    if (enemy.region) {
+      this.scene.start('Journey', { regionId: enemy.region, result: '守護機との距離を取り、足場を立て直した。6行動の調査は完了している。', resultSpeaker: 'ash' });
+      return;
+    }
+    if (this.enemyId === 'new-hero') {
+      this.scene.start('Hub');
+      return;
+    }
     const location = this.enemyId === 'factory-core' ? 'Factory' : 'Scrapyard';
     this.scene.start('Explore', { location });
   }

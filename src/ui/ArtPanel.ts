@@ -14,6 +14,20 @@ export function addArtPanel(
   focusY = 0.5,
   textureKey = 'chapter0-art'
 ) {
+  return addTexturePanel(scene, textureKey, x, y, width, height, focusX, focusY, frame);
+}
+
+export function addTexturePanel(
+  scene: Phaser.Scene,
+  textureKey: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  focusX = 0.5,
+  focusY = 0.5,
+  frame: string | number = 0
+) {
   const textureFrame = scene.textures.get(textureKey).get(frame);
   const sourceWidth = textureFrame.width;
   const sourceHeight = textureFrame.height;
