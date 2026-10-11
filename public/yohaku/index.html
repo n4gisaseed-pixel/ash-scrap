@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
   <meta name="theme-color" content="#101d29" />
-  <meta name="description" content="高低差とジョブ育成が楽しめる、オリジナルのブラウザ戦術RPG『余白の旅団』試作版 v0.3" />
+  <meta name="description" content="直感タップ操作、危険範囲、攻撃予測を搭載したブラウザ戦術RPG『余白の旅団』試作版 v0.4" />
   <title>余白の旅団 ─ TACTICAL CHRONICLE</title>
   <style>:root{--navy:#101e2b;--deep:#0a1420;--nav2:#142a3c;--cream:#f4e9cc;--paper:#faf4e5;--ink:#283849;--gold:#caa96c;--gold-light:#f0d59b;--blue:#3974a8;--blue-light:#78b5dd;--muted:#a4b0b7;--line:rgba(203,174,116,.38)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080e18;color:var(--cream);font-family:'Noto Sans JP',sans-serif}body{background:radial-gradient(ellipse at 55% 0%,#294151 0%,#0e1927 56%,#080d15 100%)}button,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,select:focus-visible{outline:2px solid #e8cf88;outline-offset:2px}.hidden{display:none!important}
@@ -78,7 +78,7 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
 @media(max-width:700px){.quest-carousel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:43px;gap:5px;overflow:visible;scroll-snap-type:none;padding:0 0 6px}.quest-tile{width:100%;height:43px;min-width:0;flex-basis:auto;padding:5px;gap:4px}.q-ord{font-size:15px}.q-name{font-size:9px;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}.q-icon{font-size:10px}.party-preview-head{margin:10px 1px 5px;font-size:11px}.party-preview{gap:4px}.party-mini{padding:3px;flex-direction:column;align-items:center;gap:3px}.party-mini img{width:34px;height:39px}.party-mini span{text-align:center;font-size:10px}.party-mini small{font-size:8px;white-space:nowrap}.mission-card p{margin:5px 0 7px}.home-view.quests{overflow-y:auto}}
 @media(max-width:700px) and (max-height:700px){.home-view{padding:6px}.quest-carousel{grid-auto-rows:36px}.quest-tile{height:36px}.mission-card{padding:8px}.mission-card h3{font-size:15px;margin:3px 0}.mission-card p{font-size:10px;line-height:1.5}.party-preview-head{margin-top:6px}.party-mini img{height:31px;width:28px}.home-view.quests .dock-hint{display:none}}
 
-/* v0.3 Mobile direct-tap battle UI */
+/* v0.4 Mobile direct-tap battle UI */
 .mission-card{background-image:linear-gradient(115deg,rgba(8,25,40,.94),rgba(9,26,39,.87)),var(--mission-art)!important;background-size:cover;background-position:center}.floating-msg{max-width:69%;padding:8px 12px!important;font-size:12px!important;line-height:1.5}.battle-menu-mobile{display:none;position:absolute;top:42px;right:9px;z-index:4;width:34px;height:33px;border:1px solid #c8a96a;border-radius:5px;color:#f8e7bd;background:#102437e8;box-shadow:0 3px 8px #0008;font-size:17px;touch-action:manipulation}
 @media(max-width:700px){
   .battle-menu-mobile{display:block}
@@ -98,13 +98,43 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
   .home-tab{min-height:49px}
 }
 @media(max-width:700px) and (max-height:610px){.right-panel{flex-basis:164px;height:164px}.commands{grid-auto-rows:40px}.cmd-btn{height:40px;min-height:40px}}
+
+/* v0.4 — deliberate input hierarchy, Fire Emblem-inspired information clarity */
+:root{--tactical-blue:#50bcf3;--tactical-red:#ff7d7f;--soft-cream:#f7e8bd}
+.header{border-bottom:2px solid #e2ba75;box-shadow:0 2px 20px #0008}.battle-titlebar{border-bottom:1px solid #8ba6b84c;background:linear-gradient(105deg,#123a5a,#092039 75%)}
+.phase-tag{font-size:10px;font-weight:800;letter-spacing:.055em;color:#d2efff;border-color:#57caff;background:#123953}
+body[data-phase=enemy] .phase-tag{background:#652633;color:#ffe4de;border-color:#e27f78}
+.stage-shell{background:#233d49}.stage-shell canvas{touch-action:none;cursor:crosshair}
+.mobile-terrain{position:absolute;left:7px;top:48px;z-index:2;padding:5px 8px;max-width:175px;background:#0c2233df;color:#e5eef2;border:1px solid #7c9db899;border-radius:5px;font-size:10px;font-weight:700;pointer-events:none}.stage-tools{position:absolute;right:7px;top:48px;z-index:3;display:grid;gap:6px}
+.stage-tool{display:flex;align-items:center;gap:5px;justify-content:center;min-height:35px;min-width:66px;padding:5px 9px;border:1px solid #a2b4bc91;border-radius:7px;background:#071a2be8;box-shadow:0 3px 10px #0008;color:#f4eacb;font-size:11px;font-weight:700}
+.stage-tool.on{color:#0b2236;background:#90dfff;box-shadow:0 0 0 2px #266aa8,0 2px 12px #73c7e36e}
+.forecast{position:absolute;z-index:4;left:9px;right:9px;bottom:48px;background:linear-gradient(125deg,#071b2cf8,#133451fa);border:1px solid #d4b67f;border-radius:8px;box-shadow:0 9px 23px #000a;padding:8px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;color:#fff1cf;pointer-events:auto}
+.forecast-title{grid-column:1/-1;font-weight:800;font-size:11px;color:#f8db92;letter-spacing:.06em}
+.forecast-target{font-weight:800;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.forecast-nums{font-size:11px;color:#c8dcef;display:flex;gap:10px;align-items:center}.forecast-nums b{color:white}
+.forecast-buttons{display:flex;align-items:center;gap:5px;grid-column:2;grid-row:2/4}
+.forecast-buttons button{height:38px;min-width:62px;padding:0 10px;border-radius:6px;border:1px solid #ab976e;color:#f9e6b9;background:#1d3345;font-weight:800;font-size:12px}
+.forecast-buttons .forecast-go{color:#122a3d;background:linear-gradient(#ffe7a7,#d6ac68);border-color:#fff1c5}
+.enemy-face{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 2px 2px #0008)}.phase-flash{position:absolute;z-index:3;left:0;right:0;top:22%;padding:13px;text-align:center;font:800 20px Georgia,serif;letter-spacing:.14em;color:#f2e5be;background:linear-gradient(90deg,#102c41bb,#134b74f5,#102c41bb);border-block:1px solid #d5ae76;pointer-events:none;opacity:0;transform:translateY(-8px);transition:opacity .14s,transform .14s;text-shadow:0 1px 4px #000a}
+.phase-flash.on{opacity:1;transform:translateY(0)}.phase-flash.enemy{background:linear-gradient(90deg,#401c28bb,#8f343af5,#401c28bb)}
+.cmd-btn{border-radius:7px!important;transition:background .14s,border-color .14s,transform .1s}.cmd-btn:active{transform:scale(.97)}.cmd-btn.active{border-color:#78d4fa!important;background:linear-gradient(#174b70,#17374f)!important}
+.stage-bottom{pointer-events:none}.stage-bottom .zoom-tools{pointer-events:auto}
+.mission-card{border-color:#ddb879aa;box-shadow:0 3px 22px #030f1ed1,inset 0 0 0 1px #5d7b8545}
+@media(max-width:700px){
+ .stage-tools{top:85px;right:6px;gap:4px}.mobile-terrain{top:44px;left:6px;font-size:9px;max-width:130px}.stage-tool{font-size:10px;min-height:34px;min-width:57px;padding:5px 6px;box-shadow:0 2px 8px #0008}
+ .forecast{bottom:42px;left:5px;right:5px;padding:6px 8px;gap:3px 7px}.forecast-title{font-size:10px}.forecast-target{font-size:11px}.forecast-nums{font-size:10px;gap:8px}.forecast-buttons button{height:34px;min-width:53px;padding:0 6px;font-size:11px}
+ .phase-flash{top:20%;font-size:17px;padding:10px}.stage-bottom>span{max-width:calc(100% - 116px)!important;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+ .right-panel{flex-basis:194px!important;height:194px!important}.commands{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:46px}.cmd-btn{height:46px!important}.ability-panel{min-height:29px!important}
+}
+@media(max-width:700px) and (max-height:700px){.right-panel{flex-basis:166px!important;height:166px!important}.commands{grid-auto-rows:38px}.cmd-btn{height:38px!important}.unit-panel{height:37px;min-height:37px}.ability-panel{min-height:22px!important}}
+
 </style>
 </head>
 <body>
   <div class="app" id="app">
     <header class="header">
       <div class="brand"><span class="brand-icon">✧</span><div><h1>余白の旅団</h1><small>Y O H A K U &nbsp; N O &nbsp; R Y O D A N</small></div></div>
-      <div class="head-center"><span class="pill pale">BROWSER TACTICAL RPG</span><span class="version">WEB DEMO v0.3</span></div>
+      <div class="head-center"><span class="pill pale">BROWSER TACTICAL RPG</span><span class="version">WEB DEMO v0.4</span></div>
       <div class="head-meta"><span id="headerGold" class="gold">◈ 0 G</span><button type="button" id="helpBtn" class="head-button" title="遊び方を表示">？</button><button type="button" id="soundBtn" class="head-button" title="効果音 ON/OFF">♫</button></div>
     </header>
     <div class="game-layout">
@@ -123,6 +153,8 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
           <canvas id="battleCanvas" width="1000" height="700" aria-label="アイソメトリック式戦闘マップ"></canvas>
           <div class="stage-vignette"></div>
           <div class="stage-top"><span id="lawBanner">⚖ 境界律：炎術は慎め</span><span id="roundBanner">TURN 01</span></div>
+          <div class="stage-tools"><button id="dangerToggle" type="button" class="stage-tool" aria-pressed="false" title="敵の移動後も含む攻撃範囲">◇ 危険</button><button id="gridToggle" type="button" class="stage-tool on" aria-pressed="true">▦ グリッド</button><button id="resetCamera" type="button" class="stage-tool" title="マップ全体">⌖ 全体</button></div>
+          <div id="mobileTerrain" class="mobile-terrain" aria-live="polite">草地　回避 +10 ／ 高さ 0</div><div id="combatForecast" class="forecast hidden" aria-live="polite"></div><div id="phaseFlash" class="phase-flash" aria-live="polite"></div>
           <div class="stage-bottom"><span id="stageHint">依頼を選び、出撃しましょう。</span><div class="zoom-tools"><button id="zoomOut" type="button" title="縮小">－</button><span id="zoomValue">100%</span><button id="zoomIn" type="button" title="拡大">＋</button></div></div>
           <button id="battleMenuMobile" class="battle-menu-mobile" type="button" aria-label="戦闘から拠点へ戻る">☰</button><div id="floatingMsg" class="floating-msg" aria-live="polite"></div>
           <div id="homeLayer" class="home-layer"></div>
@@ -209,7 +241,7 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
   }
   const store=loadSave();
   function save(){try{localStorage.setItem(KEY,JSON.stringify(store));}catch{/* file:// storage may be unavailable */}}
-  const game={scene:'home',quest:0,tiles:[],units:[],active:null,inspected:null,round:1,turnNum:0,mode:'idle',selectedSkill:null,reachable:[],hover:null,logs:[],moved:false,acted:false,locked:false,busy:false,session:0,lawBroken:false,zoom:1,offsetX:0,offsetY:0,anim:null,particles:[],pendingTimers:[],homeTab:'quests',displayMessage:''};
+  const game={showDanger:false,showGrid:true,pendingAttack:null,moveOrigin:null,lastRoute:[],lastRouteTime:0,phaseTimer:null,lastTeam:null,scene:'home',quest:0,tiles:[],units:[],active:null,inspected:null,round:1,turnNum:0,mode:'idle',selectedSkill:null,reachable:[],hover:null,logs:[],moved:false,acted:false,locked:false,busy:false,session:0,lawBroken:false,zoom:1,offsetX:0,offsetY:0,anim:null,particles:[],pendingTimers:[],homeTab:'quests',displayMessage:''};
   let pointer={down:false,x:0,y:0,lastX:0,lastY:0,drag:false};
   function schedule(fn,ms){let sid=game.session;let t=setTimeout(()=>{game.pendingTimers=game.pendingTimers.filter(q=>q!==t);if(sid===game.session)fn();},ms);game.pendingTimers.push(t);}
   function clearTimers(){game.pendingTimers.forEach(clearTimeout);game.pendingTimers=[];game.session++;}
@@ -239,7 +271,7 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
   function heroStats(p){const j=JOBS[p.job],lv=p.lv||1;return {name:p.name,avatar:p.avatar,job:p.job,team:'player',lv,exp:p.xp||0,ap:p.ap||0,color:p.color,hp:j.hp+(lv-1)*6,maxHp:j.hp+(lv-1)*6,mp:j.mp+(lv-1)*2,maxMp:j.mp+(lv-1)*2,atk:j.atk+(lv-1)*2+store.forge*2,def:j.def+(lv-1),speed:j.speed,move:j.move,jump:j.jump,range:j.range.slice(),x:0,y:0,dir:1};}
   function startBattle(qid=game.quest){
     if(qid>store.unlocked)return;
-    clearTimers();game.quest=qid;game.scene='battle';document.body.dataset.scene='battle';game.tiles=buildMap(QUESTS[qid]);game.turnNum=0;game.round=1;game.mode='idle';game.hover=null;game.inspected=null;game.active=null;game.lawBroken=false;game.logs=[];game.locked=false;game.busy=false;game.zoom=window.innerWidth<=540?1.18:1;game.offsetX=0;game.offsetY=window.innerWidth<=540?45:0;game.particles=[];
+    clearTimers();game.quest=qid;game.scene='battle';document.body.dataset.scene='battle';game.tiles=buildMap(QUESTS[qid]);game.turnNum=0;game.round=1;game.lastTeam=null;game.pendingAttack=null;game.moveOrigin=null;game.lastRoute=[];game.mode='idle';game.hover=null;game.inspected=null;game.active=null;game.lawBroken=false;game.logs=[];game.locked=false;game.busy=false;game.zoom=window.innerWidth<=700?1.35:1;game.offsetX=0;game.offsetY=window.innerWidth<=540?45:0;game.particles=[];
     const q=QUESTS[qid];game.units=store.party.map((p,i)=>({...heroStats(p),id:p.id,x:q.players[i][0],y:q.players[i][1],nextTick:5+i*3}));
     q.enemies.forEach((e,i)=>{const data=ENEMY[e[0]],difficulty=qid*3;game.units.push({...clone(data),id:'e'+i,x:e[1],y:e[2],type:e[0],team:'enemy',maxHp:data.hp+difficulty,hp:data.hp+difficulty,maxMp:0,nextTick:15+i*5,dir:3});});
     $('homeLayer').classList.add('hidden');$('mobileDeployBtn').classList.add('hidden');$('resultLayer').classList.add('hidden');log(`「${q.name}」に出撃した。`,true);log('青い枠の仲間を操作し、敵をすべて倒そう。');nextTurn();updateUI();playSound('tap');
@@ -248,26 +280,26 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
     if(game.scene!=='battle'||game.locked)return;
     const living=game.units.filter(u=>u.hp>0).sort((a,b)=>a.nextTick-b.nextTick||(a.team==='player'?-1:1));
     if(!living.length)return;
-    const u=living[0];game.active=u;game.inspected=u;game.moved=false;game.acted=false;game.mode=u.team==='player'?'smart':'idle';game.reachable=u.team==='player'?reachable(u):[];game.selectedSkill=null;game.turnNum++;game.round=1+Math.floor((game.turnNum-1)/(game.units.length));
+    const u=living[0];game.pendingAttack=null;game.moveOrigin=null;game.lastRoute=[];showForecast();if(game.lastTeam!==u.team){game.lastTeam=u.team;flashPhase(u.team);}game.active=u;game.inspected=u;game.moved=false;game.acted=false;game.mode=u.team==='player'?'smart':'idle';game.reachable=u.team==='player'?reachable(u):[];game.selectedSkill=null;game.turnNum++;game.round=1+Math.floor((game.turnNum-1)/(game.units.length));
     log(`${u.team==='enemy'?'敵':'味方'}「${u.name}」の手番。`);updateUI();
     if(u.team==='enemy'){game.locked=true;schedule(()=>enemyTurn(u),480);}else{game.displayMessage=`${u.name}：移動先か敵を直接タップ`;}
   }
   function endTurn(){
     if(game.scene!=='battle'||!game.active)return;
-    const u=game.active;u.nextTick+=1000/(u.speed||10);game.mode='idle';game.reachable=[];game.selectedSkill=null;game.locked=false;game.busy=false;game.active=null;
+    const u=game.active;game.pendingAttack=null;game.moveOrigin=null;showForecast();u.nextTick+=1000/(u.speed||10);game.mode='idle';game.reachable=[];game.selectedSkill=null;game.locked=false;game.busy=false;game.active=null;
     const outcome=checkOutcome();if(outcome)return;nextTurn();
   }
   function checkOutcome(){if(game.scene!=='battle')return true;if(alive('enemy').length===0){finishBattle(true);return true;}if(alive('player').length===0){finishBattle(false);return true;}return false;}
   function finishBattle(win){
     if(game.scene!=='battle')return;
-    game.scene='result';document.body.dataset.scene='result';game.locked=true;game.active=null;game.mode='idle';game.reachable=[];clearTimers();const q=quest();
+    game.scene='result';game.pendingAttack=null;showForecast();document.body.dataset.scene='result';game.locked=true;game.active=null;game.mode='idle';game.reachable=[];clearTimers();const q=quest();
     let gold=0,lvups=[];
     if(win){gold=q.gold+(game.lawBroken?0:60);store.gold+=gold;store.unlocked=Math.max(store.unlocked,Math.min(QUESTS.length-1,game.quest+1));if(!store.cleared.includes(game.quest))store.cleared.push(game.quest);store.potions=Math.min(99,store.potions+1);store.party.forEach(p=>{p.ap=(p.ap||0)+2;p.xp=(p.xp||0)+q.exp;while(p.xp>=((p.lv||1)*25+20)){p.xp-=p.lv*25+20;p.lv++;lvups.push(p.name);}});save();log('依頼完了。報酬と熟練度を獲得した。',true);playSound('win');}
     else{log('旅団は撤退した。育成データは失われません。',true);}
     $('resultLayer').classList.remove('hidden');$('resultLayer').innerHTML=`<div class="result-content"><div class="result-icon">${win?'✧':'✦'}</div><small style="font:10px Georgia,serif;letter-spacing:.2em;color:#c6ab74">${win?'QUEST COMPLETE':'PARTY DEFEATED'}</small><h2>${win?'依頼達成':'撤退'}</h2><p>${win?'旅団の活躍で街道に平穏が戻った。次の依頼への道が開かれる。':'今回は力及ばず。ジョブ変更や武具の強化を試しましょう。'}</p>${win?`<div class="reward-row"><span>◈ ${gold} G</span><span>EXP +${q.exp}</span><span>AP +2</span><span>回復薬 +1</span></div><p>${game.lawBroken?'境界律を破ったため追加報酬なし':'境界律を守った！ ボーナス +60 G'}</p>${lvups.length?`<p style="color:#b2eeb8">LEVEL UP：${lvups.join('、')}</p>`:''}`:''}<button id="backCamp" class="button-primary" type="button">旅団詰所へ戻る</button></div>`;
     $('backCamp').onclick=showHome;updateUI();
   }
-  function showHome(){clearTimers();game.scene='home';document.body.dataset.scene='home';game.active=null;game.inspected=null;game.tiles=buildMap(QUESTS[game.quest]);game.mode='idle';game.zoom=window.innerWidth<=540?1.18:1;game.offsetX=0;game.offsetY=window.innerWidth<=540?45:0;game.locked=false;game.logs=[];log('旅団詰所に戻った。出撃の準備を整えよう。');$('resultLayer').classList.add('hidden');$('homeLayer').classList.remove('hidden');$('mobileDeployBtn').classList.remove('hidden');updateUI();renderHome();}
+  function showHome(){clearTimers();game.scene='home';game.pendingAttack=null;game.moveOrigin=null;showForecast();document.body.dataset.scene='home';game.active=null;game.inspected=null;game.tiles=buildMap(QUESTS[game.quest]);game.mode='idle';game.zoom=window.innerWidth<=700?1.35:1;game.offsetX=0;game.offsetY=window.innerWidth<=540?45:0;game.locked=false;game.logs=[];log('旅団詰所に戻った。出撃の準備を整えよう。');$('resultLayer').classList.add('hidden');$('homeLayer').classList.remove('hidden');$('mobileDeployBtn').classList.remove('hidden');updateUI();renderHome();}
   function setQuest(id){if(id>store.unlocked)return;game.quest=id;game.tiles=buildMap(QUESTS[id]);renderHome();updateUI();}
   function changeJob(id,job){if(game.scene!=='home'||!JOBS[job])return;const p=store.party.find(u=>u.id===id);if(!p)return;p.job=job;save();renderHome();updateUI();playSound();}
   function forge(){const price=150+store.forge*120;if(store.forge>=6){announce('これ以上は強化できません');return;}if(store.gold<price){announce('お金が足りません');return;}store.gold-=price;store.forge++;save();renderHome();updateUI();announce('武具を鍛えた！ 全員の攻撃力 +2');playSound();}
@@ -302,31 +334,48 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
   function updateUI(){
     $('headerGold').textContent=`◈ ${store.gold.toLocaleString('ja-JP')} G`;
     const q=quest(),inBattle=game.scene==='battle';
-    $('areaLabel').textContent=inBattle?q.name:'はじまりの街 ― 旅団詰所';$('areaSubtitle').textContent=inBattle?'TACTICAL BATTLE / THE BORDERLAND':'THE WHITE BORDERLAND';$('phaseTag').textContent=game.scene==='battle'?(game.active?.team==='enemy'?'敵の行動':'戦闘中'):game.scene==='result'?'結果':'拠点';
+    $('areaLabel').textContent=inBattle?q.name:'はじまりの街 ― 旅団詰所';$('areaSubtitle').textContent=inBattle?'TACTICAL BATTLE / THE BORDERLAND':'THE WHITE BORDERLAND';$('phaseTag').textContent=game.scene==='battle'?(game.active?.team==='enemy'?'ENEMY PHASE':'PLAYER PHASE'):game.scene==='result'?'結果':'拠点';document.body.dataset.phase=game.active?.team==='enemy'?'enemy':'player';
     $('missionInfo').innerHTML=`<span class="tag">${q.chapter}・依頼${q.id+1}</span><div style="margin-top:6px"><strong>${q.name}</strong></div><p>${q.summary}</p><div class="objective">勝利条件：${q.objective}<br>境界律：<span style="color:#f0d59b">${q.law}</span></div>`;
     $('partyCount').textContent=`${store.party.length} / 6`;
     const pteam=inBattle||game.scene==='result'?game.units.filter(u=>u.team==='player'):store.party.map(heroStats);
-    $('partyList').innerHTML=pteam.map(u=>`<button class="party-member ${getSelected()?.id===u.id?'selected':''}" data-inspect="${u.id}"><div class="party-avatar" style="--av-bg:${u.color}">${u.team==='player'?portrait(u.id):`<span>${u.avatar}</span>`}</div><div class="party-data"><div class="topline"><b>${u.name}</b><small>Lv.${u.lv} ${JOBS[u.job].name}</small></div><div class="minibar"><div style="width:${Math.round(u.hp/u.maxHp*100)}%;background:${u.hp?'#66c6a2':'#9f5559'}"></div></div><small>HP ${u.hp} / ${u.maxHp}</small></div></button>`).join('');
+    $('partyList').innerHTML=pteam.map(u=>`<button class="party-member ${getSelected()?.id===u.id?'selected':''}" data-inspect="${u.id}"><div class="party-avatar" style="--av-bg:${u.color}">${u.team==='player'?portrait(u.id):`<img class="enemy-face" src="${SPRITE_URLS['enemy_'+u.type]||''}" alt="">`}</div><div class="party-data"><div class="topline"><b>${u.name}</b><small>Lv.${u.lv} ${JOBS[u.job].name}</small></div><div class="minibar"><div style="width:${Math.round(u.hp/u.maxHp*100)}%;background:${u.hp?'#66c6a2':'#9f5559'}"></div></div><small>HP ${u.hp} / ${u.maxHp}</small></div></button>`).join('');
     $('partyList').querySelectorAll('[data-inspect]').forEach(b=>b.onclick=()=>{if(game.scene==='battle'){game.inspected=game.units.find(u=>u.id===b.dataset.inspect);game.hover={x:game.inspected.x,y:game.inspected.y};updateUI();}else{const u=store.party.find(p=>p.id===b.dataset.inspect);if(u)announce(`${u.name}：${JOBS[u.job].desc}`);}});
     $('lawBanner').textContent=`⚖ 境界律：${q.law}${game.lawBroken?'（違反）':''}`;$('lawBanner').classList.toggle('broken',game.lawBroken);$('roundBanner').textContent=game.scene==='battle'?`TURN ${String(game.turnNum).padStart(2,'0')}`:'旅団ランク Ⅰ';
     const u=getSelected();
-    if(u){$('unitPanel').innerHTML=`<div class="unit-hero"><div class="unit-portrait" style="--av-bg:${u.color}">${u.team==='player'?portrait(u.id):`<span>${u.avatar}</span>`}</div><div><div class="unit-name">${u.name}</div><div class="unit-sub">Lv.${u.lv}　${u.team==='enemy'?u.type==='guardian'?'古き番人':'魔物':JOBS[u.job].name}</div><div class="unit-sub">${u.team==='player'?'旅団員':'敵対勢力'}</div></div></div>${hpBar(u.hp,u.maxHp)}${u.maxMp?hpBar(u.mp,u.maxMp,'mp'):''}<div class="stat-misc"><span>攻 <b>${u.atk}</b></span><span>防 <b>${u.def}</b></span><span>速 <b>${u.speed}</b></span><span>移 <b>${u.move}</b></span></div>`;}
+    if(u){$('unitPanel').innerHTML=`<div class="unit-hero"><div class="unit-portrait" style="--av-bg:${u.color}">${u.team==='player'?portrait(u.id):`<img class="enemy-face" src="${SPRITE_URLS['enemy_'+u.type]||''}" alt="">`}</div><div><div class="unit-name">${u.name}</div><div class="unit-sub">Lv.${u.lv}　${u.team==='enemy'?u.type==='guardian'?'古き番人':'魔物':JOBS[u.job].name}</div><div class="unit-sub">${u.team==='player'?'旅団員':'敵対勢力'}</div></div></div>${hpBar(u.hp,u.maxHp)}${u.maxMp?hpBar(u.mp,u.maxMp,'mp'):''}<div class="stat-misc"><span>攻 <b>${u.atk}</b></span><span>防 <b>${u.def}</b></span><span>速 <b>${u.speed}</b></span><span>移 <b>${u.move}</b></span></div>`;}
     else $('unitPanel').innerHTML='<div style="font-size:12px;line-height:1.9">旅団に所属する仲間を管理し、依頼を受注しましょう。</div>';
     const me=game.active,turn=inBattle&&me&&me.team==='player'&&!game.locked;
-    const cmds=[{act:'move',ic:'➤',name:'移動',s:game.moved?'済':'移動範囲',off:!turn||game.moved},{act:'attack',ic:'⚔',name:'攻撃',s:game.acted?'済':'通常攻撃',off:!turn||game.acted},{act:'item',ic:'♧',name:'回復薬',s:`×${store.potions}`,off:!turn||game.acted||store.potions===0},{act:'skill',ic:'✧',name:'アビリティ',s:me?.team==='player'?`MP ${me.mp}`:'技の使用',off:!turn||game.acted},{act:'wait',ic:'◷',name:'待機 / 手番終了',s:'',off:!turn},{act:'cancel',ic:'↶',name:'選択を戻す',s:'ESC',off:!turn||game.mode==='idle'}];
+    const cmds=[{act:'move',ic:'➤',name:'移動',s:game.moved?'済':'移動範囲',off:!turn||game.moved},{act:'attack',ic:'⚔',name:'攻撃',s:game.acted?'済':'通常攻撃',off:!turn||game.acted},{act:'item',ic:'♧',name:'回復薬',s:`×${store.potions}`,off:!turn||game.acted||store.potions===0},{act:'skill',ic:'✧',name:'アビリティ',s:me?.team==='player'?`MP ${me.mp}`:'技の使用',off:!turn||game.acted},{act:'wait',ic:'◷',name:'待機 / 手番終了',s:'',off:!turn},{act:'cancel',ic:'↶',name:game.moved&&!game.acted?'移動を戻す':'選択を戻す',s:game.moved&&!game.acted?'UNDO':'ESC',off:!turn||(!game.moved&&game.mode==='smart')}];
     $('commandPanel').innerHTML=cmds.map(c=>`<button type="button" class="cmd-btn ${game.mode===c.act?'active':''} ${c.act==='wait'?'accent':''}" data-action="${c.act}" ${c.off?'disabled':''}><span class="cmd-icon">${c.ic}</span>${c.name}<small>${c.s}</small></button>`).join('');
     $('commandPanel').querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>command(b.dataset.action));
     const abilities=turn&&me&&me.job&&JOBS[me.job]?JOBS[me.job].skills:[];
     $('abilityPanel').innerHTML=game.mode==='skillMenu'?abilities.map((s,i)=>`<button class="ability-option" data-skill="${i}" ${me.mp<s.mp?'disabled':''}>${s.name}<small>${s.mp} MP ／ 射程${s.min}〜${s.max}</small></button>`).join(''):'<div style="font-size:10px;color:#92a9b5;line-height:1.6">直接タップで移動・攻撃。青=移動 / 赤=攻撃可能。</div>';
     $('abilityPanel').querySelectorAll('[data-skill]').forEach(b=>b.onclick=()=>setSkill(abilities[Number(b.dataset.skill)]));
-    $('stageHint').textContent=game.scene==='home'?'依頼を選んで、旅団を出撃させよう。':game.scene==='result'?'依頼を終えました。':'青いマスをタップで移動／赤い敵をタップで攻撃。'+(game.active?.team==='enemy'?'　敵の行動中…':'');
+    $('stageHint').textContent=game.scene==='home'?'依頼を選んで、旅団を出撃させよう。':game.scene==='result'?'依頼を終えました。':(game.pendingAttack?'攻撃予測：実行または対象を再タップ':'青いマスへ移動／敵をタップで予測確認。')+(game.active?.team==='enemy'?'　敵の行動中…':'');
     $('zoomValue').textContent=`${Math.round(game.zoom*100)}%`;
     const remaining=game.units.filter(u=>u.hp>0).sort((a,b)=>a.nextTick-b.nextTick);
     const order=inBattle?[...(game.active?[game.active]:[]),...remaining.filter(u=>u!==game.active)].slice(0,7):[];
-    $('timeline').innerHTML=order.map((x,i)=>`<div class="turn-item ${i===0?'active':''} ${x.team==='enemy'?'enemy':''}"><div class="turn-icon" style="color:${x.color}">${x.team==='player'?portrait(x.id):`<span>${x.avatar}</span>`}</div><div><strong>${x.name}</strong><small>${x.team==='enemy'?'ENEMY':JOBS[x.job]?.name||'味方'}</small></div></div>`).join('');
-    updateTilePanel();
+    $('timeline').innerHTML=order.map((x,i)=>`<div class="turn-item ${i===0?'active':''} ${x.team==='enemy'?'enemy':''}"><div class="turn-icon" style="color:${x.color}">${x.team==='player'?portrait(x.id):`<img class="enemy-face" src="${SPRITE_URLS['enemy_'+x.type]||''}" alt="">`}</div><div><strong>${x.name}</strong><small>${x.team==='enemy'?'ENEMY':JOBS[x.job]?.name||'味方'}</small></div></div>`).join('');
+    updateTilePanel();updateStageTools();showForecast();
   }
-  function updateTilePanel(){const h=game.hover;const t=h&&tileAt(h.x,h.y);if(!t){$('tilePanel').textContent='タイルにカーソルを合わせると地形情報が表示されます。';return;}let types={water:'水路',rock:'岩壁',road:'石畳',grass:'草地'};const u=at(t.x,t.y);$('tilePanel').innerHTML=`<b>${types[t.type]}</b>　高さ ${t.z}<br>座標 ${t.x+1} - ${t.y+1}　／　${t.type==='rock'||t.type==='water'?'移動不可':'移動コスト 1'}${u?`<br><b>${u.name}</b>（${u.team==='enemy'?'敵':'味方'}）HP ${u.hp}/${u.maxHp}`:''}`;}
+
+  function flashPhase(team){const e=$('phaseFlash');if(!e)return;e.textContent=team==='enemy'?'◆ ENEMY PHASE ◆':'✦ PLAYER PHASE ✦';e.classList.toggle('enemy',team==='enemy');e.classList.add('on');clearTimeout(game.phaseTimer);game.phaseTimer=setTimeout(()=>e.classList.remove('on'),730);}
+  function updateStageTools(){for(const [id,on] of [['dangerToggle',game.showDanger],['gridToggle',game.showGrid]]){let e=$(id);if(e){e.classList.toggle('on',on);e.setAttribute('aria-pressed',String(on));}}}
+  function terrainAvoid(t){return t?.type==='grass'?10:t?.type==='road'?0:t?.type==='rock'?15:0;}
+  function forecastDamage(u,target,skill){const heal=skill?.kind==='heal';const frm=tile(u.x,u.y),to=tile(target.x,target.y);const height=clamp(frm.z-to.z,-2,2);const crit=hash(game.turnNum,u.x,target.y)<.12?1.25:1;return heal?Math.min(target.maxHp-target.hp,Math.max(10,Math.round(u.atk*(skill?.power||1.5)))):Math.max(3,Math.round((u.atk*(skill?.power||1)-target.def*.48+height*2+3)*crit));}
+  function forecastHit(u,target,skill){if(skill?.kind==='heal')return 100;return clamp((u.team==='enemy'?97:95)-terrainAvoid(tile(target.x,target.y))+(tile(u.x,u.y).z>tile(target.x,target.y).z?4:0),5,100);}
+  function showForecast(){const el=$('combatForecast');if(!el)return;const p=game.pendingAttack;if(!p||game.scene!=='battle'||p.u.hp<=0||p.target.hp<=0){el.classList.add('hidden');el.innerHTML='';return;}
+    const {u,target,skill}=p,heal=skill?.kind==='heal',dmg=forecastDamage(u,target,skill),hit=forecastHit(u,target,skill);el.classList.remove('hidden');
+    el.innerHTML=`<div class="forecast-title">${heal?'✚ 回復予測':'⚔ 攻撃予測'} · ${skill?.name||'通常攻撃'}</div><div class="forecast-target">${u.name} → ${target.name}　${heal?'HP +':'ダメージ '}${dmg}</div><div class="forecast-nums"><span>命中 <b>${hit}%</b></span><span>残HP <b>${heal?Math.min(target.maxHp,target.hp+dmg):Math.max(0,target.hp-dmg)}/${target.maxHp}</b></span></div><div class="forecast-buttons"><button id="forecastCancel" type="button">戻る</button><button id="forecastGo" class="forecast-go" type="button">${heal?'回復':'攻撃'}する</button></div>`;
+    $('forecastCancel').onclick=()=>{game.pendingAttack=null;showForecast();updateUI();};$('forecastGo').onclick=confirmForecast;
+  }
+  function confirmForecast(){const p=game.pendingAttack;if(!p||game.scene!=='battle'||game.locked)return;game.pendingAttack=null;showForecast();doAttack(p.u,p.target,p.skill);}
+  function queueForecast(u,target,skill){if(game.pendingAttack?.target===target&&game.pendingAttack?.skill===skill){confirmForecast();return;}game.pendingAttack={u,target,skill};game.inspected=target;game.hover={x:target.x,y:target.y};playSound();updateUI();showForecast();}
+  function movementPath(u,x,y){const q=[{x:u.x,y:u.y}],visit=new Map([[tileKey(u.x,u.y),null]]),start=tile(u.x,u.y);for(let n=0;n<q.length;n++){let t=q[n];if(t.x===x&&t.y===y)break;for(const nxt of neighbors(t)){const key=tileKey(nxt.x,nxt.y);if(visit.has(key)||nxt.type==='water'||nxt.type==='rock'||Math.abs(nxt.z-t.z)>u.jump||at(nxt.x,nxt.y))continue;visit.set(key,tileKey(t.x,t.y));q.push(nxt);}}const dest=tileKey(x,y);if(!visit.has(dest))return [];let route=[];for(let cur=dest;cur;cur=visit.get(cur)){const [a,b]=cur.split(',').map(Number);route.push(tile(a,b));}return route.reverse();}
+  function dangerTiles(){const map=new Set();for(const enemy of alive('enemy')){let places=[tile(enemy.x,enemy.y),...reachable(enemy)];for(const p of places){for(const t of game.tiles){if(t.type==='water'||t.type==='rock')continue;if(isInRange(p,t,...enemy.range))map.add(tileKey(t.x,t.y));}}}return map;}
+  function drawRoute(route,time){if(!route?.length||route.length<2)return;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();route.forEach((t,i)=>{const p=project(t.x,t.y,t.z);i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);});ctx.strokeStyle='#07344c';ctx.lineWidth=9;ctx.stroke();ctx.strokeStyle='#b7faff';ctx.lineWidth=4;ctx.setLineDash([10,6]);ctx.lineDashOffset=-time*18;ctx.stroke();ctx.setLineDash([]);for(const t of route.slice(1)){const p=project(t.x,t.y,t.z);ctx.fillStyle='#e8fdff';ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();}ctx.restore();}
+
+  function updateTilePanel(){const h=game.hover;const t=h&&tileAt(h.x,h.y);if(!t){$('tilePanel').textContent='タイルにカーソルを合わせると地形情報が表示されます。';return;}let types={water:'水路',rock:'岩壁',road:'石畳',grass:'草地'};$('mobileTerrain').textContent=types[t.type]+'　回避 +'+terrainAvoid(t)+' / 高さ '+t.z;const u=at(t.x,t.y);$('tilePanel').innerHTML=`<b>${types[t.type]}</b>　高さ ${t.z}<br>座標 ${t.x+1} - ${t.y+1}　／　${t.type==='rock'||t.type==='water'?'移動不可':'移動コスト 1'}${u?`<br><b>${u.name}</b>（${u.team==='enemy'?'敵':'味方'}）HP ${u.hp}/${u.maxHp}`:''}`;}
   function neighbors(t){return [[t.x+1,t.y],[t.x-1,t.y],[t.x,t.y+1],[t.x,t.y-1]].filter(p=>within(...p)).map(p=>tile(...p));}
   function reachable(u){
     const origin=tile(u.x,u.y),q=[{t:origin,d:0}],found=new Map([[tileKey(u.x,u.y),0]]),ret=[];
@@ -341,8 +390,8 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
   function isInRange(a,b,min,max){const d=dist(a,b),ta=tile(a.x,a.y),tb=tile(b.x,b.y);return d>=min&&d<=max+(ta.z>tb.z?1:0)&&Math.abs(ta.z-tb.z)<=3;}
   function attackable(u,min,max,kind='damage'){return game.tiles.filter(t=>{const target=at(t.x,t.y);return target&&target.hp>0&&(kind==='heal'?target.team===u.team:target.team!==u.team)&&isInRange(u,t,min,max);});}
   function command(action){
-    const u=game.active;if(game.scene!=='battle'||game.locked||!u||u.team!=='player')return;playSound();
-    if(action==='cancel'){game.mode='smart';game.selectedSkill=null;game.reachable=game.moved?[]:reachable(u);}
+    const u=game.active;if(game.scene!=='battle'||game.locked||!u||u.team!=='player')return;if(action!=='cancel'){game.pendingAttack=null;showForecast();}playSound();
+    if(action==='cancel'){if(game.pendingAttack){game.pendingAttack=null;showForecast();}else if(game.moved&&!game.acted&&game.moveOrigin){const old=game.moveOrigin;if(!at(old.x,old.y)){u.x=old.x;u.y=old.y;game.moved=false;game.moveOrigin=null;game.lastRoute=[];announce('移動を取り消しました');}}game.mode='smart';game.selectedSkill=null;game.reachable=game.moved?[]:reachable(u);}
     if(action==='move'&&!game.moved){game.mode='move';game.reachable=reachable(u);game.selectedSkill=null;announce('青いマスから移動先を選択',900);}
     if(action==='attack'&&!game.acted){game.mode='attack';game.reachable=attackable(u,...u.range);game.selectedSkill=null;if(!game.reachable.length)announce('射程内に敵がいません',950);}
     if(action==='item'&&!game.acted&&store.potions>0){game.mode='item';game.selectedSkill={id:'potion',name:'回復薬',mp:0,min:0,max:2,power:1.2,kind:'heal',element:'道具'};game.reachable=attackable(u,0,2,'heal');announce('回復する味方をタップ',900);}
@@ -354,7 +403,7 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
   function smartMovement(u,x,y){
     if(game.moved)return false;
     const possible=reachable(u);if(!possible.some(t=>t.x===x&&t.y===y))return false;
-    const old={x:u.x,y:u.y};u.dir=x>u.x?1:x<u.x?3:y>u.y?2:0;u.x=x;u.y=y;
+    const old={x:u.x,y:u.y};game.moveOrigin=old;game.lastRoute=movementPath(u,x,y);game.lastRouteTime=performance.now();u.dir=x>u.x?1:x<u.x?3:y>u.y?2:0;u.x=x;u.y=y;
     game.moved=true;game.mode='smart';game.reachable=[];game.inspected=u;game.hover={x,y};
     game.anim={unit:u,start:performance.now(),length:230,old};
     log(`${u.name} が移動した。`);playSound();updateUI();
@@ -367,10 +416,10 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
     const u=game.active,t=tile(x,y),target=at(x,y);
     if(game.mode==='smart'||game.mode==='idle'){
       if(target&&target.team==='enemy'&&!game.acted){
-        if(isInRange(u,target,...u.range)){doAttack(u,target,null);return;}
+        if(isInRange(u,target,...u.range)){queueForecast(u,target,null);return;}
         if(!game.moved){const choices=reachable(u);const attackPlaces=choices.filter(c=>isInRange(c,target,...u.range));
           const positions=(attackPlaces.length?attackPlaces:choices).sort((a,b)=>dist(a,target)-dist(b,target) || dist(a,u)-dist(b,u));
-          if(positions.length){smartMovement(u,positions[0].x,positions[0].y);announce(attackPlaces.length?'接近しました。もう一度敵をタップで攻撃':'接近しました。射程を確認してください',1300);return;}}
+          if(positions.length){smartMovement(u,positions[0].x,positions[0].y);if(attackPlaces.length&&isInRange(u,target,...u.range)){queueForecast(u,target,null);announce('接近しました。攻撃結果を確認できます',1050);}else announce('接近しました。射程を確認してください',1100);return;}}
         game.inspected=target;updateUI();announce('射程外です。移動や技を使用してください',1150);return;
       }
       if(target&&target.team==='player'){game.inspected=target;game.hover={x,y};updateUI();return;}
@@ -380,27 +429,26 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
     if(game.mode==='move'){
       if(x===u.x&&y===u.y){command('cancel');return;}
       if(!game.reachable.some(s=>s.x===x&&s.y===y)){if(target&&target!==u){game.inspected=target;updateUI();}else announce('そこへは移動できません',750);return;}
-      const old={x:u.x,y:u.y},newp={x,y};u.dir=x>u.x?1:x<u.x?3:y>u.y?2:0;u.x=x;u.y=y;game.moved=true;game.mode='smart';game.reachable=[];game.inspected=u;game.anim={unit:u,start:performance.now(),length:220,old};log(`${u.name} が移動した。`);playSound();updateUI();if(game.acted)schedule(endTurn,250);return;
+      const old={x:u.x,y:u.y},newp={x,y};game.moveOrigin=old;game.lastRoute=movementPath(u,x,y);game.lastRouteTime=performance.now();u.dir=x>u.x?1:x<u.x?3:y>u.y?2:0;u.x=x;u.y=y;game.moved=true;game.mode='smart';game.reachable=[];game.inspected=u;game.anim={unit:u,start:performance.now(),length:220,old};log(`${u.name} が移動した。`);playSound();updateUI();if(game.acted)schedule(endTurn,250);return;
     }
     if(game.mode==='attack'||game.mode==='ability'||game.mode==='item'){
       if(!game.reachable.some(s=>s.x===x&&s.y===y)){if(target){game.inspected=target;updateUI();}else announce('射程外です',850);return;}
       const skill=(game.mode==='ability'||game.mode==='item')?game.selectedSkill:null;
       if(!target||!canTarget(u,target,skill))return;
-      doAttack(u,target,skill);return;
+      queueForecast(u,target,skill);return;
     }
     if(target){game.inspected=target;updateUI();if(target!==u)announce(`${target.name} / HP ${target.hp}`,900);}else{game.hover=t;updateTilePanel();}
   }
   function canTarget(u,target,skill){return skill?.kind==='heal'?target.team===u.team&&target.hp>0:target.team!==u.team&&target.hp>0;}
   function doAttack(u,target,skill){
-    if(game.scene!=='battle'||game.locked||!u||!target||!canTarget(u,target,skill)||game.acted)return;
+    if(game.scene!=='battle'||game.locked||!u||!target||!canTarget(u,target,skill)||game.acted)return;game.pendingAttack=null;showForecast();
     game.locked=true;game.mode='idle';game.reachable=[];game.acted=true;game.inspected=target;
     if(skill){if(skill.id==='potion'){if(store.potions<=0)return;store.potions--;save();}u.mp-=skill.mp;if(skill.element==='炎'&&(game.quest===0||game.quest===4))game.lawBroken=true;if(skill.kind==='heal'&&game.quest===2)game.lawBroken=true;}
     if(u.team==='player'&&(game.quest===1||game.quest===3)&&(u.job==='ranger'||u.range[1]>=3))game.lawBroken=true;
-    const isHeal=skill?.kind==='heal';const ch=(u.team==='enemy'?97:95);let hit=isHeal||Math.random()*100<ch;
+    const isHeal=skill?.kind==='heal';const ch=forecastHit(u,target,skill);let hit=isHeal||Math.random()*100<ch;
     let dealt=0;
-    if(hit){if(isHeal){dealt=Math.min(target.maxHp-target.hp,Math.max(10,Math.round(u.atk*(skill?.power||1.5))));target.hp+=dealt;}
-      else{const from=tile(u.x,u.y),to=tile(target.x,target.y),elev=clamp(from.z-to.z,-2,2),crit=hash(game.turnNum,u.x,target.y)<.12?1.25:1;
-        dealt=Math.max(3,Math.round((u.atk*(skill?.power||1)-target.def*.48+elev*2+3)*crit));target.hp=Math.max(0,target.hp-dealt);}
+    if(hit){if(isHeal){dealt=forecastDamage(u,target,skill);target.hp+=dealt;}
+      else{dealt=forecastDamage(u,target,skill);target.hp=Math.max(0,target.hp-dealt);}
     }
     game.anim={unit:target,start:performance.now(),length:380,hit:!isHeal};
     effects(target,isHeal?'#93e1bf':skill?.element==='炎'?'#ed9865':'#ffdfa3',hit?dealt:0,isHeal,hit);
@@ -522,6 +570,12 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
     ctx.save();ctx.translate(500+game.offsetX,350+game.offsetY);ctx.scale(game.zoom,game.zoom);ctx.translate(-500,-350);
     let tiles=game.tiles.slice().sort((a,b)=>(a.x+a.y)-(b.x+b.y)||a.x-b.x);
     tiles.forEach(t=>drawTile(t,time));drawProps(time);
+    if(game.scene==='battle'){
+      if(game.showGrid){ctx.save();ctx.globalAlpha=.43;for(const t of game.tiles){if(t.type==='water')continue;const p=project(t.x,t.y,t.z);diamond(p.x,p.y,null,'#cee1de',.8);}ctx.restore();}
+      if(game.showDanger){for(const k of dangerTiles()){const [x,y]=k.split(',').map(Number);drawHighlight(tile(x,y),'#f0404d48','#fa8589',time);}}
+      if(game.active?.team==='player'&&!game.moved&&game.hover&&game.reachable.some(t=>t.x===game.hover.x&&t.y===game.hover.y))drawRoute(movementPath(game.active,game.hover.x,game.hover.y),time);
+      else if(game.lastRoute.length&&(performance.now()-game.lastRouteTime<950))drawRoute(game.lastRoute,time);
+    }
     if(game.scene==='battle'&&game.reachable.length){const move=game.mode==='move',heal=game.selectedSkill?.kind==='heal';game.reachable.forEach(t=>drawHighlight(t,move||game.mode==='smart'?'#287bc66e':heal?'#55ba9377':'#d15f5977',move||game.mode==='smart'?'#8de0ff':heal?'#baf5cc':'#ffb098',time));}
     if(game.scene==='battle'&&game.mode==='smart'&&game.active?.team==='player'&&!game.acted){
       for(const r of attackable(game.active,...game.active.range))drawHighlight(r,'#d75d4555','#ffb58a',time);
@@ -533,9 +587,14 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
   }
   function pointToWorld(e){let r=canvas.getBoundingClientRect();const cx=(e.clientX-r.left)*W/r.width,cy=(e.clientY-r.top)*H/r.height;return {x:(cx-500-game.offsetX)/game.zoom+500,y:(cy-350-game.offsetY)/game.zoom+350};}
   function pick(world){
-    for(const u of game.units.filter(u=>u.hp>0).sort((a,b)=>(b.x+b.y)-(a.x+a.y))){let p=project(u.x,u.y,tile(u.x,u.y).z);if(Math.abs(world.x-p.x)<22&&world.y>=p.y-65&&world.y<=p.y+11)return {x:u.x,y:u.y};}
-    let all=game.tiles.slice().sort((a,b)=>(b.x+b.y)-(a.x+a.y));for(const t of all){let p=project(t.x,t.y,t.z);const dx=Math.abs(world.x-p.x)/(TW/2),dy=Math.abs(world.y-p.y)/(TH/2);if(dx+dy<=1.01)return {x:t.x,y:t.y};}
-    return null;
+    // Prefer the unit sprite if touched; this includes head and shoulders above the ground tile.
+    const units=game.units.filter(u=>u.hp>0).sort((a,b)=>(b.x+b.y)-(a.x+a.y));
+    for(const u of units){const p=project(u.x,u.y,tile(u.x,u.y).z);if(Math.abs(world.x-p.x)<27&&world.y>=p.y-69&&world.y<=p.y+9)return {x:u.x,y:u.y};}
+    // Choose the nearest *walkable tile top*, with a forgiving touch threshold in logical coordinates.
+    let result=null,score=Infinity;
+    for(const t of game.tiles){const p=project(t.x,t.y,t.z),dx=Math.abs(world.x-p.x)/(TW/2),dy=Math.abs(world.y-p.y)/(TH/2);const s=dx+dy;
+      if(s<score){score=s;result={x:t.x,y:t.y};}}
+    return score<=1.78?result:null;
   }
   const contacts=new Map();let pinchDistance=0,ignoreUntilLift=false;
   canvas.addEventListener('pointerdown',e=>{contacts.set(e.pointerId,{x:e.clientX,y:e.clientY});if(contacts.size>=2){ignoreUntilLift=true;pointer.drag=true;pointer.down=false;pinchDistance=0;}pointer.down=contacts.size===1;pointer.drag=false;pointer.x=e.clientX;pointer.y=e.clientY;pointer.lastX=e.clientX;pointer.lastY=e.clientY;try{canvas.setPointerCapture(e.pointerId);}catch{}});
@@ -554,7 +613,10 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
   function zoom(delta){game.zoom=clamp(Math.round((game.zoom+delta)*10)/10,.65,2.2);$('zoomValue').textContent=`${Math.round(game.zoom*100)}%`;}
   canvas.addEventListener('wheel',e=>{if(game.scene!=='battle')return;e.preventDefault();zoom(e.deltaY<0?.1:-.1);},{passive:false});
   $('zoomIn').onclick=()=>zoom(.2);$('zoomOut').onclick=()=>zoom(-.2);
-  $('centerBtn').onclick=()=>{game.offsetX=0;game.offsetY=0;game.zoom=window.innerWidth<=540?1.18:1;updateUI();};
+  $('dangerToggle').onclick=()=>{game.showDanger=!game.showDanger;updateStageTools();announce(game.showDanger?'敵の危険範囲を表示':'危険範囲を非表示',900);};
+  $('gridToggle').onclick=()=>{game.showGrid=!game.showGrid;updateStageTools();};
+  $('resetCamera').onclick=()=>{game.offsetX=0;game.offsetY=0;game.zoom=window.innerWidth<=700?1.35:1;updateUI();};
+  $('centerBtn').onclick=()=>{game.offsetX=0;game.offsetY=0;game.zoom=window.innerWidth<=700?1.35:1;updateUI();};
   $('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♪':'♫';$('soundBtn').title=`効果音 ${soundOn?'ON':'OFF'}`;playSound();};
   $('battleMenuMobile').onclick=()=> $('menuBtn').click();
   $('menuBtn').onclick=()=>{if(game.scene==='battle')showDialog('依頼から撤退','<p>戦闘を中断し、旅団詰所に戻ります。今回の報酬は手に入りませんが、育成データは保持されます。</p>',[{label:'戦闘に戻る'},{label:'撤退する',primary:true,fn:showHome}]);else showHome();};
@@ -571,8 +633,8 @@ html,body{height:100%;overscroll-behavior:none}body{overflow:hidden}button,selec
     if(e.key==='Enter'&&game.hover){e.preventDefault();choose(game.hover.x,game.hover.y);}
   });
   // Save progress across reloads. No external JS runtime or server required.
-  showHome();requestAnimationFrame(frame);
-  window.YohakuDebug={state:game,save:store,startBattle,showHome,choose,command,reachable,checkOutcome,heroStats,doAttack,at,JOBS,QUESTS,SPRITE_IMAGES};
+  showHome();updateStageTools();requestAnimationFrame(frame);
+  window.YohakuDebug={state:game,save:store,startBattle,showHome,choose,command,reachable,checkOutcome,heroStats,doAttack,at,JOBS,QUESTS,SPRITE_IMAGES,forecastDamage,forecastHit,movementPath,dangerTiles,queueForecast,confirmForecast,pick};
 })();
 </script>
 </body>
