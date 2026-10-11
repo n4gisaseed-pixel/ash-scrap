@@ -414,6 +414,7 @@ body[data-phase=enemy] .phase-tag{background:#652633;color:#ffe4de;border-color:
   function choose(x,y){
     if(!within(x,y)||game.scene!=='battle'||game.locked||!game.active)return;
     const u=game.active,t=tile(x,y),target=at(x,y);
+    if(game.pendingAttack&&target!==game.pendingAttack.target){game.pendingAttack=null;showForecast();}
     if(game.mode==='smart'||game.mode==='idle'){
       if(target&&target.team==='enemy'&&!game.acted){
         if(isInRange(u,target,...u.range)){queueForecast(u,target,null);return;}
@@ -594,6 +595,9 @@ body[data-phase=enemy] .phase-tag{background:#652633;color:#ffe4de;border-color:
     let result=null,score=Infinity;
     for(const t of game.tiles){const p=project(t.x,t.y,t.z),dx=Math.abs(world.x-p.x)/(TW/2),dy=Math.abs(world.y-p.y)/(TH/2);const s=dx+dy;
       if(s<score){score=s;result={x:t.x,y:t.y};}}
+    if(game.scene==='battle'&&game.active?.team==='player'&&!game.moved&&(game.mode==='smart'||game.mode==='move')){
+      let best=result,bestScore=score;for(const t of game.reachable){const p=project(t.x,t.y,t.z),s=Math.abs(world.x-p.x)/(TW/2)+Math.abs(world.y-p.y)/(TH/2);if(s<=score+.16&&s<1.68&&s<bestScore+.17){best={x:t.x,y:t.y};bestScore=s;}}if(best)result=best;
+    }
     return score<=1.78?result:null;
   }
   const contacts=new Map();let pinchDistance=0,ignoreUntilLift=false;
